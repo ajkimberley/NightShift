@@ -1,0 +1,12 @@
+digraph HumanReview {
+  start [shape=Mdiamond]
+  review [shape=hexagon, label="Accept or revise?", human.timeout=30s]
+  revise [prompt="Revise the artifact"]
+  accepted [prompt="Record acceptance; queued identity is unverified"]
+  exit [shape=Msquare]
+  start -> review
+  review -> accepted [label="[A] Accept"]
+  review -> revise [label="[R] Revise"]
+  revise -> review
+  accepted -> exit
+}

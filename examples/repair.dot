@@ -1,0 +1,11 @@
+digraph Repair {
+  graph [goal="Exercise a failed check, repair, and passing revisit"]
+  start [shape=Mdiamond]
+  check [prompt="Check the artifact", goal_gate=true, retry_target=repair, script.outcomes="fail,success"]
+  repair [prompt="Repair after the failed check"]
+  exit [shape=Msquare]
+  start -> check
+  check -> repair [condition="outcome=fail"]
+  repair -> check
+  check -> exit [condition="outcome=success"]
+}

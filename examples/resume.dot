@@ -1,0 +1,7 @@
+digraph Resume {
+  start [shape=Mdiamond]
+  first [prompt="First durable stage"]
+  second [prompt="Stage reached after resume"]
+  exit [shape=Msquare]
+  start -> first -> second -> exit
+}

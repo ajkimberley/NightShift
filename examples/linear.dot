@@ -1,0 +1,9 @@
+digraph Linear {
+  graph [goal="Demonstrate deterministic orchestration"]
+  start [shape=Mdiamond]
+  plan [prompt="Plan for $goal"]
+  implement [prompt="Implement the plan", goal_gate=true]
+  review [prompt="Review the implementation"]
+  exit [shape=Msquare]
+  start -> plan -> implement -> review -> exit
+}

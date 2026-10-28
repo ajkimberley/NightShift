@@ -1,0 +1,7 @@
+digraph CodexWorker {
+  graph [goal="Inspect a personal scratch repository", default_fidelity=truncate]
+  start [shape=Mdiamond]
+  inspect [prompt="List the project structure. Do not change files. Report incomplete work honestly.", timeout=120s]
+  exit [shape=Msquare]
+  start -> inspect -> exit
+}

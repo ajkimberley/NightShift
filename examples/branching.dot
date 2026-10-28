@@ -1,0 +1,13 @@
+digraph Branching {
+  start [shape=Mdiamond]
+  check [prompt="Persist a business fact", script.set.tests_passed=true]
+  gate [shape=diamond]
+  pass [prompt="Record passing check"]
+  repair [prompt="Repair failed check"]
+  exit [shape=Msquare]
+  start -> check -> gate
+  gate -> pass [condition="context.tests_passed=true"]
+  gate -> repair [condition="context.tests_passed!=true"]
+  repair -> check
+  pass -> exit
+}
