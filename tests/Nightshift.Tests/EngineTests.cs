@@ -27,6 +27,17 @@ public class EngineTests
     internal static string StageGraph(string attributes = "", string extra = "") => $"digraph G {{ start [shape=Mdiamond] work [prompt=do_work {attributes}] exit [shape=Msquare] start -> work work -> exit {extra} }}";
     internal static HandlerRegistry Registry(string workdir, ICodergenBackend? backend = null, IInterviewer? interviewer = null) => HandlerRegistry.Create(backend ?? new ScriptedBackend(), interviewer ?? new QueueInterviewer([]), workdir);
     [Fact]
+    public async Task BareStartAndEndIdentifiersResolveToNoOpHandlersAndPublishTypedEvents()
+    {
+        using var w = new TestWorkspace(); int calls = 0;
+        var backend = new CallbackBackend((_, _) => { calls++; return Task.FromResult(new BackendResult("", Outcome.Success())); });
+        var engine = new Engine(Registry(w.Root, backend)); var events = new List<RunEvent>(); engine.Event += events.Add;
+        var r = await engine.RunAsync("digraph G { start -> work -> end }", w.RunDirectory(), w.Root);
+        Assert.True(r.Outcome.IsSuccess); Assert.Equal(1, calls);
+        Assert.Contains(events, e => e.Kind == RunEventKind.StageStarted && e.Node == "start");
+        Assert.Contains(events, e => e.Kind == RunEventKind.PipelineCompleted); Assert.All(events, e => Assert.NotEqual(default, e.Timestamp));
+    }
+    [Fact]
     public async Task MultiStageRunPersistsStatusContextTransitionsAndFinalCheckpoint()
     {
         using var w = new TestWorkspace();
@@ -204,4 +215,38 @@ public class EngineTests
         Assert.True(r.Outcome.IsSuccess); Assert.Equal(14, r.Checkpoint.CompletedNodes.Count);
         var legacy = await new Engine(Registry(w.Root), new NoWait()).RunAsync(StageGraph(", script.outcomes=\"retry,success\"", "graph [default_max_retry=1]"), w.RunDirectory("legacy"), w.Root); Assert.True(legacy.Outcome.IsSuccess);
     }
+    [Fact]
+    public async Task NoEligibleEdgeCannotBypassTerminalAndGoalChecks()
+    {
+        using var w = new TestWorkspace();
+        string graph = "digraph G { start [shape=Mdiamond] work [prompt=x] exit [shape=Msquare] start -> work work -> exit [condition=\"outcome=fail\"] }";
+        var r = await new Engine(Registry(w.Root)).RunAsync(graph, w.RunDirectory(), w.Root);
+        Assert.False(r.Outcome.IsSuccess); Assert.Contains("No eligible edge", r.Outcome.FailureReason);
+    }
+    [Fact]
+    public async Task ResumeKeepsUnsatisfiedGoalGateOutcomeAtExit()
+    {
+        using var w = new TestWorkspace();
+        string graph = StageGraph(", goal_gate=true, script.outcomes=fail", "work -> exit [condition=\"outcome=fail\"]");
+        var engine = new Engine(Registry(w.Root));
+        var paused = await engine.RunAsync(graph, w.RunDirectory(), w.Root, new(PauseAfterStages: 2));
+        Assert.Equal("exit", paused.Checkpoint.NextNode);
+        var resumed = await engine.RunAsync(graph, w.RunDirectory(), w.Root, resume: true);
+        Assert.False(resumed.Outcome.IsSuccess); Assert.Contains("Goal gate", resumed.Outcome.FailureReason);
+    }
+    private sealed class CancelDelay(CancellationTokenSource cancel) : IRetryDelay
+    {
+        public Task WaitAsync(TimeSpan delay, CancellationToken token) { cancel.Cancel(); token.ThrowIfCancellationRequested(); return Task.CompletedTask; }
+    }
+    [Fact]
+    public async Task ResumeKeepsPendingRetryBudgetAndAttemptEvidence()
+    {
+        using var w = new TestWorkspace(); using var cancel = new CancellationTokenSource();
+        string graph = StageGraph(", max_retries=1, script.outcomes=\"retry,success\"");
+        var first = await new Engine(Registry(w.Root), new CancelDelay(cancel)).RunAsync(graph, w.RunDirectory(), w.Root, cancellationToken: cancel.Token);
+        Assert.Equal("interrupted", first.State); Assert.Equal(1, first.Checkpoint.PendingRetries);
+        var resumed = await new Engine(Registry(w.Root), new NoWait()).RunAsync(graph, w.RunDirectory(), w.Root, resume: true);
+        Assert.True(resumed.Outcome.IsSuccess); Assert.Equal(2, Directory.GetFiles(Path.Combine(w.RunDirectory(), "work"), "status.json", SearchOption.AllDirectories).Length);
+    }
+
 }

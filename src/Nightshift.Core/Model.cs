@@ -34,7 +34,10 @@ public sealed class Node(string id, Attributes attributes, SourceLocation locati
     public Dictionary<string, string> ConfigurationSources { get; } = new(StringComparer.Ordinal);
     public string Label => Attributes.Text("label", Id);
     public string Shape => Attributes.Text("shape", "box");
-    public string Type => Attributes.Text("type") is { Length: > 0 } t ? t : ShapeTypes.GetValueOrDefault(Shape, "codergen");
+    public string Type => Attributes.Text("type") is { Length: > 0 } t ? t
+        : !Attributes.ContainsKey("shape") && Id is "start" or "Start" ? "start"
+        : !Attributes.ContainsKey("shape") && Id is "exit" or "end" ? "exit"
+        : ShapeTypes.GetValueOrDefault(Shape, "codergen");
     public bool IsStart => Type == "start" || Id is "start" or "Start";
     public bool IsExit => Type == "exit" || Id is "exit" or "end";
     public static readonly IReadOnlyDictionary<string, string> ShapeTypes = new Dictionary<string, string>(StringComparer.Ordinal)
@@ -79,7 +82,7 @@ public sealed class RunContext
     public void Set<T>(string key, T value) { lock (sync) values[key] = JsonSerializer.SerializeToElement(value, Json.Options); }
     public string Get(string key, string fallback = "")
     {
-        lock (sync) return values.TryGetValue(key, out var v) ? v.ValueKind == JsonValueKind.String ? v.GetString()! : v.GetRawText() : fallback;
+        lock (sync) return values.TryGetValue(key, out var v) ? v.ValueKind is JsonValueKind.Null or JsonValueKind.Undefined ? fallback : v.ValueKind == JsonValueKind.String ? v.GetString()! : v.GetRawText() : fallback;
     }
     public bool Has(string key) { lock (sync) return values.ContainsKey(key); }
     public void Apply(IEnumerable<KeyValuePair<string, JsonElement>> updates) { lock (sync) foreach (var (k, v) in updates) values[k] = v.Clone(); }

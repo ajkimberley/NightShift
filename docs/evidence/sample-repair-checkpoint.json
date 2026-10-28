@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "timestamp": "2026-10-28T23:42:16.089355+00:00",
+  "graph_hash": "22EB64B3289678CAF0F930CE82F81877CE6022F0A2CC603649E186E17DFE948D",
+  "current_node": "exit",
+  "next_node": null,
+  "incoming_edge_index": 3,
+  "completed_nodes": [
+    "start",
+    "check",
+    "repair",
+    "check",
+    "exit"
+  ],
+  "node_outcomes": {
+    "start": {
+      "outcome": "success",
+      "preferred_label": "",
+      "suggested_next_ids": [],
+      "context_updates": {},
+      "notes": "",
+      "failure_reason": ""
+    },
+    "check": {
+      "outcome": "success",
+      "preferred_label": "",
+      "suggested_next_ids": [],
+      "context_updates": {
+        "script.calls.check": 2,
+        "last_stage": "check"
+      },
+      "notes": "Deterministic simulation",
+      "failure_reason": ""
+    },
+    "repair": {
+      "outcome": "success",
+      "preferred_label": "",
+      "suggested_next_ids": [],
+      "context_updates": {
+        "script.calls.repair": 1,
+        "last_stage": "repair"
+      },
+      "notes": "Deterministic simulation",
+      "failure_reason": ""
+    }
+  },
+  "node_visits": {
+    "start": 1,
+    "check": 2,
+    "repair": 1,
+    "exit": 1
+  },
+  "node_retries": {
+    "start": 0,
+    "check": 0,
+    "repair": 0
+  },
+  "context_values": {
+    "graph.goal": "Exercise a failed check, repair, and passing revisit",
+    "run.id": "repair",
+    "current_node": "exit",
+    "internal.retry_count.start": 0,
+    "outcome": "success",
+    "preferred_label": "",
+    "internal.retry_count.check": 0,
+    "script.calls.check": 2,
+    "last_stage": "check",
+    "internal.retry_count.repair": 0,
+    "script.calls.repair": 1
+  },
+  "transitions": [
+    {
+      "from": "start",
+      "to": "check",
+      "edge_index": 0,
+      "reason": "edge"
+    },
+    {
+      "from": "check",
+      "to": "repair",
+      "edge_index": 1,
+      "reason": "edge"
+    },
+    {
+      "from": "repair",
+      "to": "check",
+      "edge_index": 2,
+      "reason": "edge"
+    },
+    {
+      "from": "check",
+      "to": "exit",
+      "edge_index": 3,
+      "reason": "edge"
+    }
+  ],
+  "logs": [],
+  "pending_visit": null,
+  "attempt_ordinal": 0,
+  "pending_retries": 0,
+  "total_visits": 5,
+  "revision": 10,
+  "elapsed_seconds": 0.0956908,
+  "state": "success",
+  "final_outcome": {
+    "outcome": "success",
+    "preferred_label": "",
+    "suggested_next_ids": [],
+    "context_updates": {},
+    "notes": "Pipeline reached exit; visited goal gates satisfied",
+    "failure_reason": ""
+  }
+}

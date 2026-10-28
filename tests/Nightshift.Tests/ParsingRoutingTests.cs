@@ -100,7 +100,7 @@ public class ParsingRoutingTests
     [Fact]
     public void ConditionsAreCaseSensitiveMissingIsEmptyAndQuotedConjunctionIsLiteral()
     {
-        var c = new RunContext(); c.Set("flag", true); c.Set("context.name", "A&&B");
+        var c = new RunContext(); c.Set<string?>("null_value", null); Assert.Equal("", c.Get("null_value")); c.Set("flag", true); c.Set("context.name", "A&&B");
         Assert.True(Conditions.Evaluate("context.missing=\"\" && context.flag=true && context.name=\"A&&B\"", Outcome.Success(), c));
         Assert.False(Conditions.Evaluate("outcome=SUCCESS", Outcome.Success(), c));
         Assert.True(Conditions.Evaluate("preferred_label=Fix && context.flag!=false", Outcome.Success() with { PreferredLabel = "Fix" }, c));
@@ -115,6 +115,7 @@ public class ParsingRoutingTests
         var p = Preparation.Prepare("""
         digraph G {
           graph [goal="goal", llm_provider=openai, model_stylesheet="* {llm_model: base;} box {llm_model: shape;} .fast {llm_model: class;} #a {llm_model: id; reasoning_effort: low;} #a {llm_model: later;}"]
+          node [llm_model=inherited]
           start [shape=Mdiamond] exit [shape=Msquare]
           a [class=fast, prompt="$goal"] b [class=fast, llm_model=explicit] c
           start -> a -> b -> c -> exit

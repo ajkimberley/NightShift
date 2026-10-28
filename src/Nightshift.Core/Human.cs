@@ -27,7 +27,16 @@ public sealed class CallbackInterviewer(Func<Question, CancellationToken, Task<A
 }
 public sealed class AutoApproveInterviewer : IInterviewer
 {
-    public Task<Answer> AskAsync(Question q, CancellationToken cancellationToken) { cancellationToken.ThrowIfCancellationRequested(); return Task.FromResult(new Answer(q.Type == QuestionType.MultipleChoice ? q.Options.First().Key : "YES", Identity: "auto-approver-test-only")); }
+    public Task<Answer> AskAsync(Question q, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        return Task.FromResult(q.Type switch
+        {
+            QuestionType.MultipleChoice when q.Options.Count > 0 => new Answer(q.Options[0].Key, Identity: "auto-approver-test-only"),
+            QuestionType.YesNo or QuestionType.Confirmation => new Answer("YES", Identity: "auto-approver-test-only"),
+            _ => new Answer("auto-approved", "auto-approved", "auto-approver-test-only")
+        });
+    }
 }
 public sealed class ConsoleInterviewer : IInterviewer
 {
@@ -36,7 +45,16 @@ public sealed class ConsoleInterviewer : IInterviewer
         Console.WriteLine($"[{question.Stage}] {question.Text}"); foreach (var option in question.Options) Console.WriteLine($"  {option.Key}: {option.Label}");
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         if (question.Timeout != null) timeout.CancelAfter(question.Timeout.Value);
-        try { return new(await Console.In.ReadLineAsync(timeout.Token) ?? "SKIPPED", Identity: "local-console-unverified"); }
+        try
+        {
+            string? input = await Console.In.ReadLineAsync(timeout.Token);
+            if (input == null) return new("SKIPPED", Identity: "local-console-unverified");
+            string value = question.Type is QuestionType.YesNo or QuestionType.Confirmation ? input.Trim().ToLowerInvariant() switch
+            {
+                "y" or "yes" => "YES", "n" or "no" => "NO", _ => input
+            } : input;
+            return new(value, question.Type == QuestionType.Freeform ? input : "", "local-console-unverified");
+        }
         catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested) { return new("TIMEOUT"); }
     }
 }

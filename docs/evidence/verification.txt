@@ -1,0 +1,67 @@
+10.0.103
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Nightshift.Core -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/bin/Debug/net10.0/Nightshift.Core.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Debug/net10.0/Nightshift.Cli.dll
+  Nightshift.Tests -> /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/bin/Debug/net10.0/Nightshift.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.59
+Test run for /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/bin/Debug/net10.0/Nightshift.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.1 (arm64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    91, Skipped:     0, Total:    91, Duration: 4 s - Nightshift.Tests.dll (net10.0)
+Nightshift — a partial Attractor implementation (.NET 10)
+  validate GRAPH.dot
+  run GRAPH.dot [--dir RUN_DIR] [--answers A,R,A] [--pause-after N]
+  resume RUN_DIR [--answers A] [--pause-after N]
+  inspect RUN_DIR
+  events RUN_DIR
+
+Run/resume options: --max-visits N (default 1000), --max-seconds N (default 3600)
+The default scripted backend simulates outcomes without credentials or network.
+Human gates use the console unless --answers is supplied (empty queue => skipped).
+Pause exits 3; failed/incomplete run exits 1; invalid input exits 2; success exits 0.
+Resume retains completed evidence and may replay an interrupted stage's effects.
+
+Explicit worker opt-in (may incur charges; not used by demos):
+  --backend codex --enable-codex [--codex EXECUTABLE] [--sandbox read-only|workspace-write]
+Codex requires truncate fidelity; no session reuse, summaries or per-tool hooks.
+Each resume requires worker opt-in again; no worker credentials are saved.
+Warning goal_gate_has_retry implement SourceLocation { Line = 5, Column = 3 }: Goal gate has no valid recovery target
+Valid: 5 nodes, 4 edges
+  plan: model=(backend default) sources={
+  "reasoning_effort": "system default"
+}
+  implement: model=(backend default) sources={
+  "reasoning_effort": "system default"
+}
+  review: model=(backend default) sources={
+  "reasoning_effort": "system default"
+}
+Warning goal_gate_has_retry implement SourceLocation { Line = 5, Column = 3 }: Goal gate has no valid recovery target
+Backend: scripted. Run directory: /Users/adamkimberley/Repos/nightshift/runs/final-verification/linear
+success: Pipeline reached exit; visited goal gates satisfied
+Trace: start -> plan -> implement -> review -> exit
+Backend: scripted. Run directory: /Users/adamkimberley/Repos/nightshift/runs/final-verification/branching
+success: Pipeline reached exit; visited goal gates satisfied
+Trace: start -> check -> gate -> pass -> exit
+Backend: scripted. Run directory: /Users/adamkimberley/Repos/nightshift/runs/final-verification/repair
+success: Pipeline reached exit; visited goal gates satisfied
+Trace: start -> check -> repair -> check -> exit
+Backend: scripted. Run directory: /Users/adamkimberley/Repos/nightshift/runs/final-verification/human
+success: Pipeline reached exit; visited goal gates satisfied
+Trace: start -> review -> revise -> review -> accepted -> exit
+Backend: scripted. Run directory: /Users/adamkimberley/Repos/nightshift/runs/final-verification/resume
+interrupted: Paused after requested completed stages
+Trace: start -> first
+Backend: scripted. Run directory: /Users/adamkimberley/Repos/nightshift/runs/final-verification/resume
+success: Pipeline reached exit; visited goal gates satisfied
+Trace: start -> first -> second -> exit
+Verified deterministic evidence: runs/final-verification

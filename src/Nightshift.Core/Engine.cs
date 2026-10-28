@@ -17,6 +17,7 @@ public sealed class Engine(HandlerRegistry handlers, IRetryDelay? retryDelay = n
 {
     private readonly IRetryDelay retryDelay = retryDelay ?? new SystemRetryDelay();
     private readonly Backoff backoff = backoff ?? new();
+    public event Action<RunEvent>? Event;
     public static string Hash(string source) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(source)));
     public async Task<RunResult> RunAsync(string dot, string directory, string workingDirectory, EngineOptions? options = null, bool resume = false, CancellationToken cancellationToken = default)
     {
@@ -24,6 +25,7 @@ public sealed class Engine(HandlerRegistry handlers, IRetryDelay? retryDelay = n
         if (options.MaxVisits <= 0 || options.MaxSeconds <= 0 || !double.IsFinite(options.MaxSeconds) || options.PauseAfterStages is <= 0) throw new ArgumentException("Run limits must be positive and finite");
         var prepared = Preparation.Prepare(dot, handlers); Preparation.RequireValid(prepared); var graph = prepared.Graph;
         using var store = new RunStore(directory);
+        store.Event += evt => Event?.Invoke(evt);
         Checkpoint state;
         if (resume)
         {

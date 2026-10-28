@@ -8,11 +8,11 @@ public sealed record ProcessResult(int ExitCode, string Stdout, string Stderr);
 public static class ProcessRunner
 {
     // Full output is streamed to disk; the in-memory preview is bounded.
-    private static async Task<string> CaptureAsync(StreamReader reader, string path)
+    private static async Task<string> CaptureAsync(StreamReader reader, string path, CancellationToken cancellationToken)
     {
         await using var output = new StreamWriter(path, false, new UTF8Encoding(false));
         var preview = new StringBuilder(); char[] buffer = new char[4096]; int count;
-        while ((count = await reader.ReadAsync(buffer)) > 0)
+        while ((count = await reader.ReadAsync(buffer.AsMemory(), cancellationToken)) > 0)
         {
             await output.WriteAsync(buffer.AsMemory(0, count));
             if (preview.Length < 1024 * 1024) preview.Append(buffer, 0, Math.Min(count, 1024 * 1024 - preview.Length));
@@ -28,8 +28,8 @@ public static class ProcessRunner
         using var process = new Process { StartInfo = start };
         process.Start();
         await File.WriteAllTextAsync(Path.Combine(artifactDirectory, "process.pid"), process.Id.ToString(), CancellationToken.None);
-        var stdout = CaptureAsync(process.StandardOutput, Path.Combine(artifactDirectory, "stdout.txt"));
-        var stderr = CaptureAsync(process.StandardError, Path.Combine(artifactDirectory, "stderr.txt"));
+        var stdout = CaptureAsync(process.StandardOutput, Path.Combine(artifactDirectory, "stdout.txt"), cancellationToken);
+        var stderr = CaptureAsync(process.StandardError, Path.Combine(artifactDirectory, "stderr.txt"), cancellationToken);
         using var registration = cancellationToken.Register(() => { try { if (!process.HasExited) process.Kill(entireProcessTree: true); } catch (InvalidOperationException) { } catch (System.ComponentModel.Win32Exception) { } });
         try
         {

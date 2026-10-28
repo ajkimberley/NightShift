@@ -48,7 +48,16 @@ public class HumanArtifactTests
         Assert.Equal("SKIPPED", (await queue.AskAsync(q, CancellationToken.None)).Value);
         var auto = new AutoApproveInterviewer(); Assert.Equal("YES", (await auto.AskAsync(q, CancellationToken.None)).Value);
         var prior = Console.In;
-        try { Console.SetIn(new StringReader("typed\n")); Assert.Equal("typed", (await new ConsoleInterviewer().AskAsync(q, CancellationToken.None)).Value); }
+        try
+        {
+            Console.SetIn(new StringReader("yes\nno\nfree text\n")); var console = new ConsoleInterviewer();
+            Assert.Equal("YES", (await console.AskAsync(q, CancellationToken.None)).Value);
+            Assert.Equal("NO", (await console.AskAsync(q with { Type = QuestionType.Confirmation }, CancellationToken.None)).Value);
+            Assert.Equal("free text", (await console.AskAsync(q with { Type = QuestionType.Freeform }, CancellationToken.None)).Text);
+            Assert.Equal("auto-approved", (await auto.AskAsync(q with { Type = QuestionType.Freeform }, CancellationToken.None)).Text);
+            var choices = q with { Type = QuestionType.MultipleChoice, Options = [new("A", "first", "a"), new("B", "second", "b")] };
+            Assert.Equal("A", (await auto.AskAsync(choices, CancellationToken.None)).Value);
+        }
         finally { Console.SetIn(prior); }
     }
     [Fact]

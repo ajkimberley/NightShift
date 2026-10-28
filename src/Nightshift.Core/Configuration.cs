@@ -67,9 +67,10 @@ public static class Preparation
                 node.Classes.UnionWith(node.Attributes.Text("class").Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries));
                 foreach (string property in Stylesheet.Properties)
                 {
-                    if (node.Attributes.ContainsKey(property)) { node.ConfigurationSources[property] = $"DOT {node.Attributes[property].Location}"; continue; }
+                    if (node.ExplicitKeys.Contains(property)) { node.ConfigurationSources[property] = $"explicit DOT {node.Attributes[property].Location}"; continue; }
                     var selected = rules.Where(r => Stylesheet.Matches(r, node) && r.Declarations.ContainsKey(property)).OrderBy(r => r.Specificity).ThenBy(r => r.Order).LastOrDefault();
                     if (selected != null) { node.Attributes[property] = selected.Declarations[property]; node.ConfigurationSources[property] = $"stylesheet {selected.Selector} rule {selected.Order + 1}"; }
+                    else if (node.Attributes.ContainsKey(property)) node.ConfigurationSources[property] = $"node default {node.Attributes[property].Location}";
                     else if (graph.Attributes.TryGetValue(property, out var v)) { node.Attributes[property] = v; node.ConfigurationSources[property] = "graph default"; }
                 }
                 if (!node.Attributes.ContainsKey("reasoning_effort")) { node.Attributes.Set("reasoning_effort", "high"); node.ConfigurationSources["reasoning_effort"] = "system default"; }
