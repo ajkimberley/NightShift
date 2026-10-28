@@ -67,7 +67,7 @@ public sealed record Outcome
     public Dictionary<string, JsonElement> ContextUpdates { get; init; } = new(StringComparer.Ordinal);
     public string Notes { get; init; } = "";
     public string FailureReason { get; init; } = "";
-    public bool IsSuccess => Status is StageStatus.Success or StageStatus.PartialSuccess;
+    [JsonIgnore] public bool IsSuccess => Status is StageStatus.Success or StageStatus.PartialSuccess;
     public static Outcome Success(string notes = "") => new() { Status = StageStatus.Success, Notes = notes };
     public static Outcome Fail(string reason) => new() { Status = StageStatus.Fail, FailureReason = reason };
 }
@@ -96,8 +96,7 @@ public static class Json
     public static readonly JsonSerializerOptions Options = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower, WriteIndented = true,
-        Converters = { new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower, allowIntegerValues: false) },
-        IgnoreReadOnlyProperties = true
+        Converters = { new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower, allowIntegerValues: false) }
     };
     public static string Serialize<T>(T value) => JsonSerializer.Serialize(value, Options);
     public static T Read<T>(string text) => JsonSerializer.Deserialize<T>(text, Options) ?? throw new JsonException("Null document");
