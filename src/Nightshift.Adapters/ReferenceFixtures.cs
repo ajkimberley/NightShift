@@ -10,6 +10,8 @@ namespace Nightshift.Adapters;
 public sealed class ReferenceFixture(string directory, Candidate candidate, string repositoryService, string pipelineService) : HttpMessageHandler
 {
     public const string Yaml = "name: approved-fixture\n# configured correlation input and immutable candidate required\n";
+    public bool MalformedResponse { get; set; }
+    public string LogText { get; set; } = "fixture check passed\n";
     public string CommitOverride { get; set; } = candidate.Revision;
     public string NativeStatus { get; set; } = "completed";
     public string NativeResult { get; set; } = "success";
@@ -32,6 +34,7 @@ public sealed class ReferenceFixture(string directory, Candidate candidate, stri
         string path = request.RequestUri!.AbsolutePath, body = request.Content == null ? "" : await request.Content.ReadAsStringAsync(token);
         Requests.Add((request.Method.Method, path + request.RequestUri.Query, body));
         if (ErrorStatus != null) return new(ErrorStatus.Value) { Content = new StringContent("dummy secret must never appear in diagnostics") };
+        if (MalformedResponse) return new(HttpStatusCode.OK) { Content = new StringContent("{}") };
         var state = Load(); bool azureRepo = repositoryService == "azure-devops", azurePipeline = pipelineService == "azure-pipelines";
         object Pr() => azureRepo ? new { pullRequestId = 8, description = "[nightshift:" + state.Correlation + "]", lastMergeSourceCommit = new { commitId = CommitOverride }, repository = new { id = candidate.Repository.Name, name = candidate.Repository.Name }, _links = new { web = new { href = "https://fixture.invalid/pr/8" } } }
             : new { number = 8, body = "[nightshift:" + state.Correlation + "]", head = new { sha = CommitOverride, repo = new { full_name = candidate.Repository.Namespace + "/" + candidate.Repository.Name } }, html_url = "https://fixture.invalid/pr/8" };
@@ -68,14 +71,14 @@ public sealed class ReferenceFixture(string directory, Candidate candidate, stri
         if (path.EndsWith("/artifacts", StringComparison.Ordinal)) return azurePipeline
             ? Reply(new { value = new[] { new { id = 31, name = "report", resource = new { downloadUrl = "https://fixture.invalid/artifact/31" } } } })
             : Reply(new { artifacts = new[] { new { id = 31, name = "report", archive_download_url = "https://fixture.invalid/artifact/31" } } });
-        if (path.EndsWith("/logs/1", StringComparison.Ordinal)) return new(HttpStatusCode.OK) { Content = new StringContent("fixture check passed\n") };
+        if (path.EndsWith("/logs/1", StringComparison.Ordinal)) return new(HttpStatusCode.OK) { Content = new StringContent(LogText) };
         if (path.EndsWith("/logs", StringComparison.Ordinal))
         {
             if (LogRedirect.Length > 0) { var redirect = new HttpResponseMessage(HttpStatusCode.Found); redirect.Headers.Location = new Uri(LogRedirect); return redirect; }
             if (azurePipeline) return Reply(new { value = new[] { new { id = 1 } } });
             using var bytes = new MemoryStream();
             using (var zip = new ZipArchive(bytes, ZipArchiveMode.Create, true))
-            using (var writer = new StreamWriter(zip.CreateEntry("check.txt").Open())) writer.WriteLine("fixture check passed");
+            using (var writer = new StreamWriter(zip.CreateEntry("check.txt").Open())) writer.Write(LogText);
             return new(HttpStatusCode.OK) { Content = new ByteArrayContent(bytes.ToArray()) };
         }
         if (path.EndsWith("/runs/27", StringComparison.Ordinal) || path.EndsWith("/builds/27", StringComparison.Ordinal)) return Reply(Run());

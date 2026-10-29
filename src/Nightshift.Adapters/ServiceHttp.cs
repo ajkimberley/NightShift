@@ -28,10 +28,12 @@ public sealed class ServiceHttp : IDisposable
         client.Timeout = anonymous.Timeout = TimeSpan.FromSeconds(20);
     }
     public static string Segment(string s) => Uri.EscapeDataString(s);
-    public static string Text(JsonElement element, string property) => element.TryGetProperty(property, out var p) && p.ValueKind is JsonValueKind.String or JsonValueKind.Number ? p.ToString() : "";
+    public static string Text(JsonElement element, string property) => element.ValueKind == JsonValueKind.Object && element.TryGetProperty(property, out var p) && p.ValueKind is JsonValueKind.String or JsonValueKind.Number ? p.ToString() : "";
     public static void Correlate(bool matches) { if (!matches) throw new ServiceException(ServiceFailure.Protocol, "Native response does not match repository/candidate/pipeline/run correlation"); }
     public async Task<(HttpStatusCode Status, byte[] Body, Uri? Location)> Send(HttpMethod method, string relative, object? body, CancellationToken token, int bound = 2 * 1024 * 1024)
     {
+        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(token);
+        deadline.CancelAfter(TimeSpan.FromSeconds(20));
         var uri = new Uri(origin, relative);
         if (uri.Scheme != origin.Scheme || uri.Authority != origin.Authority || !uri.AbsolutePath.StartsWith(origin.AbsolutePath, StringComparison.Ordinal)) throw new ServiceException(ServiceFailure.Configuration, "Cross-origin service request refused");
         using var request = new HttpRequestMessage(method, uri);
@@ -41,12 +43,12 @@ public sealed class ServiceHttp : IDisposable
         if (body != null) request.Content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
         try
         {
-            using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, token);
+            using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, deadline.Token);
             if (response.StatusCode == HttpStatusCode.Unauthorized) throw new ServiceException(ServiceFailure.Authentication, "Service authentication failed (401)");
             if (response.StatusCode == HttpStatusCode.Forbidden) throw new ServiceException(ServiceFailure.Authorization, "Service authorization failed (403)");
             if ((int)response.StatusCode >= 500 || (int)response.StatusCode is 408 or 429) throw new ServiceException(ServiceFailure.Transport, "Service temporarily unavailable (" + (int)response.StatusCode + ")");
             if ((int)response.StatusCode >= 400) throw new ServiceException(ServiceFailure.Configuration, "Service request rejected (" + (int)response.StatusCode + ")");
-            byte[] bytes = await Bounded(await response.Content.ReadAsStreamAsync(token), bound, token);
+            byte[] bytes = await Bounded(await response.Content.ReadAsStreamAsync(deadline.Token), bound, deadline.Token);
             return (response.StatusCode, bytes, response.Headers.Location);
         }
         catch (HttpRequestException) { throw new ServiceException(ServiceFailure.Transport, "Service transport failed; dispatch may be uncertain"); }
@@ -60,6 +62,13 @@ public sealed class ServiceHttp : IDisposable
         catch (JsonException) { throw new ServiceException(ServiceFailure.Protocol, "Invalid service JSON"); }
     }
     public async Task<string> Logs(string relative, bool zip, CancellationToken token)
+    {
+        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(token);
+        deadline.CancelAfter(TimeSpan.FromSeconds(20));
+        try { return await ReadLogs(relative, zip, deadline.Token); }
+        catch (OperationCanceledException) when (!token.IsCancellationRequested) { throw new ServiceException(ServiceFailure.Transport, "Bounded log retrieval timed out"); }
+    }
+    private async Task<string> ReadLogs(string relative, bool zip, CancellationToken token)
     {
         var response = await Send(HttpMethod.Get, relative, null, token, 2 * 1024 * 1024);
         byte[] bytes = response.Body;
@@ -99,4 +108,14 @@ public sealed class ServiceHttp : IDisposable
         }
     }
     public void Dispose() { client.Dispose(); anonymous.Dispose(); }
+}
+
+public static class ServiceJson
+{
+    public static JsonElement Required(this JsonElement value, string property)
+        => value.ValueKind == JsonValueKind.Object && value.TryGetProperty(property, out var found) ? found
+            : throw new ServiceException(ServiceFailure.Protocol, "Service response is missing required metadata");
+    public static JsonElement.ArrayEnumerator RequiredArray(this JsonElement value)
+        => value.ValueKind == JsonValueKind.Array ? value.EnumerateArray()
+            : throw new ServiceException(ServiceFailure.Protocol, "Service response has an invalid collection");
 }

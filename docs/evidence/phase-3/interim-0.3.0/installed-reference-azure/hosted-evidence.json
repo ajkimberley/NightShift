@@ -1,0 +1,17 @@
+{
+  "source": "hosted_ci",
+  "candidate": {
+    "repository": {
+      "service": "fixture",
+      "namespace": "owner",
+      "name": "repo"
+    },
+    "revision": "98a4f97cf919866fa3b6c66eea3146c48b7ec4b5",
+    "snapshot_digest": "6FABA107FAF13F71153C5DCC053420EF7B8013A6496DC10A21783A95A952CE49"
+  },
+  "policy_revision": "90D61F670711DB082D4A24B2B5DEC05C2EE6ED48A033D2545CCD5655FBAEA625",
+  "check_id": "hosted:17",
+  "state": "passed",
+  "execution_id": "azure-pipelines:27",
+  "recorded_at": "2026-10-29T11:31:18.787323+00:00"
+}

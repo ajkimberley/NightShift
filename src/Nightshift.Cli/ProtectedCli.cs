@@ -10,6 +10,15 @@ public sealed class ProtectedCli(TextWriter output, TextWriter error, string inv
     {
         string project = args.Get("--project") is { } p ? Project.FullPath(p, invocation) : Path.GetFullPath(invocation);
         string? stateRoot = args.Get("--state-root") is { } s ? Project.FullPath(s, invocation) : null;
+        if (args.Target != null && args.Command is "status" or "result" or "resume" or "inspect" or "events")
+        {
+            string explicitRun = Project.FullPath(args.Target, invocation);
+            if (!ProtectedState.Within(explicitRun, Path.Combine(stateRoot ?? ProtectedState.DefaultRoot, "projects")))
+                throw new IOException("Protected run must be under the selected external state root; legacy resume is refused");
+            string identityFile = Path.Combine(explicitRun, "protected-identity.json");
+            if (!File.Exists(identityFile)) throw new IOException("Protected run identity is missing; legacy reconstruction is refused");
+            project = Json.Read<ProtectedIdentity>(await File.ReadAllTextAsync(identityFile, token)).ProjectRoot;
+        }
         if (args.Command == "demo") return await Demo(args, stateRoot, token);
         if (args.Command is "init" or "adopt")
         {
@@ -97,7 +106,18 @@ public sealed class ProtectedCli(TextWriter output, TextWriter error, string inv
         string root = Path.Combine(state.ProjectDirectory, "runs");
         if (!Directory.Exists(root)) throw new ArgumentException("No protected runs for this project; legacy runs remain inspectable with --profile native-development");
         return Directory.GetDirectories(root).OrderDescending(StringComparer.Ordinal).FirstOrDefault(p => File.Exists(Path.Combine(p, "checkpoint.json"))
-            && (!resume || Json.Read<Checkpoint>(File.ReadAllText(Path.Combine(p, "checkpoint.json"))).FinalOutcome == null)) ?? throw new ArgumentException("No matching protected run");
+            && (!resume || Resumable(p))) ?? throw new ArgumentException("No matching protected run");
+    }
+    private static bool Resumable(string directory)
+    {
+        var checkpoint = Json.Read<Checkpoint>(File.ReadAllText(Path.Combine(directory, "checkpoint.json")));
+        if (checkpoint.FinalOutcome == null) return true;
+        if (checkpoint.State != "success") return false;
+        string path = Path.Combine(directory, "acceptance.json");
+        if (!File.Exists(path)) return true;
+        using var doc = JsonDocument.Parse(File.ReadAllText(path));
+        var decision = doc.RootElement.TryGetProperty("decision", out var nested) ? nested : doc.RootElement;
+        return !decision.TryGetProperty("accepted", out var accepted) || accepted.ValueKind != JsonValueKind.True;
     }
     private async Task<int> Demo(Arguments args, string? stateRoot, CancellationToken token)
     {

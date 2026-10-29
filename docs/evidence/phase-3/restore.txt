@@ -1,0 +1,5 @@
+  Determining projects to restore...
+  Restored /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/Nightshift.Core.csproj (in 28 ms).
+  Restored /Users/adamkimberley/Repos/nightshift/src/Nightshift.Adapters/Nightshift.Adapters.csproj (in 31 ms).
+  Restored /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/Nightshift.Cli.csproj (in 32 ms).
+  Restored /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/Nightshift.Tests.csproj (in 693 ms).

@@ -42,12 +42,13 @@ public class AdversarialIsolationTests
             .Select(name => Path.Combine(run, name)).ToArray();
         await new LocalGit().CommitSnapshotAsync(Path.Combine(run, "git-admin"), new WorkspaceSnapshot([new("seed", "fixture"u8.ToArray(), false)]), new("fixture", "owner", "repo"), CancellationToken.None);
         foreach (string path in sentinels) { Directory.CreateDirectory(Path.GetDirectoryName(path)!); if (!File.Exists(path)) await File.WriteAllTextAsync(path, "NIGHTSHIFT_DUMMY_SECRET_" + Path.GetFileName(path)); }
-        var before = sentinels.ToDictionary(p => p, p => Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(File.ReadAllBytes(p))));
+        var protectedTargets = sentinels.Append(typeof(Engine).Assembly.Location).ToArray();
+        var before = protectedTargets.ToDictionary(p => p, p => Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(File.ReadAllBytes(p))));
         using var openSentinel = new FileStream(sentinels[^1], FileMode.Open, FileAccess.Read, FileShare.Read);
         Environment.SetEnvironmentVariable("NIGHTSHIFT_DUMMY_CREDENTIAL", "HOST_ONLY_DUMMY_VALUE");
         try
         {
-            string targets = string.Join(' ', sentinels.Append(typeof(Engine).Assembly.Location).Select(Q));
+            string targets = string.Join(' ', protectedTargets.Select(Q));
             string script = """
 set -eu
 printf 'permitted edit' > candidate.txt
@@ -87,7 +88,7 @@ ls -l /proc/self/fd
             Assert.DoesNotContain("HOST_ONLY_DUMMY_VALUE", result.Stdout); Assert.DoesNotContain("NIGHTSHIFT_DUMMY_SECRET", result.Stdout);
             Assert.Equal(sentinels.Length + 1, result.Stdout.Split('\n').Count(line => line.StartsWith("denied:", StringComparison.Ordinal)));
             Assert.Equal("permitted edit"u8.ToArray(), launcher.Snapshot.Files.Single(file => file.Path == "candidate.txt").Bytes);
-            var after = sentinels.ToDictionary(p => p, p => Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(File.ReadAllBytes(p))));
+            var after = protectedTargets.ToDictionary(p => p, p => Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(File.ReadAllBytes(p))));
             Assert.Equal(before, after);
             Directory.CreateDirectory(EvidenceDirectory);
             await AtomicFile.WriteJsonAsync(Path.Combine(EvidenceDirectory, "hostile-enforcement.json"), new { identity, result, before_hashes = before, after_hashes = after, denied_operations_per_path = new[] { "read", "write", "delete", "replace", "descendant read" }, credential_and_handle_probe = "dummy environment/file/open descriptor absent" });
@@ -131,7 +132,7 @@ ls -l /proc/self/fd
         var result = await new ProtectedWorkflow(f.State).RunAsync(f.State.NewRun(), false, null, new QueueInterviewer([]), CancellationToken.None);
         Assert.Equal("success", result.Pipeline.State); Assert.False(result.Acceptance.Accepted);
         Assert.DoesNotContain(result.Pipeline.Checkpoint.ContextValues.Keys, k => k.StartsWith("verification", StringComparison.OrdinalIgnoreCase));
-        var evidence = Json.Read<VerificationEvidence>(File.ReadAllText(Directory.GetFiles(Path.Combine(result.RunDirectory, "evidence")).Single()));
+        var evidence = EvidenceLedger.Read(result.RunDirectory)[^1];
         Assert.Equal(EvidenceSource.ControlledLocalCheck, evidence.Source); Assert.Equal(CheckState.Failed, evidence.State);
     }
     [Fact]
@@ -142,7 +143,7 @@ ls -l /proc/self/fd
         await f.State.AdoptAsync(new(dot, "scripted", "/bin/sh", ContainerProfile.LocalDefault, [new("pinned-script", "/bin/sh check.sh")], [new("check.sh", Convert.ToBase64String("exit 1\n"u8.ToArray()))]), CancellationToken.None);
         var result = await new ProtectedWorkflow(f.State).RunAsync(f.State.NewRun(), false, null, new QueueInterviewer([]), CancellationToken.None);
         Assert.False(result.Acceptance.Accepted);
-        var evidence = Json.Read<VerificationEvidence>(File.ReadAllText(Directory.GetFiles(Path.Combine(result.RunDirectory, "evidence")).Single())); Assert.Equal("definition-review-required", evidence.ExecutionId);
+        var evidence = EvidenceLedger.Read(result.RunDirectory)[^1]; Assert.Equal("definition-review-required", evidence.ExecutionId);
         var launcher = new PodmanLauncher(ContainerProfile.LocalDefault, new WorkspaceSnapshot([new("cmp", "#!/bin/sh\nexit 0\n"u8.ToArray(), true), new("candidate.txt", "wrong bytes"u8.ToArray(), false)]));
         var actual = await launcher.ExecuteAsync(new("/bin/sh", ["-c", "printf 'expected' | cmp -s - candidate.txt"]), CancellationToken.None); Assert.NotEqual(0, actual.ExitCode);
     }

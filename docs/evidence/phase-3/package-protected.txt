@@ -1,0 +1,365 @@
+$ ['dotnet', 'pack', '/Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli', '-c', 'Release', '--no-restore', '-o', '/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/packages']
+  Nightshift.Core -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/bin/Release/net10.0/Nightshift.Core.dll
+  Nightshift.Adapters -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Adapters/bin/Release/net10.0/Nightshift.Adapters.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Release/net10.0/Nightshift.Cli.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Release/net10.0/Nightshift.Cli.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Release/net10.0/publish/
+  Successfully created package '/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/packages/Nightshift.Cli.0.3.1.nupkg'.
+
+
+exit=0
+$ ['dotnet', 'tool', 'install', 'Nightshift.Cli', '--tool-path', '/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/tools', '--source', '/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/packages', '--version', '0.3.1', '--no-cache']
+Skipping NuGet package signature verification.
+You can invoke the tool using the following command: nightshift
+Tool 'nightshift.cli' (version '0.3.1') was successfully installed.
+
+
+exit=0
+$ ['/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/tools/nightshift', '--version']
+nightshift 0.3.1
+
+
+exit=0
+$ ['/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/tools/nightshift', 'doctor', '--state-root', '/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state', '--json']
+{
+  "profile": "linux-container-v1",
+  "state_root": "/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state",
+  "checks": [
+    {
+      "capability": "configured",
+      "state": "no",
+      "detail": "No approved protected policy. Run nightshift adopt --policy FILE after reviewing it, or explicitly choose --profile native-development."
+    },
+    {
+      "capability": "runtime-prerequisites",
+      "state": "available",
+      "identity": {
+        "profile": "linux-container-v1",
+        "runtime_version": "6.1.4",
+        "connection": "nightshift-dev",
+        "image": "docker.io/library/alpine@sha256:2e0b81d60597f449baa56dc25d355367869d2dca4cd57e866f1e2b52af3eb55f",
+        "platform": "linux/arm64"
+      }
+    },
+    {
+      "capability": "fixture-contract-tests",
+      "state": "not probed by doctor; see shipped phase-three evidence"
+    },
+    {
+      "capability": "actual-isolation-verification",
+      "state": "not inferred from runtime availability; run nightshift reference for an exercised workflow; hostile suite evidence is platform-specific"
+    },
+    {
+      "capability": "authenticated-live-integration",
+      "state": "unexecuted"
+    }
+  ]
+}
+
+
+exit=0
+$ ['/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/tools/nightshift', 'run', '--state-root', '/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state']
+
+Error: No approved protected policy. Run nightshift adopt --policy FILE after reviewing it, or explicitly choose --profile native-development.
+
+exit=2
+$ ['/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/tools/nightshift', 'init', '--state-root', '/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state']
+Created reviewable policy: /Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/project/nightshift-policy.json
+Edit task and checks, then: nightshift adopt --policy /Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/project/nightshift-policy.json
+
+
+exit=0
+$ ['/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/tools/nightshift', 'adopt', '--policy', '/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/project/nightshift-policy.json', '--state-root', '/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state']
+Adopted immutable policy 6AA8CE53CE5A5EDDA4C7285BFC1EF8B2F978530499238FF206E572884DA623D4
+Protected state: /Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state/projects/3E9732A3F6E6738EAD5A204C
+
+
+exit=0
+$ ['/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/tools/nightshift', 'run', '--state-root', '/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state', '--pause-after', '1']
+Stage start: running | visit 1, attempt 1
+Stage start: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+interrupted: Ready to resume; an interrupted effect may replay.
+Workspace: /Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/project
+Backend: scripted | Sandbox: linux-container-v1
+Stages visited: 1 | Checkpointed active time: 0.0s
+Next stage: produce
+Run: /Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state/projects/3E9732A3F6E6738EAD5A204C/runs/20261029T113635497-dde640ad
+Checkpoint: /Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state/projects/3E9732A3F6E6738EAD5A204C/runs/20261029T113635497-dde640ad/checkpoint.json
+Events: /Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state/projects/3E9732A3F6E6738EAD5A204C/runs/20261029T113635497-dde640ad/events.jsonl
+Profile: linux-container-v1 | Policy: 6AA8CE53CE5A5EDDA4C7285BFC1EF8B2F978530499238FF206E572884DA623D4
+Candidate: 6E993D21B54E14F6A00CAAB6EEF3316C6EE0E873274E35E09AD2A619794EFD18
+Code acceptance: False — Pipeline incomplete/interrupted/failed
+
+
+exit=3
+$ ['/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/tools/nightshift', 'status', '--latest', '--state-root', '/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state']
+interrupted: Ready to resume; an interrupted effect may replay.
+Workspace: /Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/project
+Backend: scripted | Sandbox: linux-container-v1
+Stages visited: 1 | Checkpointed active time: 0.0s
+Next stage: produce
+Run: /Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state/projects/3E9732A3F6E6738EAD5A204C/runs/20261029T113635497-dde640ad
+Checkpoint: /Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state/projects/3E9732A3F6E6738EAD5A204C/runs/20261029T113635497-dde640ad/checkpoint.json
+Events: /Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state/projects/3E9732A3F6E6738EAD5A204C/runs/20261029T113635497-dde640ad/events.jsonl
+Profile: linux-container-v1 | Policy: 6AA8CE53CE5A5EDDA4C7285BFC1EF8B2F978530499238FF206E572884DA623D4
+Candidate: 6E993D21B54E14F6A00CAAB6EEF3316C6EE0E873274E35E09AD2A619794EFD18
+Code acceptance: False — Pipeline incomplete/interrupted/failed
+
+
+exit=0
+$ ['/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/tools/nightshift', 'resume', '--latest', '--state-root', '/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state']
+Stage produce: running | visit 1, attempt 1
+Stage produce: completed | visit 1, attempt 1 | 0.9s | success; will_retry=False; 
+success: Pipeline reached exit; visited goal gates satisfied
+Workspace: /Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/project
+Backend: scripted | Sandbox: linux-container-v1
+Stages visited: 3 | Checkpointed active time: 1.0s
+Tool verdict: produce: success (isolated command; acceptance separate)
+Run: /Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state/projects/3E9732A3F6E6738EAD5A204C/runs/20261029T113635497-dde640ad
+Checkpoint: /Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state/projects/3E9732A3F6E6738EAD5A204C/runs/20261029T113635497-dde640ad/checkpoint.json
+Events: /Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state/projects/3E9732A3F6E6738EAD5A204C/runs/20261029T113635497-dde640ad/events.jsonl
+Stage logs: /Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state/projects/3E9732A3F6E6738EAD5A204C/runs/20261029T113635497-dde640ad/produce/visit-0001/attempt-0001
+Profile: linux-container-v1 | Policy: 6AA8CE53CE5A5EDDA4C7285BFC1EF8B2F978530499238FF206E572884DA623D4
+Candidate: CF089B441F15BE3CEABE12C7D4A77A356EC3892695539EAE7118F43B3F6AF323
+Code acceptance: True — Specified approved checks passed for the exact candidate; no general correctness claim
+
+
+exit=0
+$ ['/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/tools/nightshift', 'result', '--latest', '--state-root', '/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state', '--json']
+{
+  "run": {
+    "run_directory": "/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state/projects/3E9732A3F6E6738EAD5A204C/runs/20261029T113635497-dde640ad",
+    "state": "success",
+    "working_directory": "/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/project",
+    "backend": "scripted",
+    "sandbox": "linux-container-v1",
+    "current_node": "exit",
+    "next_node": null,
+    "visits": 3,
+    "active_seconds": 0.9647559,
+    "summary": "Pipeline reached exit; visited goal gates satisfied",
+    "checkpoint": "/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state/projects/3E9732A3F6E6738EAD5A204C/runs/20261029T113635497-dde640ad/checkpoint.json",
+    "events": "/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state/projects/3E9732A3F6E6738EAD5A204C/runs/20261029T113635497-dde640ad/events.jsonl",
+    "response": null,
+    "logs": "/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state/projects/3E9732A3F6E6738EAD5A204C/runs/20261029T113635497-dde640ad/produce/visit-0001/attempt-0001",
+    "outputs": [],
+    "tool_verdicts": [
+      "produce: success (isolated command; acceptance separate)"
+    ]
+  },
+  "provenance": "protected coordinator record",
+  "identity": {
+    "policy_revision": "6AA8CE53CE5A5EDDA4C7285BFC1EF8B2F978530499238FF206E572884DA623D4",
+    "runtime": {
+      "profile": "linux-container-v1",
+      "runtime_version": "6.1.4",
+      "connection": "nightshift-dev",
+      "image": "docker.io/library/alpine@sha256:2e0b81d60597f449baa56dc25d355367869d2dca4cd57e866f1e2b52af3eb55f",
+      "platform": "linux/arm64"
+    },
+    "agent": {
+      "name": "scripted",
+      "version": "deterministic-1",
+      "fresh_tasks": true,
+      "structured_claims": true,
+      "progress": false,
+      "cancellation": true,
+      "sessions": false,
+      "steering": false,
+      "hooks": false
+    },
+    "project_root": "/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/project",
+    "coordinator_version": "A8C6F202FC1999AC93FBB25EFC60413B39CCC739AA3D654A3C060F452A38D746:974B7F7A10019A9540C593E59E0D9E30B5A975ECF16228B7CDD2AFD04E0112F7",
+    "repository_service": "none",
+    "pipeline_service": "none"
+  },
+  "candidate": {
+    "repository": {
+      "service": "local",
+      "namespace": "3E9732A3F6E6738EAD5A204C",
+      "name": "workspace"
+    },
+    "revision": "snapshot:CF089B441F15BE3CEABE12C7D4A77A356EC3892695539EAE7118F43B3F6AF323",
+    "snapshot_digest": "CF089B441F15BE3CEABE12C7D4A77A356EC3892695539EAE7118F43B3F6AF323"
+  },
+  "acceptance": {
+    "accepted": true,
+    "reason": "Specified approved checks passed for the exact candidate; no general correctness claim"
+  },
+  "evidence": [
+    {
+      "source": "controlled_local_check",
+      "candidate": {
+        "repository": {
+          "service": "local",
+          "namespace": "3E9732A3F6E6738EAD5A204C",
+          "name": "workspace"
+        },
+        "revision": "snapshot:CF089B441F15BE3CEABE12C7D4A77A356EC3892695539EAE7118F43B3F6AF323",
+        "snapshot_digest": "CF089B441F15BE3CEABE12C7D4A77A356EC3892695539EAE7118F43B3F6AF323"
+      },
+      "policy_revision": "6AA8CE53CE5A5EDDA4C7285BFC1EF8B2F978530499238FF206E572884DA623D4",
+      "check_id": "bytes",
+      "state": "pending",
+      "execution_id": "awaiting-owned-unit",
+      "recorded_at": "2026-10-29T11:36:37.304288+00:00"
+    },
+    {
+      "source": "controlled_local_check",
+      "candidate": {
+        "repository": {
+          "service": "local",
+          "namespace": "3E9732A3F6E6738EAD5A204C",
+          "name": "workspace"
+        },
+        "revision": "snapshot:CF089B441F15BE3CEABE12C7D4A77A356EC3892695539EAE7118F43B3F6AF323",
+        "snapshot_digest": "CF089B441F15BE3CEABE12C7D4A77A356EC3892695539EAE7118F43B3F6AF323"
+      },
+      "policy_revision": "6AA8CE53CE5A5EDDA4C7285BFC1EF8B2F978530499238FF206E572884DA623D4",
+      "check_id": "bytes",
+      "state": "passed",
+      "execution_id": "nightshift-b03bf60e2a0448a8a4f2353731673dbf",
+      "recorded_at": "2026-10-29T11:36:38.183695+00:00"
+    }
+  ]
+}
+
+
+exit=0
+$ ['/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/tools/nightshift', 'result', '/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state/projects/3E9732A3F6E6738EAD5A204C/runs/20261029T113635497-dde640ad', '--state-root', '/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state', '--json']
+{
+  "run": {
+    "run_directory": "/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state/projects/3E9732A3F6E6738EAD5A204C/runs/20261029T113635497-dde640ad",
+    "state": "success",
+    "working_directory": "/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/project",
+    "backend": "scripted",
+    "sandbox": "linux-container-v1",
+    "current_node": "exit",
+    "next_node": null,
+    "visits": 3,
+    "active_seconds": 0.9647559,
+    "summary": "Pipeline reached exit; visited goal gates satisfied",
+    "checkpoint": "/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state/projects/3E9732A3F6E6738EAD5A204C/runs/20261029T113635497-dde640ad/checkpoint.json",
+    "events": "/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state/projects/3E9732A3F6E6738EAD5A204C/runs/20261029T113635497-dde640ad/events.jsonl",
+    "response": null,
+    "logs": "/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state/projects/3E9732A3F6E6738EAD5A204C/runs/20261029T113635497-dde640ad/produce/visit-0001/attempt-0001",
+    "outputs": [],
+    "tool_verdicts": [
+      "produce: success (isolated command; acceptance separate)"
+    ]
+  },
+  "provenance": "protected coordinator record",
+  "identity": {
+    "policy_revision": "6AA8CE53CE5A5EDDA4C7285BFC1EF8B2F978530499238FF206E572884DA623D4",
+    "runtime": {
+      "profile": "linux-container-v1",
+      "runtime_version": "6.1.4",
+      "connection": "nightshift-dev",
+      "image": "docker.io/library/alpine@sha256:2e0b81d60597f449baa56dc25d355367869d2dca4cd57e866f1e2b52af3eb55f",
+      "platform": "linux/arm64"
+    },
+    "agent": {
+      "name": "scripted",
+      "version": "deterministic-1",
+      "fresh_tasks": true,
+      "structured_claims": true,
+      "progress": false,
+      "cancellation": true,
+      "sessions": false,
+      "steering": false,
+      "hooks": false
+    },
+    "project_root": "/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/project",
+    "coordinator_version": "A8C6F202FC1999AC93FBB25EFC60413B39CCC739AA3D654A3C060F452A38D746:974B7F7A10019A9540C593E59E0D9E30B5A975ECF16228B7CDD2AFD04E0112F7",
+    "repository_service": "none",
+    "pipeline_service": "none"
+  },
+  "candidate": {
+    "repository": {
+      "service": "local",
+      "namespace": "3E9732A3F6E6738EAD5A204C",
+      "name": "workspace"
+    },
+    "revision": "snapshot:CF089B441F15BE3CEABE12C7D4A77A356EC3892695539EAE7118F43B3F6AF323",
+    "snapshot_digest": "CF089B441F15BE3CEABE12C7D4A77A356EC3892695539EAE7118F43B3F6AF323"
+  },
+  "acceptance": {
+    "accepted": true,
+    "reason": "Specified approved checks passed for the exact candidate; no general correctness claim"
+  },
+  "evidence": [
+    {
+      "source": "controlled_local_check",
+      "candidate": {
+        "repository": {
+          "service": "local",
+          "namespace": "3E9732A3F6E6738EAD5A204C",
+          "name": "workspace"
+        },
+        "revision": "snapshot:CF089B441F15BE3CEABE12C7D4A77A356EC3892695539EAE7118F43B3F6AF323",
+        "snapshot_digest": "CF089B441F15BE3CEABE12C7D4A77A356EC3892695539EAE7118F43B3F6AF323"
+      },
+      "policy_revision": "6AA8CE53CE5A5EDDA4C7285BFC1EF8B2F978530499238FF206E572884DA623D4",
+      "check_id": "bytes",
+      "state": "pending",
+      "execution_id": "awaiting-owned-unit",
+      "recorded_at": "2026-10-29T11:36:37.304288+00:00"
+    },
+    {
+      "source": "controlled_local_check",
+      "candidate": {
+        "repository": {
+          "service": "local",
+          "namespace": "3E9732A3F6E6738EAD5A204C",
+          "name": "workspace"
+        },
+        "revision": "snapshot:CF089B441F15BE3CEABE12C7D4A77A356EC3892695539EAE7118F43B3F6AF323",
+        "snapshot_digest": "CF089B441F15BE3CEABE12C7D4A77A356EC3892695539EAE7118F43B3F6AF323"
+      },
+      "policy_revision": "6AA8CE53CE5A5EDDA4C7285BFC1EF8B2F978530499238FF206E572884DA623D4",
+      "check_id": "bytes",
+      "state": "passed",
+      "execution_id": "nightshift-b03bf60e2a0448a8a4f2353731673dbf",
+      "recorded_at": "2026-10-29T11:36:38.183695+00:00"
+    }
+  ]
+}
+
+
+exit=0
+$ ['/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/tools/nightshift', 'reference', '--state-root', '/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state', '--repository-service', 'github', '--pipeline-service', 'github-actions']
+{
+  "accepted": true,
+  "stale_rejected": true,
+  "dispatches": 1,
+  "pull_requests": 1,
+  "directory": "/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state/projects/AEEDC177198BBD6C8760E16E/runs/20261029T113638422-36686128",
+  "repository_service": "github",
+  "pipeline_service": "github-actions",
+  "evidence": "/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state/projects/AEEDC177198BBD6C8760E16E/runs/20261029T113638422-36686128/hosted-evidence.json",
+  "assurance": "Actual local isolation \u002B offline HTTP fixtures; live accounts unexecuted"
+}
+
+
+exit=0
+$ ['/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/tools/nightshift', 'reference', '--state-root', '/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state', '--repository-service', 'azure-devops', '--pipeline-service', 'azure-pipelines']
+{
+  "accepted": true,
+  "stale_rejected": true,
+  "dispatches": 1,
+  "pull_requests": 1,
+  "directory": "/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state/projects/06F4832CE826AB19401929A9/runs/20261029T113643383-d12e1da6",
+  "repository_service": "azure-devops",
+  "pipeline_service": "azure-pipelines",
+  "evidence": "/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/state/projects/06F4832CE826AB19401929A9/runs/20261029T113643383-d12e1da6/hosted-evidence.json",
+  "assurance": "Actual local isolation \u002B offline HTTP fixtures; live accounts unexecuted"
+}
+
+
+exit=0
+$ ['dotnet', 'tool', 'uninstall', 'Nightshift.Cli', '--tool-path', '/Users/adamkimberley/Library/Application Support/Nightshift/package-fixtures/phase3-wibyz_rv/tools']
+Tool 'nightshift.cli' (version '0.3.1') was successfully uninstalled.
+
+
+exit=0
+PASS: installed protected commands, external state, source-independent assets, actual containers, both hosted fixtures, package uninstall.

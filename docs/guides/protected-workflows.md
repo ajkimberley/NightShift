@@ -53,6 +53,12 @@ nightshift run --pause-after 1
 nightshift resume --latest
 ```
 
+A graph deadline leaves an incomplete resumable checkpoint. To deliberately increase
+a previously tighter bound, use `resume --latest --max-seconds N`; N cannot exceed
+the adopted policy. Every check has its own `max_seconds` (default 60). A check
+deadline records cancelled evidence and can be retried with resume; it never passes
+by reusing an earlier success. These check budgets are separate from graph time.
+
 The state root defaults to `~/Library/Application Support/Nightshift/state` on this
 Mac, or `~/.local/state/nightshift` on Linux. An operator may select a fresh separate
 root with `--state-root /absolute/path` on each command. Project/worker files cannot

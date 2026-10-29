@@ -101,3 +101,38 @@ public class HostedAdapterTests
         Assert.Equal(ServiceFailure.Configuration, (await Assert.ThrowsAsync<ServiceException>(() => f.Http.Json(HttpMethod.Get, "https://attacker.invalid", null, CancellationToken.None))).Kind);
     }
 }
+
+public class HostedHttpBoundaryTests
+{
+    private sealed class ResponseHandler(string content) : HttpMessageHandler
+    {
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken token)
+            => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(content) });
+    }
+    [Theory]
+    [InlineData(false)] [InlineData(true)]
+    public async Task Malformed_native_metadata_is_a_protocol_error_and_never_a_success(bool azure)
+    {
+        using var w = new TestWorkspace();
+        var candidate = new Candidate(new("fixture", "owner", "repo"), new string('a', 40), "snapshot");
+        using var fixture = new ReferenceFixture(w.Root, candidate, azure ? "azure-devops" : "github", azure ? "azure-pipelines" : "github-actions") { MalformedResponse = true };
+        using var http = new ServiceHttp(new("https://fixture.invalid/"), () => null, handler: fixture);
+        IRepositoryService repository = azure ? new AzureRepository(http, candidate.Repository) : new GitHubRepository(http, candidate.Repository);
+        var error = await Assert.ThrowsAsync<ServiceException>(() => repository.FindPullRequestAsync(candidate, "correlation", CancellationToken.None));
+        Assert.Equal(ServiceFailure.Protocol, error.Kind); Assert.Equal(0, fixture.PrPosts);
+    }
+    [Fact]
+    public async Task Service_response_bytes_are_bounded()
+    {
+        using var http = new ServiceHttp(new("https://fixture.invalid/"), () => null, handler: new ResponseHandler(new string('x', 2 * 1024 * 1024 + 1)));
+        var error = await Assert.ThrowsAsync<ServiceException>(() => http.Json(HttpMethod.Get, "logs", null, CancellationToken.None));
+        Assert.Equal(ServiceFailure.Protocol, error.Kind);
+    }
+    [Fact]
+    public async Task Injected_authentication_is_redacted_from_retrieved_log_text()
+    {
+        using var http = new ServiceHttp(new("https://fixture.invalid/"), () => new AuthenticationHeaderValue("Bearer", "dummy-sensitive-token"), handler: new ResponseHandler("log dummy-sensitive-token content"));
+        string logs = await http.Logs("logs", false, CancellationToken.None);
+        Assert.Equal("log [REDACTED] content", logs);
+    }
+}

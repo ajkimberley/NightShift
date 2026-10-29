@@ -1,0 +1,92 @@
+[
+  {
+    "method": "GET",
+    "path": "/_apis/git/repositories/repo/pullrequests?searchCriteria.status=all\u0026$top=100\u0026api-version=7.1",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/_apis/git/repositories/repo/refs?filter=heads%2Fcandidate\u0026api-version=7.1",
+    "body": ""
+  },
+  {
+    "method": "POST",
+    "path": "/_apis/git/repositories/repo/pullrequests?api-version=7.1",
+    "body": "{\u0022title\u0022:\u0022Nightshift candidate 9c177e70a58dc389ae9b17e6026f25fa9fca18ca\u0022,\u0022sourceRefName\u0022:\u0022refs/heads/candidate\u0022,\u0022targetRefName\u0022:\u0022refs/heads/main\u0022,\u0022description\u0022:\u0022[nightshift:3e7238cefd27494aa1abc08cfb3e3529]\u0022}"
+  },
+  {
+    "method": "GET",
+    "path": "/_apis/build/definitions/17?api-version=7.1",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/_apis/git/repositories/repo/items?path=azure-pipelines.yml\u0026includeContent=true\u0026versionDescriptor.versionType=commit\u0026versionDescriptor.version=9c177e70a58dc389ae9b17e6026f25fa9fca18ca\u0026api-version=7.1",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/_apis/build/builds?definitions=17\u0026branchName=refs%2Fheads%2Fcandidate\u0026properties=nightshift.correlation\u0026$top=100\u0026api-version=7.1",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/_apis/build/definitions/17?api-version=7.1",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/_apis/git/repositories/repo/items?path=azure-pipelines.yml\u0026includeContent=true\u0026versionDescriptor.versionType=commit\u0026versionDescriptor.version=9c177e70a58dc389ae9b17e6026f25fa9fca18ca\u0026api-version=7.1",
+    "body": ""
+  },
+  {
+    "method": "POST",
+    "path": "/_apis/build/builds?api-version=7.1",
+    "body": "{\u0022definition\u0022:{\u0022id\u0022:17},\u0022sourceVersion\u0022:\u00229c177e70a58dc389ae9b17e6026f25fa9fca18ca\u0022,\u0022sourceBranch\u0022:\u0022refs/heads/candidate\u0022,\u0022properties\u0022:{\u0022nightshift.correlation\u0022:\u00223e7238cefd27494aa1abc08cfb3e3529\u0022}}"
+  },
+  {
+    "method": "GET",
+    "path": "/_apis/build/definitions/17?api-version=7.1",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/_apis/git/repositories/repo/items?path=azure-pipelines.yml\u0026includeContent=true\u0026versionDescriptor.versionType=commit\u0026versionDescriptor.version=9c177e70a58dc389ae9b17e6026f25fa9fca18ca\u0026api-version=7.1",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/_apis/build/builds?definitions=17\u0026branchName=refs%2Fheads%2Fcandidate\u0026properties=nightshift.correlation\u0026$top=100\u0026api-version=7.1",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/_apis/build/definitions/17?api-version=7.1",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/_apis/git/repositories/repo/items?path=azure-pipelines.yml\u0026includeContent=true\u0026versionDescriptor.versionType=commit\u0026versionDescriptor.version=9c177e70a58dc389ae9b17e6026f25fa9fca18ca\u0026api-version=7.1",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/_apis/build/builds/27?propertyFilters=nightshift.correlation\u0026api-version=7.1",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/_apis/build/builds/27/logs?api-version=7.1",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/_apis/build/builds/27/logs/1?api-version=7.1",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/_apis/build/builds/27/artifacts?api-version=7.1",
+    "body": ""
+  }
+]

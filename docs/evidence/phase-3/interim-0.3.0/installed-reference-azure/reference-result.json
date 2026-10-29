@@ -1,0 +1,11 @@
+{
+  "accepted": true,
+  "stale_rejected": true,
+  "dispatches": 1,
+  "pull_requests": 1,
+  "directory": "/Users/adamkimberley/Library/Application Support/Nightshift/state/projects/D30BC595F025A1E1AB9E1C0E/runs/20261029T113113716-7e0db024",
+  "repository_service": "azure-devops",
+  "pipeline_service": "azure-pipelines",
+  "evidence": "/Users/adamkimberley/Library/Application Support/Nightshift/state/projects/D30BC595F025A1E1AB9E1C0E/runs/20261029T113113716-7e0db024/hosted-evidence.json",
+  "assurance": "Actual local isolation + offline HTTP fixtures; live accounts unexecuted"
+}

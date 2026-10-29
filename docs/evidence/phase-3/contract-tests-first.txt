@@ -1,0 +1,63 @@
+  Nightshift.Core -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/bin/Debug/net10.0/Nightshift.Core.dll
+  Nightshift.Adapters -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Adapters/bin/Debug/net10.0/Nightshift.Adapters.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Debug/net10.0/Nightshift.Cli.dll
+  Nightshift.Tests -> /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/bin/Debug/net10.0/Nightshift.Tests.dll
+Test run for /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/bin/Debug/net10.0/Nightshift.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.1 (arm64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.3)
+[xUnit.net 00:00:00.03]   Discovering: Nightshift.Tests
+[xUnit.net 00:00:00.06]   Discovered:  Nightshift.Tests
+[xUnit.net 00:00:00.07]   Starting:    Nightshift.Tests
+  Passed Nightshift.Tests.TrustedContractTests.Archive_never_extracts_traversal_links_special_files_or_git_administration(path: "safe", type: SymbolicLink) [3 ms]
+  Passed Nightshift.Tests.TrustedContractTests.Archive_never_extracts_traversal_links_special_files_or_git_administration(path: "safe", type: HardLink) [< 1 ms]
+  Passed Nightshift.Tests.TrustedContractTests.Archive_never_extracts_traversal_links_special_files_or_git_administration(path: "safe", type: Fifo) [< 1 ms]
+  Passed Nightshift.Tests.TrustedContractTests.Archive_never_extracts_traversal_links_special_files_or_git_administration(path: ".git/config", type: RegularFile) [< 1 ms]
+  Passed Nightshift.Tests.TrustedContractTests.Archive_never_extracts_traversal_links_special_files_or_git_administration(path: "../checkpoint.json", type: RegularFile) [< 1 ms]
+  Passed Nightshift.Tests.TrustedContractTests.Archive_never_extracts_traversal_links_special_files_or_git_administration(path: "/absolute", type: RegularFile) [< 1 ms]
+  Passed Nightshift.Tests.TrustedContractTests.Agent_protocol_rejects_malformed_partial_nonzero_and_zero_exit_errors(claude: False, stdout: "{\"type\":\"turn.started\"}", exit: 0, expected: Incomplete) [9 ms]
+  Passed Nightshift.Tests.TrustedContractTests.Agent_protocol_rejects_malformed_partial_nonzero_and_zero_exit_errors(claude: True, stdout: "{bad", exit: 0, expected: Incomplete) [< 1 ms]
+  Passed Nightshift.Tests.TrustedContractTests.Agent_protocol_rejects_malformed_partial_nonzero_and_zero_exit_errors(claude: False, stdout: "", exit: 4, expected: WorkerFailure) [< 1 ms]
+  Passed Nightshift.Tests.TrustedContractTests.Agent_protocol_rejects_malformed_partial_nonzero_and_zero_exit_errors(claude: True, stdout: "{}", exit: 0, expected: Incomplete) [< 1 ms]
+  Passed Nightshift.Tests.TrustedContractTests.Agent_protocol_rejects_malformed_partial_nonzero_and_zero_exit_errors(claude: True, stdout: "{\"type\":\"assistant\"}", exit: 0, expected: Incomplete) [< 1 ms]
+  Passed Nightshift.Tests.TrustedContractTests.Agent_protocol_rejects_malformed_partial_nonzero_and_zero_exit_errors(claude: True, stdout: "", exit: 4, expected: WorkerFailure) [< 1 ms]
+  Passed Nightshift.Tests.TrustedContractTests.Agent_protocol_rejects_malformed_partial_nonzero_and_zero_exit_errors(claude: False, stdout: "{bad", exit: 0, expected: Incomplete) [< 1 ms]
+  Passed Nightshift.Tests.TrustedContractTests.Agent_protocol_rejects_malformed_partial_nonzero_and_zero_exit_errors(claude: False, stdout: "{\"type\":\"error\"}", exit: 0, expected: TaskFailure) [< 1 ms]
+  Passed Nightshift.Tests.TrustedContractTests.Agent_protocol_rejects_malformed_partial_nonzero_and_zero_exit_errors(claude: False, stdout: "{}", exit: 0, expected: Incomplete) [< 1 ms]
+  Passed Nightshift.Tests.TrustedContractTests.Agent_protocol_rejects_malformed_partial_nonzero_and_zero_exit_errors(claude: True, stdout: "{\"type\":\"result\",\"is_error\":true,\"subtype\""···, exit: 0, expected: TaskFailure) [< 1 ms]
+  Passed Nightshift.Tests.TrustedContractTests.Acceptance_requires_exact_provenance_candidate_policy_check_and_terminal_pass [< 1 ms]
+  Passed Nightshift.Tests.TrustedContractTests.Protected_cli_fails_closed_without_adoption_and_does_not_accept_project_state_redirection [13 ms]
+  Passed Nightshift.Tests.TrustedContractTests.Immutable_agent_contract_rejects_unsupported_features_before_launch(claude: True) [< 1 ms]
+  Passed Nightshift.Tests.TrustedContractTests.Immutable_agent_contract_rejects_unsupported_features_before_launch(claude: False) [< 1 ms]
+  Passed Nightshift.Tests.TrustedContractTests.Run_store_rejects_stage_path_escape_and_state_roots_reject_checkout_or_share [1 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Repository_and_pipeline_selections_work_independently_and_reconcile_lost_post_response(azureRepo: False, azurePipeline: False) [100 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Repository_and_pipeline_selections_work_independently_and_reconcile_lost_post_response(azureRepo: True, azurePipeline: False) [41 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Repository_and_pipeline_selections_work_independently_and_reconcile_lost_post_response(azureRepo: False, azurePipeline: True) [46 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Repository_and_pipeline_selections_work_independently_and_reconcile_lost_post_response(azureRepo: True, azurePipeline: True) [39 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Authentication_authorization_and_transport_errors_are_distinct_and_redacted(azure: False, status: Forbidden, expected: Authorization) [4 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Authentication_authorization_and_transport_errors_are_distinct_and_redacted(azure: True, status: Forbidden, expected: Authorization) [4 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Authentication_authorization_and_transport_errors_are_distinct_and_redacted(azure: True, status: ServiceUnavailable, expected: Transport) [4 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Authentication_authorization_and_transport_errors_are_distinct_and_redacted(azure: False, status: ServiceUnavailable, expected: Transport) [4 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Authentication_authorization_and_transport_errors_are_distinct_and_redacted(azure: False, status: Unauthorized, expected: Authentication) [4 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Authentication_authorization_and_transport_errors_are_distinct_and_redacted(azure: True, status: Unauthorized, expected: Authentication) [4 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Native_states_are_mapped_conservatively(azure: False, status: "in_progress", result: "", expected: Running) [33 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Native_states_are_mapped_conservatively(azure: True, status: "completed", result: "cancelled", expected: Cancelled) [33 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Native_states_are_mapped_conservatively(azure: True, status: "completed", result: "none", expected: Unknown) [34 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Native_states_are_mapped_conservatively(azure: False, status: "completed", result: "neutral", expected: Unknown) [32 ms]
+[xUnit.net 00:00:00.91]   Finished:    Nightshift.Tests
+  Passed Nightshift.Tests.HostedAdapterTests.Native_states_are_mapped_conservatively(azure: False, status: "queued", result: "", expected: Pending) [30 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Native_states_are_mapped_conservatively(azure: True, status: "completed", result: "failed", expected: Failed) [31 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Native_states_are_mapped_conservatively(azure: True, status: "in_progress", result: "", expected: Running) [32 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Native_states_are_mapped_conservatively(azure: True, status: "queued", result: "", expected: Pending) [34 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Native_states_are_mapped_conservatively(azure: False, status: "completed", result: "failure", expected: Failed) [36 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Native_states_are_mapped_conservatively(azure: False, status: "completed", result: "cancelled", expected: Cancelled) [38 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Changed_commit_definition_duplicate_correlation_and_ambiguous_dispatch_never_pass(azure: True) [94 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Changed_commit_definition_duplicate_correlation_and_ambiguous_dispatch_never_pass(azure: False) [94 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Credentials_are_never_forwarded_to_arbitrary_log_redirects_or_cross_origin_requests [40 ms]
+
+Test Run Successful.
+Total tests: 44
+     Passed: 44
+ Total time: 1.1667 Seconds

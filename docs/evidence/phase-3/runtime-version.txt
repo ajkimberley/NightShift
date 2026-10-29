@@ -1,0 +1,15 @@
+Client:        Podman Engine
+Version:       6.1.4
+API Version:   6.1.4
+Go Version:    go1.27.2
+Built:         Mon Oct 12 18:07:47 2026
+Build Origin:  brew
+OS/Arch:       darwin/arm64
+
+Server:       Podman Engine
+Version:      6.1.4
+API Version:  6.1.4
+Go Version:   go1.26.9-X:nodwarf5
+Git Commit:   464c15fec06f0074c916f9eff87c4806869c2833
+Built:        Mon Oct 12 01:00:00 2026
+OS/Arch:      linux/arm64

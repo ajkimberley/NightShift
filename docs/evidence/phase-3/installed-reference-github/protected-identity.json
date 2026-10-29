@@ -1,0 +1,25 @@
+{
+  "policy_revision": "9175D67021BF0F90DED8E434115C0D34828F8834F36A4E1C43BD05A4B0B6F249",
+  "runtime": {
+    "profile": "linux-container-v1",
+    "runtime_version": "6.1.4",
+    "connection": "nightshift-dev",
+    "image": "docker.io/library/alpine@sha256:2e0b81d60597f449baa56dc25d355367869d2dca4cd57e866f1e2b52af3eb55f",
+    "platform": "linux/arm64"
+  },
+  "agent": {
+    "name": "fake-codex",
+    "version": "fake-codex 1",
+    "fresh_tasks": true,
+    "structured_claims": true,
+    "progress": true,
+    "cancellation": true,
+    "sessions": false,
+    "steering": false,
+    "hooks": false
+  },
+  "project_root": "/Users/adamkimberley/Library/Application Support/Nightshift/reference-projects/de952aa6ace94866acfe172361cc7e9b",
+  "coordinator_version": "A8C6F202FC1999AC93FBB25EFC60413B39CCC739AA3D654A3C060F452A38D746:974B7F7A10019A9540C593E59E0D9E30B5A975ECF16228B7CDD2AFD04E0112F7",
+  "repository_service": "github",
+  "pipeline_service": "github-actions"
+}

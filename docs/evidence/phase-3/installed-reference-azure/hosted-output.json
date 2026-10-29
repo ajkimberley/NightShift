@@ -1,0 +1,10 @@
+{
+  "log": "fixture check passed\n",
+  "artifacts": [
+    {
+      "id": "31",
+      "name": "report",
+      "url": "https://fixture.invalid/artifact/31"
+    }
+  ]
+}

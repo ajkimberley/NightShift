@@ -1,0 +1,17 @@
+{
+  "source": "hosted_ci",
+  "candidate": {
+    "repository": {
+      "service": "fixture",
+      "namespace": "owner",
+      "name": "repo"
+    },
+    "revision": "6765c62b390e605242764b82314db5e6b084c7dd",
+    "snapshot_digest": "6FABA107FAF13F71153C5DCC053420EF7B8013A6496DC10A21783A95A952CE49"
+  },
+  "policy_revision": "B724DC4CC5EB385D4FECFEDEF2E714A457626242E816F258303D0B708354CD6A",
+  "check_id": "hosted:17",
+  "state": "passed",
+  "execution_id": "github-actions:27",
+  "recorded_at": "2026-10-29T11:31:13.599645+00:00"
+}

@@ -1,0 +1,506 @@
+
+$ dotnet pack src/Nightshift.Cli -c Release --no-restore -p:Version=0.2.0 -o /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/feed
+  Nightshift.Core -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/bin/Release/net10.0/Nightshift.Core.dll
+  Nightshift.Adapters -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Adapters/bin/Release/net10.0/Nightshift.Adapters.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Release/net10.0/Nightshift.Cli.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Release/net10.0/Nightshift.Cli.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Release/net10.0/publish/
+  Successfully created package '/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/feed/Nightshift.Cli.0.2.0.nupkg'.
+[exit 0; expected 0]
+
+$ dotnet pack src/Nightshift.Cli -c Release --no-restore -p:Version=0.3.1 -o /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/feed
+  Nightshift.Core -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/bin/Release/net10.0/Nightshift.Core.dll
+  Nightshift.Adapters -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Adapters/bin/Release/net10.0/Nightshift.Adapters.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Release/net10.0/Nightshift.Cli.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Release/net10.0/Nightshift.Cli.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Release/net10.0/publish/
+  Successfully created package '/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/feed/Nightshift.Cli.0.3.1.nupkg'.
+[exit 0; expected 0]
+
+$ dotnet tool install Nightshift.Cli --tool-path /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tools --source /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/feed --version 0.2.0
+Skipping NuGet package signature verification.
+You can invoke the tool using the following command: nightshift
+Tool 'nightshift.cli' (version '0.2.0') was successfully installed.
+[exit 0; expected 0]
+
+$ nightshift --version
+nightshift 0.2.0
+[exit 0; expected 0]
+
+$ nightshift doctor --codex '/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/fake codex with spaces' --json --profile native-development
+{
+  "version": "0.2.0",
+  "runtime": ".NET 10.0.3",
+  "installation": "/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tools/.store/nightshift.cli/0.2.0/nightshift.cli/0.2.0/tools/net10.0/any/",
+  "project": "/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project",
+  "configuration": null,
+  "working_directory": "/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project",
+  "output_root": "/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs",
+  "backend": "scripted",
+  "sandbox": "read-only",
+  "real_workers_enabled": false,
+  "codex": {
+    "path": "/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/fake codex with spaces",
+    "source": "command line"
+  },
+  "checks": [
+    {
+      "name": "Run output root",
+      "state": "ok",
+      "detail": "/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs",
+      "next_action": "Choose a directory path, not an existing file."
+    },
+    {
+      "name": "Workspace",
+      "state": "ok",
+      "detail": "/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project",
+      "next_action": "Set an existing working_directory or --workdir."
+    },
+    {
+      "name": "Codex version",
+      "state": "ok",
+      "detail": "codex-cli 1.2.3",
+      "next_action": "Use a compatible Codex CLI executable."
+    },
+    {
+      "name": "Codex interface",
+      "state": "ok",
+      "detail": "Required exec flags available",
+      "next_action": "Compare codex exec --help with the adapter requirements."
+    },
+    {
+      "name": "Stored authentication",
+      "state": "ok",
+      "detail": "Credentials reported present; live model access is unverified",
+      "next_action": "Run codex login yourself if needed; doctor never logs in."
+    }
+  ],
+  "healthy": true
+}
+[exit 0; expected 0]
+
+$ nightshift demo --json --profile native-development
+{
+  "run_directory": "/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/20261029T113630653-d99214d5",
+  "state": "success",
+  "working_directory": "/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/.workspaces/edf6465a96234472817b0ba8d54f70dc",
+  "backend": "scripted",
+  "sandbox": "read-only",
+  "current_node": "exit",
+  "next_node": null,
+  "visits": 5,
+  "active_seconds": 0.1206652,
+  "summary": "[Legacy untrusted evidence; no verified acceptance] Pipeline reached exit; visited goal gates satisfied",
+  "checkpoint": "/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/20261029T113630653-d99214d5/checkpoint.json",
+  "events": "/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/20261029T113630653-d99214d5/events.jsonl",
+  "response": "/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/20261029T113630653-d99214d5/plan/visit-0001/attempt-0001/response.md",
+  "logs": "/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/20261029T113630653-d99214d5/verify/visit-0001/attempt-0001",
+  "outputs": [
+    {
+      "path": "/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/.workspaces/edf6465a96234472817b0ba8d54f70dc/demo-output.txt",
+      "exists": true
+    }
+  ],
+  "tool_verdicts": [
+    "create: success (untrusted native command claim)",
+    "verify: success (untrusted native command claim) (Attractor goal gate)"
+  ]
+}
+Explicit native-development profile: lacks protected execution and trusted acceptance.
+Warning goal_gate_has_retry verify: Goal gate has no valid recovery target
+Project: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project
+Workflow: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/.workspaces/edf6465a96234472817b0ba8d54f70dc/workflow.dot
+Workspace: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/.workspaces/edf6465a96234472817b0ba8d54f70dc
+Backend: scripted | Real workers: off (simulation) | Sandbox: read-only
+Run directory: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/20261029T113630653-d99214d5
+Settings: offline demo; scripted worker and local shell verification
+Stage start: running | visit 1, attempt 1
+Stage start: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Stage plan: running | visit 1, attempt 1
+Stage plan: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Stage create: running | visit 1, attempt 1
+Stage create: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Stage verify: running | visit 1, attempt 1
+Stage verify: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+[exit 0; expected 0]
+
+$ nightshift init --backend codex --enable-codex --codex '/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/fake codex with spaces' --profile native-development
+Initialized project: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project
+Configuration: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/nightshift.json
+Workflow: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/workflow.dot
+Backend: codex | Sandbox: read-only
+Saved explicit real-worker opt-in. Future project runs may consume Codex usage.
+Review your workflow prompts, then run: nightshift doctor; nightshift run
+[exit 0; expected 0]
+
+$ nightshift validate --profile native-development
+Valid: 4 nodes, 3 edges
+Warning goal_gate_has_retry verify: Goal gate has no valid recovery target
+[exit 0; expected 0]
+
+$ nightshift run --pause-after 1 --profile native-development
+Project: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project
+Workflow: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/workflow.dot
+Workspace: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project
+Backend: codex-process | Real workers: enabled; may consume usage | Sandbox: read-only
+Run directory: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/20261029T113630989-aef2bec6
+Codex executable: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/fake codex with spaces
+Settings: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/nightshift.json
+Stage start: running | visit 1, attempt 1
+Stage start: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Trace: start
+interrupted: [Legacy untrusted evidence; no verified acceptance] Ready to resume; an interrupted effect may replay.
+Workspace: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project
+Backend: codex | Sandbox: read-only
+Stages visited: 1 | Checkpointed active time: 0.0s
+Next stage: worker
+Declared output (missing): /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/generated.txt
+Run: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/20261029T113630989-aef2bec6
+Checkpoint: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/20261029T113630989-aef2bec6/checkpoint.json
+Events: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/20261029T113630989-aef2bec6/events.jsonl
+Explicit native-development profile: lacks protected execution and trusted acceptance.
+Warning goal_gate_has_retry verify: Goal gate has no valid recovery target
+[exit 3; expected 3]
+
+$ nightshift status --latest --profile native-development
+interrupted: [Legacy untrusted evidence; no verified acceptance] Ready to resume; an interrupted effect may replay.
+Workspace: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project
+Backend: codex | Sandbox: read-only
+Stages visited: 1 | Checkpointed active time: 0.0s
+Next stage: worker
+Declared output (missing): /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/generated.txt
+Run: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/20261029T113630989-aef2bec6
+Checkpoint: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/20261029T113630989-aef2bec6/checkpoint.json
+Events: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/20261029T113630989-aef2bec6/events.jsonl
+[exit 0; expected 0]
+
+$ nightshift resume --latest --profile native-development
+Project: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project
+Workflow: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/workflow.dot
+Workspace: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project
+Backend: codex-process | Real workers: enabled; may consume usage | Sandbox: read-only
+Run directory: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/20261029T113630989-aef2bec6
+Codex executable: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/fake codex with spaces
+Settings: saved run identity; current project defaults ignored
+Stage worker: running | visit 1, attempt 1
+Stage worker: completed | visit 1, attempt 1 | 0.1s | success; will_retry=False; 
+Stage verify: running | visit 1, attempt 1
+Stage verify: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Trace: start -> worker -> verify -> exit
+success: [Legacy untrusted evidence; no verified acceptance] Pipeline reached exit; visited goal gates satisfied
+Workspace: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project
+Backend: codex | Sandbox: read-only
+Stages visited: 4 | Checkpointed active time: 0.1s
+Tool verdict: verify: success (untrusted native command claim) (Attractor goal gate)
+Declared output (exists; existence alone is not verification): /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/generated.txt
+Worker response (a claim; check tool verdicts separately):
+fake package worker claim
+Run: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/20261029T113630989-aef2bec6
+Checkpoint: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/20261029T113630989-aef2bec6/checkpoint.json
+Events: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/20261029T113630989-aef2bec6/events.jsonl
+Response: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/20261029T113630989-aef2bec6/worker/visit-0001/attempt-0001/last-message.json
+Stage logs: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/20261029T113630989-aef2bec6/verify/visit-0001/attempt-0001
+Explicit native-development profile: lacks protected execution and trusted acceptance.
+Warning goal_gate_has_retry verify: Goal gate has no valid recovery target
+[exit 0; expected 0]
+
+$ nightshift result --latest --json --profile native-development
+{
+  "run_directory": "/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/20261029T113630989-aef2bec6",
+  "state": "success",
+  "working_directory": "/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project",
+  "backend": "codex",
+  "sandbox": "read-only",
+  "current_node": "exit",
+  "next_node": null,
+  "visits": 4,
+  "active_seconds": 0.13633220000000001,
+  "summary": "[Legacy untrusted evidence; no verified acceptance] Pipeline reached exit; visited goal gates satisfied",
+  "checkpoint": "/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/20261029T113630989-aef2bec6/checkpoint.json",
+  "events": "/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/20261029T113630989-aef2bec6/events.jsonl",
+  "response": "/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/20261029T113630989-aef2bec6/worker/visit-0001/attempt-0001/last-message.json",
+  "logs": "/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/20261029T113630989-aef2bec6/verify/visit-0001/attempt-0001",
+  "outputs": [
+    {
+      "path": "/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/generated.txt",
+      "exists": true
+    }
+  ],
+  "tool_verdicts": [
+    "verify: success (untrusted native command claim) (Attractor goal gate)"
+  ]
+}
+[exit 0; expected 0]
+
+$ nightshift resume '/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/20261029T113630989-aef2bec6' --backend scripted --profile native-development
+Explicit native-development profile: lacks protected execution and trusted acceptance.
+Error: Cannot switch backend on resume. Start a fresh run to change backend.
+[exit 2; expected 2]
+
+$ nightshift init --backend codex --enable-codex --codex '/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/fake codex with spaces' --sandbox workspace-write --output report.txt --profile native-development
+Initialized project: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project
+Configuration: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/nightshift.json
+Workflow: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/workflow.dot
+Backend: codex | Sandbox: workspace-write
+Saved explicit real-worker opt-in. Future project runs may consume Codex usage.
+Review your workflow prompts, then run: nightshift doctor; nightshift run
+[exit 0; expected 0]
+
+$ nightshift validate '/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/codex-project.md0.dot' --profile native-development
+Valid: 4 nodes, 3 edges
+Warning goal_gate_has_retry verify: Goal gate has no valid recovery target
+[exit 0; expected 0]
+
+$ nightshift run '/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/codex-project.md0.dot' --max-visits 12 --max-seconds 30 --answers A --profile native-development
+Project: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project
+Workflow: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/codex-project.md0.dot
+Workspace: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project
+Backend: codex-process | Real workers: enabled; may consume usage | Sandbox: workspace-write
+Run directory: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/.nightshift/runs/20261029T113631610-c2a6a623
+Codex executable: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/fake codex with spaces
+Settings: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/nightshift.json
+CLI overrides: workflow, max_visits, max_seconds
+Stage start: running | visit 1, attempt 1
+Stage start: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Stage write: running | visit 1, attempt 1
+Stage write: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Stage verify: running | visit 1, attempt 1
+Stage verify: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Trace: start -> write -> verify -> exit
+success: [Legacy untrusted evidence; no verified acceptance] Pipeline reached exit; visited goal gates satisfied
+Workspace: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project
+Backend: codex | Sandbox: workspace-write
+Stages visited: 4 | Checkpointed active time: 0.1s
+Tool verdict: verify: success (untrusted native command claim) (Attractor goal gate)
+Declared output (exists; existence alone is not verification): /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/report.txt
+Worker response (a claim; check tool verdicts separately):
+fake package worker claim
+Run: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/.nightshift/runs/20261029T113631610-c2a6a623
+Checkpoint: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/.nightshift/runs/20261029T113631610-c2a6a623/checkpoint.json
+Events: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/.nightshift/runs/20261029T113631610-c2a6a623/events.jsonl
+Response: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/.nightshift/runs/20261029T113631610-c2a6a623/write/visit-0001/attempt-0001/last-message.json
+Stage logs: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/.nightshift/runs/20261029T113631610-c2a6a623/verify/visit-0001/attempt-0001
+Explicit native-development profile: lacks protected execution and trusted acceptance.
+Warning goal_gate_has_retry verify: Goal gate has no valid recovery target
+[exit 0; expected 0]
+
+$ nightshift validate '/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/workflows.md0.dot' --profile native-development
+Valid: 6 nodes, 7 edges
+[exit 0; expected 0]
+
+$ nightshift run '/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/workflows.md0.dot' --max-visits 12 --max-seconds 30 --answers A --profile native-development
+Project: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project
+Workflow: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/workflows.md0.dot
+Workspace: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project
+Backend: codex-process | Real workers: enabled; may consume usage | Sandbox: workspace-write
+Run directory: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/.nightshift/runs/20261029T113631898-438fd876
+Codex executable: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/fake codex with spaces
+Settings: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/nightshift.json
+CLI overrides: workflow, max_visits, max_seconds
+Stage start: running | visit 1, attempt 1
+Stage start: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Stage write: running | visit 1, attempt 1
+Stage write: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Stage verify: running | visit 1, attempt 1
+Stage verify: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Stage review: running | visit 1, attempt 1
+Stage review: waiting for a human answer
+Stage review: InterviewCompleted | A
+Stage review: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Trace: start -> write -> verify -> review -> exit
+success: [Legacy untrusted evidence; no verified acceptance] Pipeline reached exit; visited goal gates satisfied
+Workspace: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project
+Backend: codex | Sandbox: workspace-write
+Stages visited: 5 | Checkpointed active time: 0.1s
+Tool verdict: verify: success (untrusted native command claim) (Attractor goal gate)
+Declared output (exists; existence alone is not verification): /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/report.txt
+Worker response (a claim; check tool verdicts separately):
+fake package worker claim
+Run: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/.nightshift/runs/20261029T113631898-438fd876
+Checkpoint: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/.nightshift/runs/20261029T113631898-438fd876/checkpoint.json
+Events: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/.nightshift/runs/20261029T113631898-438fd876/events.jsonl
+Response: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/.nightshift/runs/20261029T113631898-438fd876/write/visit-0001/attempt-0001/last-message.json
+Stage logs: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/.nightshift/runs/20261029T113631898-438fd876/verify/visit-0001/attempt-0001
+Explicit native-development profile: lacks protected execution and trusted acceptance.
+[exit 0; expected 0]
+
+$ nightshift run '/Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/workflows.md0.dot' --max-visits 12 --max-seconds 30 --answers R,A --profile native-development
+Project: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project
+Workflow: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/workflows.md0.dot
+Workspace: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project
+Backend: codex-process | Real workers: enabled; may consume usage | Sandbox: workspace-write
+Run directory: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/.nightshift/runs/20261029T113632155-ecf7de24
+Codex executable: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/fake codex with spaces
+Settings: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/nightshift.json
+CLI overrides: workflow, max_visits, max_seconds
+Stage start: running | visit 1, attempt 1
+Stage start: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Stage write: running | visit 1, attempt 1
+Stage write: completed | visit 1, attempt 1 | 0.1s | success; will_retry=False; 
+Stage verify: running | visit 1, attempt 1
+Stage verify: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Stage review: running | visit 1, attempt 1
+Stage review: waiting for a human answer
+Stage review: InterviewCompleted | R
+Stage review: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Stage repair: running | visit 1, attempt 1
+Stage repair: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Stage verify: running | visit 2, attempt 1
+Stage verify: completed | visit 2, attempt 1 | 0.0s | success; will_retry=False; 
+Stage review: running | visit 2, attempt 1
+Stage review: waiting for a human answer
+Stage review: InterviewCompleted | A
+Stage review: completed | visit 2, attempt 1 | 0.0s | success; will_retry=False; 
+Trace: start -> write -> verify -> review -> repair -> verify -> review -> exit
+success: [Legacy untrusted evidence; no verified acceptance] Pipeline reached exit; visited goal gates satisfied
+Workspace: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project
+Backend: codex | Sandbox: workspace-write
+Stages visited: 8 | Checkpointed active time: 0.3s
+Tool verdict: verify: success (untrusted native command claim) (Attractor goal gate)
+Declared output (exists; existence alone is not verification): /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/report.txt
+Worker response (a claim; check tool verdicts separately):
+fake package worker claim
+Run: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/.nightshift/runs/20261029T113632155-ecf7de24
+Checkpoint: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/.nightshift/runs/20261029T113632155-ecf7de24/checkpoint.json
+Events: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/.nightshift/runs/20261029T113632155-ecf7de24/events.jsonl
+Response: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/.nightshift/runs/20261029T113632155-ecf7de24/repair/visit-0001/attempt-0001/last-message.json
+Stage logs: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tutorial project/.nightshift/runs/20261029T113632155-ecf7de24/verify/visit-0002/attempt-0001
+Explicit native-development profile: lacks protected execution and trusted acceptance.
+[exit 0; expected 0]
+
+$ nightshift demo --dir /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-missing --pause-after 3 --profile native-development
+Offline demo: simulated model planning, local file creation and independent byte comparison; no account or model.
+Project: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project
+Workflow: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/.workspaces/8e6bcec1dcde42e7a141fb81fa69834f/workflow.dot
+Workspace: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/.workspaces/8e6bcec1dcde42e7a141fb81fa69834f
+Backend: scripted | Real workers: off (simulation) | Sandbox: read-only
+Run directory: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-missing
+Settings: offline demo; scripted worker and local shell verification
+Stage start: running | visit 1, attempt 1
+Stage start: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Stage plan: running | visit 1, attempt 1
+Stage plan: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Stage create: running | visit 1, attempt 1
+Stage create: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Trace: start -> plan -> create
+interrupted: [Legacy untrusted evidence; no verified acceptance] Ready to resume; an interrupted effect may replay.
+Workspace: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/.workspaces/8e6bcec1dcde42e7a141fb81fa69834f
+Backend: scripted | Sandbox: read-only
+Stages visited: 3 | Checkpointed active time: 0.1s
+Next stage: verify
+Tool verdict: create: success (untrusted native command claim)
+Declared output (exists; existence alone is not verification): /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/.workspaces/8e6bcec1dcde42e7a141fb81fa69834f/demo-output.txt
+Worker response (a claim; check tool verdicts separately):
+[SCRIPTED; no task correctness claim] plan: Simulate a planning stage
+Run: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-missing
+Checkpoint: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-missing/checkpoint.json
+Events: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-missing/events.jsonl
+Response: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-missing/plan/visit-0001/attempt-0001/response.md
+Stage logs: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-missing/create/visit-0001/attempt-0001
+Explicit native-development profile: lacks protected execution and trusted acceptance.
+Warning goal_gate_has_retry verify: Goal gate has no valid recovery target
+[exit 3; expected 3]
+
+$ nightshift resume /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-missing --profile native-development
+Project: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project
+Workflow: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/.workspaces/8e6bcec1dcde42e7a141fb81fa69834f/workflow.dot
+Workspace: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/.workspaces/8e6bcec1dcde42e7a141fb81fa69834f
+Backend: scripted | Real workers: off (simulation) | Sandbox: read-only
+Run directory: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-missing
+Settings: saved run identity; current project defaults ignored
+Stage verify: running | visit 1, attempt 1
+Stage verify: failed/requested retry | visit 1, attempt 1 | 0.0s | fail; will_retry=False; Command exited 2; see stderr.txt
+Trace: start -> plan -> create -> verify
+failed: [Legacy untrusted evidence; no verified acceptance] Command exited 2; see stderr.txt
+Workspace: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/.workspaces/8e6bcec1dcde42e7a141fb81fa69834f
+Backend: scripted | Sandbox: read-only
+Stages visited: 4 | Checkpointed active time: 0.1s
+Tool verdict: create: success (untrusted native command claim)
+Tool verdict: verify: fail (untrusted native command claim) (Attractor goal gate)
+Declared output (missing): /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/.workspaces/8e6bcec1dcde42e7a141fb81fa69834f/demo-output.txt
+Worker response (a claim; check tool verdicts separately):
+[SCRIPTED; no task correctness claim] plan: Simulate a planning stage
+Run: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-missing
+Checkpoint: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-missing/checkpoint.json
+Events: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-missing/events.jsonl
+Response: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-missing/plan/visit-0001/attempt-0001/response.md
+Stage logs: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-missing/verify/visit-0001/attempt-0001
+Explicit native-development profile: lacks protected execution and trusted acceptance.
+Warning goal_gate_has_retry verify: Goal gate has no valid recovery target
+[exit 1; expected 1]
+
+$ nightshift demo --dir /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-wrong --pause-after 3 --profile native-development
+Offline demo: simulated model planning, local file creation and independent byte comparison; no account or model.
+Project: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project
+Workflow: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/.workspaces/56f1c0d1c5084fc6b141a5bf8dffa504/workflow.dot
+Workspace: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/.workspaces/56f1c0d1c5084fc6b141a5bf8dffa504
+Backend: scripted | Real workers: off (simulation) | Sandbox: read-only
+Run directory: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-wrong
+Settings: offline demo; scripted worker and local shell verification
+Stage start: running | visit 1, attempt 1
+Stage start: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Stage plan: running | visit 1, attempt 1
+Stage plan: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Stage create: running | visit 1, attempt 1
+Stage create: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Trace: start -> plan -> create
+interrupted: [Legacy untrusted evidence; no verified acceptance] Ready to resume; an interrupted effect may replay.
+Workspace: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/.workspaces/56f1c0d1c5084fc6b141a5bf8dffa504
+Backend: scripted | Sandbox: read-only
+Stages visited: 3 | Checkpointed active time: 0.1s
+Next stage: verify
+Tool verdict: create: success (untrusted native command claim)
+Declared output (exists; existence alone is not verification): /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/.workspaces/56f1c0d1c5084fc6b141a5bf8dffa504/demo-output.txt
+Worker response (a claim; check tool verdicts separately):
+[SCRIPTED; no task correctness claim] plan: Simulate a planning stage
+Run: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-wrong
+Checkpoint: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-wrong/checkpoint.json
+Events: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-wrong/events.jsonl
+Response: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-wrong/plan/visit-0001/attempt-0001/response.md
+Stage logs: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-wrong/create/visit-0001/attempt-0001
+Explicit native-development profile: lacks protected execution and trusted acceptance.
+Warning goal_gate_has_retry verify: Goal gate has no valid recovery target
+[exit 3; expected 3]
+
+$ nightshift resume /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-wrong --profile native-development
+Project: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project
+Workflow: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/.workspaces/56f1c0d1c5084fc6b141a5bf8dffa504/workflow.dot
+Workspace: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/.workspaces/56f1c0d1c5084fc6b141a5bf8dffa504
+Backend: scripted | Real workers: off (simulation) | Sandbox: read-only
+Run directory: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-wrong
+Settings: saved run identity; current project defaults ignored
+Stage verify: running | visit 1, attempt 1
+Stage verify: failed/requested retry | visit 1, attempt 1 | 0.0s | fail; will_retry=False; Command exited 1; see stderr.txt
+Trace: start -> plan -> create -> verify
+failed: [Legacy untrusted evidence; no verified acceptance] Command exited 1; see stderr.txt
+Workspace: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/.workspaces/56f1c0d1c5084fc6b141a5bf8dffa504
+Backend: scripted | Sandbox: read-only
+Stages visited: 4 | Checkpointed active time: 0.1s
+Tool verdict: create: success (untrusted native command claim)
+Tool verdict: verify: fail (untrusted native command claim) (Attractor goal gate)
+Declared output (exists; existence alone is not verification): /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/personal project/.nightshift/runs/.workspaces/56f1c0d1c5084fc6b141a5bf8dffa504/demo-output.txt
+Worker response (a claim; check tool verdicts separately):
+[SCRIPTED; no task correctness claim] plan: Simulate a planning stage
+Run: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-wrong
+Checkpoint: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-wrong/checkpoint.json
+Events: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-wrong/events.jsonl
+Response: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-wrong/plan/visit-0001/attempt-0001/response.md
+Stage logs: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/demo-wrong/verify/visit-0001/attempt-0001
+Explicit native-development profile: lacks protected execution and trusted acceptance.
+Warning goal_gate_has_retry verify: Goal gate has no valid recovery target
+[exit 1; expected 1]
+
+$ dotnet tool update Nightshift.Cli --tool-path /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tools --source /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/feed --version 0.3.1
+Skipping NuGet package signature verification.
+Tool 'nightshift.cli' was successfully updated from version '0.2.0' to version '0.3.1'.
+[exit 0; expected 0]
+
+$ nightshift --version
+nightshift 0.3.1
+[exit 0; expected 0]
+
+$ dotnet tool uninstall Nightshift.Cli --tool-path /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv/tools
+Tool 'nightshift.cli' (version '0.3.1') was successfully uninstalled.
+[exit 0; expected 0]
+
+PASS: package lifecycle and installed onboarding. Evidence retained: /Users/adamkimberley/Repos/nightshift/artifacts/package-check-eqb8xdsv

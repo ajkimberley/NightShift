@@ -1,0 +1,4 @@
+  Nightshift.Core -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/bin/Debug/net10.0/Nightshift.Core.dll
+  Nightshift.Adapters -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Adapters/bin/Debug/net10.0/Nightshift.Adapters.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Debug/net10.0/Nightshift.Cli.dll
+/Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/IsolationTests.cs(109,9): error CA1416: This call site is reachable on all platforms. 'File.SetUnixFileMode(string, UnixFileMode)' is unsupported on: 'windows'. (https://learn.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1416) [/Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/Nightshift.Tests.csproj]

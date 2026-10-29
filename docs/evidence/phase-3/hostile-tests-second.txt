@@ -1,0 +1,64 @@
+  Nightshift.Core -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/bin/Debug/net10.0/Nightshift.Core.dll
+  Nightshift.Adapters -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Adapters/bin/Debug/net10.0/Nightshift.Adapters.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Debug/net10.0/Nightshift.Cli.dll
+  Nightshift.Tests -> /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/bin/Debug/net10.0/Nightshift.Tests.dll
+Test run for /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/bin/Debug/net10.0/Nightshift.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.1 (arm64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.3)
+[xUnit.net 00:00:00.03]   Discovering: Nightshift.Tests
+[xUnit.net 00:00:00.06]   Discovered:  Nightshift.Tests
+[xUnit.net 00:00:00.07]   Starting:    Nightshift.Tests
+  Passed Nightshift.Tests.AdversarialIsolationTests.Real_worker_link_rename_and_git_ingestion_attacks_are_refused(command: "ln seed artifact") [1 s]
+  Passed Nightshift.Tests.IsolationTests.Real_container_edits_collects_and_has_no_host_capabilities [1 s]
+  Passed Nightshift.Tests.AdversarialIsolationTests.Real_worker_link_rename_and_git_ingestion_attacks_are_refused(command: "mkdir .git; echo forged > .git/config") [902 ms]
+  Passed Nightshift.Tests.AdversarialIsolationTests.Real_worker_link_rename_and_git_ingestion_attacks_are_refused(command: "ln -s /etc/passwd temporary; mv temporary artifact") [940 ms]
+  Passed Nightshift.Tests.AdversarialIsolationTests.Real_worker_link_rename_and_git_ingestion_attacks_are_refused(command: "ln -s /etc/passwd artifact") [918 ms]
+  Passed Nightshift.Tests.AdversarialIsolationTests.Same_graph_runs_through_both_fake_agent_executables_with_no_core_provider_branch(claude: False) [3 s]
+  Passed Nightshift.Tests.AdversarialIsolationTests.Same_graph_runs_through_both_fake_agent_executables_with_no_core_provider_branch(claude: True) [3 s]
+  Passed Nightshift.Tests.AdversarialIsolationTests.Missing_runtime_remote_context_invalid_mount_or_mutable_image_never_start_the_worker [1 ms]
+[xUnit.net 00:00:13.66]     Nightshift.Tests.AdversarialIsolationTests.Forged_status_context_evidence_and_legacy_files_never_pass_acceptance [FAIL]
+[xUnit.net 00:00:13.66]       Nightshift.Core.DotParseException : 1:72: Unsupported escape
+[xUnit.net 00:00:13.66]       Stack Trace:
+[xUnit.net 00:00:13.66]         /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/DotParser.cs(42,0): at Nightshift.Core.Lexer.Scan()
+[xUnit.net 00:00:13.66]         /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/DotParser.cs(76,0): at Nightshift.Core.DotParser.Parse(String source)
+[xUnit.net 00:00:13.66]         /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/Configuration.cs(60,0): at Nightshift.Core.Preparation.Prepare(String dot, HandlerRegistry registry, IEnumerable`1 transforms)
+[xUnit.net 00:00:13.66]         /Users/adamkimberley/Repos/nightshift/src/Nightshift.Adapters/ProtectedWorkflow.cs(69,0): at Nightshift.Adapters.ProtectedWorkflow.RunAsync(String directory, Boolean resume, EngineOptions options, IInterviewer interviewer, CancellationToken token)
+[xUnit.net 00:00:13.66]         /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/IsolationTests.cs(126,0): at Nightshift.Tests.AdversarialIsolationTests.Forged_status_context_evidence_and_legacy_files_never_pass_acceptance()
+[xUnit.net 00:00:13.66]         --- End of stack trace from previous location ---
+  Passed Nightshift.Tests.AdversarialIsolationTests.Edited_verifier_definitions_require_review_and_workspace_PATH_tools_cannot_replace_image_tools [2 s]
+  Failed Nightshift.Tests.AdversarialIsolationTests.Forged_status_context_evidence_and_legacy_files_never_pass_acceptance [318 ms]
+  Error Message:
+   Nightshift.Core.DotParseException : 1:72: Unsupported escape
+  Stack Trace:
+     at Nightshift.Core.Lexer.Scan() in /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/DotParser.cs:line 42
+   at Nightshift.Core.DotParser.Parse(String source) in /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/DotParser.cs:line 76
+   at Nightshift.Core.Preparation.Prepare(String dot, HandlerRegistry registry, IEnumerable`1 transforms) in /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/Configuration.cs:line 60
+   at Nightshift.Adapters.ProtectedWorkflow.RunAsync(String directory, Boolean resume, EngineOptions options, IInterviewer interviewer, CancellationToken token) in /Users/adamkimberley/Repos/nightshift/src/Nightshift.Adapters/ProtectedWorkflow.cs:line 69
+   at Nightshift.Tests.AdversarialIsolationTests.Forged_status_context_evidence_and_legacy_files_never_pass_acceptance() in /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/IsolationTests.cs:line 126
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:24.27]     Nightshift.Tests.AdversarialIsolationTests.Cancellation_kills_the_owned_container_with_children_and_preserves_partial_logs [FAIL]
+[xUnit.net 00:00:24.27]       Assert.Contains() Failure: Sub-string not found
+[xUnit.net 00:00:24.27]       String:    "{\n  "id": "nightshift-3a5d732b293f40a990c"···
+[xUnit.net 00:00:24.27]       Not found: "interrupted"
+[xUnit.net 00:00:24.27]       Stack Trace:
+[xUnit.net 00:00:24.27]         /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/IsolationTests.cs(155,0): at Nightshift.Tests.AdversarialIsolationTests.Cancellation_kills_the_owned_container_with_children_and_preserves_partial_logs()
+[xUnit.net 00:00:24.27]         --- End of stack trace from previous location ---
+  Failed Nightshift.Tests.AdversarialIsolationTests.Cancellation_kills_the_owned_container_with_children_and_preserves_partial_logs [10 s]
+  Error Message:
+   Assert.Contains() Failure: Sub-string not found
+String:    "{\n  "id": "nightshift-3a5d732b293f40a990c"···
+Not found: "interrupted"
+  Stack Trace:
+     at Nightshift.Tests.AdversarialIsolationTests.Cancellation_kills_the_owned_container_with_children_and_preserves_partial_logs() in /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/IsolationTests.cs:line 155
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:25.56]   Finished:    Nightshift.Tests
+  Passed Nightshift.Tests.AdversarialIsolationTests.Hostile_worker_and_descendants_cannot_access_protected_state_binaries_git_or_credentials [1 s]
+
+Test Run Failed.
+Total tests: 12
+     Passed: 10
+     Failed: 2
+ Total time: 25.7845 Seconds

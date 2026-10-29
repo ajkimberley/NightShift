@@ -1,0 +1,300 @@
+$ /Users/adamkimberley/.dotnet/tools/nightshift --version
+nightshift 0.3.1
+
+
+exit=0
+$ /Users/adamkimberley/.dotnet/tools/nightshift doctor --json
+{
+  "profile": "linux-container-v1",
+  "state_root": "/Users/adamkimberley/Library/Application Support/Nightshift/state",
+  "checks": [
+    {
+      "capability": "configured",
+      "state": "no",
+      "detail": "No approved protected policy. Run nightshift adopt --policy FILE after reviewing it, or explicitly choose --profile native-development."
+    },
+    {
+      "capability": "runtime-prerequisites",
+      "state": "available",
+      "identity": {
+        "profile": "linux-container-v1",
+        "runtime_version": "6.1.4",
+        "connection": "nightshift-dev",
+        "image": "docker.io/library/alpine@sha256:2e0b81d60597f449baa56dc25d355367869d2dca4cd57e866f1e2b52af3eb55f",
+        "platform": "linux/arm64"
+      }
+    },
+    {
+      "capability": "fixture-contract-tests",
+      "state": "not probed by doctor; see shipped phase-three evidence"
+    },
+    {
+      "capability": "actual-isolation-verification",
+      "state": "not inferred from runtime availability; run nightshift reference for an exercised workflow; hostile suite evidence is platform-specific"
+    },
+    {
+      "capability": "authenticated-live-integration",
+      "state": "unexecuted"
+    }
+  ]
+}
+
+
+exit=0
+$ /Users/adamkimberley/.dotnet/tools/nightshift demo --json
+
+{
+  "run": {
+    "run_directory": "/Users/adamkimberley/Library/Application Support/Nightshift/state/projects/B000F3BD2638EA1F1B0C8A62/runs/20261029T113757211-d8a40f34",
+    "state": "success",
+    "working_directory": "/Users/adamkimberley/Library/Application Support/Nightshift/demo-projects/5b225c77ad384dd4a7559911e7f85e34",
+    "backend": "scripted",
+    "sandbox": "linux-container-v1",
+    "current_node": "exit",
+    "next_node": null,
+    "visits": 4,
+    "active_seconds": 1.0387536,
+    "summary": "Pipeline reached exit; visited goal gates satisfied",
+    "checkpoint": "/Users/adamkimberley/Library/Application Support/Nightshift/state/projects/B000F3BD2638EA1F1B0C8A62/runs/20261029T113757211-d8a40f34/checkpoint.json",
+    "events": "/Users/adamkimberley/Library/Application Support/Nightshift/state/projects/B000F3BD2638EA1F1B0C8A62/runs/20261029T113757211-d8a40f34/events.jsonl",
+    "response": "/Users/adamkimberley/Library/Application Support/Nightshift/state/projects/B000F3BD2638EA1F1B0C8A62/runs/20261029T113757211-d8a40f34/plan/visit-0001/attempt-0001/response.md",
+    "logs": "/Users/adamkimberley/Library/Application Support/Nightshift/state/projects/B000F3BD2638EA1F1B0C8A62/runs/20261029T113757211-d8a40f34/write/visit-0001/attempt-0001",
+    "outputs": [],
+    "tool_verdicts": [
+      "write: success (isolated command; acceptance separate)"
+    ]
+  },
+  "provenance": "protected coordinator record",
+  "identity": {
+    "policy_revision": "209EB28FB327E0CDB27BE5E12C30B05AC4CB50BF00D165C31E018AD431EEB5BE",
+    "runtime": {
+      "profile": "linux-container-v1",
+      "runtime_version": "6.1.4",
+      "connection": "nightshift-dev",
+      "image": "docker.io/library/alpine@sha256:2e0b81d60597f449baa56dc25d355367869d2dca4cd57e866f1e2b52af3eb55f",
+      "platform": "linux/arm64"
+    },
+    "agent": {
+      "name": "scripted",
+      "version": "deterministic-1",
+      "fresh_tasks": true,
+      "structured_claims": true,
+      "progress": false,
+      "cancellation": true,
+      "sessions": false,
+      "steering": false,
+      "hooks": false
+    },
+    "project_root": "/Users/adamkimberley/Library/Application Support/Nightshift/demo-projects/5b225c77ad384dd4a7559911e7f85e34",
+    "coordinator_version": "A8C6F202FC1999AC93FBB25EFC60413B39CCC739AA3D654A3C060F452A38D746:974B7F7A10019A9540C593E59E0D9E30B5A975ECF16228B7CDD2AFD04E0112F7",
+    "repository_service": "none",
+    "pipeline_service": "none"
+  },
+  "candidate": {
+    "repository": {
+      "service": "local",
+      "namespace": "B000F3BD2638EA1F1B0C8A62",
+      "name": "workspace"
+    },
+    "revision": "snapshot:C7BEC432D69CBB46C822F8F5C8B87F5B6BE577DE1CD1C3B249CFBF319A40C6B0",
+    "snapshot_digest": "C7BEC432D69CBB46C822F8F5C8B87F5B6BE577DE1CD1C3B249CFBF319A40C6B0"
+  },
+  "acceptance": {
+    "accepted": true,
+    "reason": "Specified approved checks passed for the exact candidate; no general correctness claim"
+  },
+  "evidence": [
+    {
+      "source": "controlled_local_check",
+      "candidate": {
+        "repository": {
+          "service": "local",
+          "namespace": "B000F3BD2638EA1F1B0C8A62",
+          "name": "workspace"
+        },
+        "revision": "snapshot:C7BEC432D69CBB46C822F8F5C8B87F5B6BE577DE1CD1C3B249CFBF319A40C6B0",
+        "snapshot_digest": "C7BEC432D69CBB46C822F8F5C8B87F5B6BE577DE1CD1C3B249CFBF319A40C6B0"
+      },
+      "policy_revision": "209EB28FB327E0CDB27BE5E12C30B05AC4CB50BF00D165C31E018AD431EEB5BE",
+      "check_id": "exact-bytes",
+      "state": "pending",
+      "execution_id": "awaiting-owned-unit",
+      "recorded_at": "2026-10-29T11:37:58.630675+00:00"
+    },
+    {
+      "source": "controlled_local_check",
+      "candidate": {
+        "repository": {
+          "service": "local",
+          "namespace": "B000F3BD2638EA1F1B0C8A62",
+          "name": "workspace"
+        },
+        "revision": "snapshot:C7BEC432D69CBB46C822F8F5C8B87F5B6BE577DE1CD1C3B249CFBF319A40C6B0",
+        "snapshot_digest": "C7BEC432D69CBB46C822F8F5C8B87F5B6BE577DE1CD1C3B249CFBF319A40C6B0"
+      },
+      "policy_revision": "209EB28FB327E0CDB27BE5E12C30B05AC4CB50BF00D165C31E018AD431EEB5BE",
+      "check_id": "exact-bytes",
+      "state": "passed",
+      "execution_id": "nightshift-947efc67f01d42588bf6f5d278f4cd65",
+      "recorded_at": "2026-10-29T11:37:59.54262+00:00"
+    }
+  ]
+}
+
+Stage start: running | visit 1, attempt 1
+Stage start: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Stage plan: running | visit 1, attempt 1
+Stage plan: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Stage write: running | visit 1, attempt 1
+Stage write: completed | visit 1, attempt 1 | 1.0s | success; will_retry=False; 
+
+exit=0
+$ /Users/adamkimberley/.dotnet/tools/nightshift status '/Users/adamkimberley/Library/Application Support/Nightshift/state/projects/B000F3BD2638EA1F1B0C8A62/runs/20261029T113757211-d8a40f34'
+success: Pipeline reached exit; visited goal gates satisfied
+Workspace: /Users/adamkimberley/Library/Application Support/Nightshift/demo-projects/5b225c77ad384dd4a7559911e7f85e34
+Backend: scripted | Sandbox: linux-container-v1
+Stages visited: 4 | Checkpointed active time: 1.0s
+Tool verdict: write: success (isolated command; acceptance separate)
+Run: /Users/adamkimberley/Library/Application Support/Nightshift/state/projects/B000F3BD2638EA1F1B0C8A62/runs/20261029T113757211-d8a40f34
+Checkpoint: /Users/adamkimberley/Library/Application Support/Nightshift/state/projects/B000F3BD2638EA1F1B0C8A62/runs/20261029T113757211-d8a40f34/checkpoint.json
+Events: /Users/adamkimberley/Library/Application Support/Nightshift/state/projects/B000F3BD2638EA1F1B0C8A62/runs/20261029T113757211-d8a40f34/events.jsonl
+Response: /Users/adamkimberley/Library/Application Support/Nightshift/state/projects/B000F3BD2638EA1F1B0C8A62/runs/20261029T113757211-d8a40f34/plan/visit-0001/attempt-0001/response.md
+Stage logs: /Users/adamkimberley/Library/Application Support/Nightshift/state/projects/B000F3BD2638EA1F1B0C8A62/runs/20261029T113757211-d8a40f34/write/visit-0001/attempt-0001
+Profile: linux-container-v1 | Policy: 209EB28FB327E0CDB27BE5E12C30B05AC4CB50BF00D165C31E018AD431EEB5BE
+Candidate: C7BEC432D69CBB46C822F8F5C8B87F5B6BE577DE1CD1C3B249CFBF319A40C6B0
+Code acceptance: True — Specified approved checks passed for the exact candidate; no general correctness claim
+
+
+exit=0
+$ /Users/adamkimberley/.dotnet/tools/nightshift result '/Users/adamkimberley/Library/Application Support/Nightshift/state/projects/B000F3BD2638EA1F1B0C8A62/runs/20261029T113757211-d8a40f34' --json
+{
+  "run": {
+    "run_directory": "/Users/adamkimberley/Library/Application Support/Nightshift/state/projects/B000F3BD2638EA1F1B0C8A62/runs/20261029T113757211-d8a40f34",
+    "state": "success",
+    "working_directory": "/Users/adamkimberley/Library/Application Support/Nightshift/demo-projects/5b225c77ad384dd4a7559911e7f85e34",
+    "backend": "scripted",
+    "sandbox": "linux-container-v1",
+    "current_node": "exit",
+    "next_node": null,
+    "visits": 4,
+    "active_seconds": 1.0387536,
+    "summary": "Pipeline reached exit; visited goal gates satisfied",
+    "checkpoint": "/Users/adamkimberley/Library/Application Support/Nightshift/state/projects/B000F3BD2638EA1F1B0C8A62/runs/20261029T113757211-d8a40f34/checkpoint.json",
+    "events": "/Users/adamkimberley/Library/Application Support/Nightshift/state/projects/B000F3BD2638EA1F1B0C8A62/runs/20261029T113757211-d8a40f34/events.jsonl",
+    "response": "/Users/adamkimberley/Library/Application Support/Nightshift/state/projects/B000F3BD2638EA1F1B0C8A62/runs/20261029T113757211-d8a40f34/plan/visit-0001/attempt-0001/response.md",
+    "logs": "/Users/adamkimberley/Library/Application Support/Nightshift/state/projects/B000F3BD2638EA1F1B0C8A62/runs/20261029T113757211-d8a40f34/write/visit-0001/attempt-0001",
+    "outputs": [],
+    "tool_verdicts": [
+      "write: success (isolated command; acceptance separate)"
+    ]
+  },
+  "provenance": "protected coordinator record",
+  "identity": {
+    "policy_revision": "209EB28FB327E0CDB27BE5E12C30B05AC4CB50BF00D165C31E018AD431EEB5BE",
+    "runtime": {
+      "profile": "linux-container-v1",
+      "runtime_version": "6.1.4",
+      "connection": "nightshift-dev",
+      "image": "docker.io/library/alpine@sha256:2e0b81d60597f449baa56dc25d355367869d2dca4cd57e866f1e2b52af3eb55f",
+      "platform": "linux/arm64"
+    },
+    "agent": {
+      "name": "scripted",
+      "version": "deterministic-1",
+      "fresh_tasks": true,
+      "structured_claims": true,
+      "progress": false,
+      "cancellation": true,
+      "sessions": false,
+      "steering": false,
+      "hooks": false
+    },
+    "project_root": "/Users/adamkimberley/Library/Application Support/Nightshift/demo-projects/5b225c77ad384dd4a7559911e7f85e34",
+    "coordinator_version": "A8C6F202FC1999AC93FBB25EFC60413B39CCC739AA3D654A3C060F452A38D746:974B7F7A10019A9540C593E59E0D9E30B5A975ECF16228B7CDD2AFD04E0112F7",
+    "repository_service": "none",
+    "pipeline_service": "none"
+  },
+  "candidate": {
+    "repository": {
+      "service": "local",
+      "namespace": "B000F3BD2638EA1F1B0C8A62",
+      "name": "workspace"
+    },
+    "revision": "snapshot:C7BEC432D69CBB46C822F8F5C8B87F5B6BE577DE1CD1C3B249CFBF319A40C6B0",
+    "snapshot_digest": "C7BEC432D69CBB46C822F8F5C8B87F5B6BE577DE1CD1C3B249CFBF319A40C6B0"
+  },
+  "acceptance": {
+    "accepted": true,
+    "reason": "Specified approved checks passed for the exact candidate; no general correctness claim"
+  },
+  "evidence": [
+    {
+      "source": "controlled_local_check",
+      "candidate": {
+        "repository": {
+          "service": "local",
+          "namespace": "B000F3BD2638EA1F1B0C8A62",
+          "name": "workspace"
+        },
+        "revision": "snapshot:C7BEC432D69CBB46C822F8F5C8B87F5B6BE577DE1CD1C3B249CFBF319A40C6B0",
+        "snapshot_digest": "C7BEC432D69CBB46C822F8F5C8B87F5B6BE577DE1CD1C3B249CFBF319A40C6B0"
+      },
+      "policy_revision": "209EB28FB327E0CDB27BE5E12C30B05AC4CB50BF00D165C31E018AD431EEB5BE",
+      "check_id": "exact-bytes",
+      "state": "pending",
+      "execution_id": "awaiting-owned-unit",
+      "recorded_at": "2026-10-29T11:37:58.630675+00:00"
+    },
+    {
+      "source": "controlled_local_check",
+      "candidate": {
+        "repository": {
+          "service": "local",
+          "namespace": "B000F3BD2638EA1F1B0C8A62",
+          "name": "workspace"
+        },
+        "revision": "snapshot:C7BEC432D69CBB46C822F8F5C8B87F5B6BE577DE1CD1C3B249CFBF319A40C6B0",
+        "snapshot_digest": "C7BEC432D69CBB46C822F8F5C8B87F5B6BE577DE1CD1C3B249CFBF319A40C6B0"
+      },
+      "policy_revision": "209EB28FB327E0CDB27BE5E12C30B05AC4CB50BF00D165C31E018AD431EEB5BE",
+      "check_id": "exact-bytes",
+      "state": "passed",
+      "execution_id": "nightshift-947efc67f01d42588bf6f5d278f4cd65",
+      "recorded_at": "2026-10-29T11:37:59.54262+00:00"
+    }
+  ]
+}
+
+
+exit=0
+$ /Users/adamkimberley/.dotnet/tools/nightshift reference --repository-service github --pipeline-service github-actions
+{
+  "accepted": true,
+  "stale_rejected": true,
+  "dispatches": 1,
+  "pull_requests": 1,
+  "directory": "/Users/adamkimberley/Library/Application Support/Nightshift/state/projects/C90E7330B6C9C947E82CB7D5/runs/20261029T113759772-564fcfc2",
+  "repository_service": "github",
+  "pipeline_service": "github-actions",
+  "evidence": "/Users/adamkimberley/Library/Application Support/Nightshift/state/projects/C90E7330B6C9C947E82CB7D5/runs/20261029T113759772-564fcfc2/hosted-evidence.json",
+  "assurance": "Actual local isolation \u002B offline HTTP fixtures; live accounts unexecuted"
+}
+
+
+exit=0
+$ /Users/adamkimberley/.dotnet/tools/nightshift reference --repository-service azure-devops --pipeline-service azure-pipelines
+{
+  "accepted": true,
+  "stale_rejected": true,
+  "dispatches": 1,
+  "pull_requests": 1,
+  "directory": "/Users/adamkimberley/Library/Application Support/Nightshift/state/projects/6B63DC87CAC5D2299337FD59/runs/20261029T113804698-df220357",
+  "repository_service": "azure-devops",
+  "pipeline_service": "azure-pipelines",
+  "evidence": "/Users/adamkimberley/Library/Application Support/Nightshift/state/projects/6B63DC87CAC5D2299337FD59/runs/20261029T113804698-df220357/hosted-evidence.json",
+  "assurance": "Actual local isolation \u002B offline HTTP fixtures; live accounts unexecuted"
+}
+
+
+exit=0
+PASS: user installation 0.3.1; doctor, enforced demo, explicit-path status/result outside project, GitHub and ADO references; no model or live account.

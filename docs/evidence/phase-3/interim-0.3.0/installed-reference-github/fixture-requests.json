@@ -1,0 +1,87 @@
+[
+  {
+    "method": "GET",
+    "path": "/repos/owner/repo/pulls?state=all\u0026per_page=100",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/repos/owner/repo/git/ref/heads/candidate",
+    "body": ""
+  },
+  {
+    "method": "POST",
+    "path": "/repos/owner/repo/pulls",
+    "body": "{\u0022title\u0022:\u0022Nightshift candidate 6765c62b390e605242764b82314db5e6b084c7dd\u0022,\u0022head\u0022:\u0022candidate\u0022,\u0022base\u0022:\u0022main\u0022,\u0022body\u0022:\u0022[nightshift:03f0dbdeb4f84a28bb7c7c5f086c31ec]\u0022}"
+  },
+  {
+    "method": "GET",
+    "path": "/repos/owner/repo/actions/workflows/17",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/repos/owner/repo/contents/.github/workflows/check.yml?ref=6765c62b390e605242764b82314db5e6b084c7dd",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/repos/owner/repo/actions/workflows/17/runs?event=workflow_dispatch\u0026head_sha=6765c62b390e605242764b82314db5e6b084c7dd\u0026per_page=100",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/repos/owner/repo/actions/workflows/17",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/repos/owner/repo/contents/.github/workflows/check.yml?ref=6765c62b390e605242764b82314db5e6b084c7dd",
+    "body": ""
+  },
+  {
+    "method": "POST",
+    "path": "/repos/owner/repo/actions/workflows/17/dispatches",
+    "body": "{\u0022ref\u0022:\u0022refs/heads/candidate\u0022,\u0022inputs\u0022:{\u0022nightshift_correlation\u0022:\u002203f0dbdeb4f84a28bb7c7c5f086c31ec\u0022,\u0022nightshift_candidate\u0022:\u00226765c62b390e605242764b82314db5e6b084c7dd\u0022}}"
+  },
+  {
+    "method": "GET",
+    "path": "/repos/owner/repo/actions/workflows/17",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/repos/owner/repo/contents/.github/workflows/check.yml?ref=6765c62b390e605242764b82314db5e6b084c7dd",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/repos/owner/repo/actions/workflows/17/runs?event=workflow_dispatch\u0026head_sha=6765c62b390e605242764b82314db5e6b084c7dd\u0026per_page=100",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/repos/owner/repo/actions/runs/27",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/repos/owner/repo/actions/workflows/17",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/repos/owner/repo/contents/.github/workflows/check.yml?ref=6765c62b390e605242764b82314db5e6b084c7dd",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/repos/owner/repo/actions/runs/27/logs",
+    "body": ""
+  },
+  {
+    "method": "GET",
+    "path": "/repos/owner/repo/actions/runs/27/artifacts?per_page=100",
+    "body": ""
+  }
+]

@@ -42,6 +42,9 @@ public class ProtectedRecoveryTests
             var before = Json.Read<Checkpoint>(File.ReadAllText(Path.Combine(run, "checkpoint.json"))); Assert.Equal("work", before.NextNode);
             var result = await new ProtectedWorkflow(state).RunAsync(run, true, null, new QueueInterviewer([]), CancellationToken.None);
             Assert.True(result.Acceptance.Accepted, result.Acceptance.Reason); Assert.Equal("success", result.Pipeline.State);
+            var output = new StringWriter(); var error = new StringWriter();
+            int inspectCode = await new CliApplication(output, error, root).RunAsync(["result", run, "--state-root", state.Root, "--json"]);
+            Assert.True(inspectCode == 0, error.ToString()); Assert.Contains("protected coordinator record", output.ToString());
             Assert.Contains("interrupted", File.ReadAllText(oldUnit));
             Assert.Equal(2, Directory.GetDirectories(Path.Combine(run, "work", "visit-0001")).Length);
             Assert.True(Directory.GetFiles(Path.Combine(run, "checkpoints")).Length > before.Revision);
@@ -64,6 +67,53 @@ public class ProtectedRecoveryTests
             Assert.True(result.Accepted); Assert.True(result.StaleRejected); Assert.Equal(1, result.Dispatches); Assert.Equal(1, result.PullRequests);
             var evidence = Json.Read<VerificationEvidence>(File.ReadAllText(result.Evidence)); Assert.Equal(CheckState.Passed, evidence.State);
             Assert.Equal(EvidenceSource.HostedCi, evidence.Source); Assert.StartsWith(pipeline + ":", evidence.ExecutionId);
+        }
+        finally { if (Directory.Exists(root)) Directory.Delete(root, true); }
+    }
+}
+
+[Trait("Category", "Isolation")]
+public class ProtectedDeadlineTests
+{
+    [Fact]
+    public async Task Run_deadline_is_incomplete_resumable_and_can_resume_only_with_a_permitted_bound()
+    {
+        string root = Path.Combine(Path.GetDirectoryName(ProtectedState.DefaultRoot)!, "phase-3-deadline-tests", Guid.NewGuid().ToString("N"));
+        string project = Path.Combine(root, "project"); Directory.CreateDirectory(project);
+        try
+        {
+            var state = new ProtectedState(project, Path.Combine(root, "state"));
+            await state.AdoptAsync(new("digraph deadline { start -> work -> exit; work [type=tool, tool_command=\"echo ready; sleep 1; printf candidate > candidate.txt\"]; }", "scripted", "/bin/sh", ContainerProfile.LocalDefault,
+                [new("bytes", "printf candidate | cmp -s - candidate.txt")], [], MaxSeconds: 30), CancellationToken.None);
+            string run = state.NewRun(); var workflow = new ProtectedWorkflow(state);
+            var timedOut = await workflow.RunAsync(run, false, new(10, .4), new QueueInterviewer([]), CancellationToken.None);
+            Assert.Equal("interrupted", timedOut.Pipeline.State); Assert.False(timedOut.Acceptance.Accepted); Assert.Null(timedOut.Pipeline.Checkpoint.FinalOutcome);
+            var resumed = await workflow.RunAsync(run, true, new(10, 20), new QueueInterviewer([]), CancellationToken.None);
+            Assert.True(resumed.Acceptance.Accepted, resumed.Acceptance.Reason); Assert.Equal("success", resumed.Pipeline.State);
+            Assert.True(Directory.GetFiles(Path.Combine(run, "execution-history")).Length > 0);
+        }
+        finally { if (Directory.Exists(root)) Directory.Delete(root, true); }
+    }
+    [Fact]
+    public async Task Hanging_verifier_is_bounded_cancelled_and_cannot_reuse_a_prior_passing_record()
+    {
+        string root = Path.Combine(Path.GetDirectoryName(ProtectedState.DefaultRoot)!, "phase-3-deadline-tests", Guid.NewGuid().ToString("N"));
+        string project = Path.Combine(root, "project"); Directory.CreateDirectory(project);
+        try
+        {
+            var state = new ProtectedState(project, Path.Combine(root, "state"));
+            await state.AdoptAsync(new("digraph verifier { start -> work -> exit; work [prompt=fixture]; }", "scripted", "/bin/sh", ContainerProfile.LocalDefault,
+                [new("bounded", "echo verifier-ready; sleep 30", .5)], []), CancellationToken.None);
+            var elapsed = Stopwatch.StartNew();
+            var result = await new ProtectedWorkflow(state).RunAsync(state.NewRun(), false, null, new QueueInterviewer([]), CancellationToken.None);
+            Assert.True(elapsed.Elapsed < TimeSpan.FromSeconds(15)); Assert.Equal("success", result.Pipeline.State); Assert.False(result.Acceptance.Accepted);
+            var records = EvidenceLedger.Read(result.RunDirectory); Assert.Equal(CheckState.Pending, records[0].State); Assert.Equal(CheckState.Cancelled, records[^1].State);
+            var output = new StringWriter(); var error = new StringWriter();
+            int resumeCode = await new CliApplication(output, error, project).RunAsync(["resume", "--latest", "--state-root", state.Root]);
+            Assert.True(resumeCode == 1, output.ToString() + error.ToString());
+            Assert.True(EvidenceLedger.Read(result.RunDirectory).Count > records.Count);
+            var oldPass = records[0] with { State = CheckState.Passed, RecordedAt = DateTimeOffset.UtcNow.AddDays(1) };
+            Assert.False(Acceptance.Decide(records[0].Candidate, records[0].PolicyRevision, ["bounded"], new[] { oldPass }.Concat(records)).Accepted);
         }
         finally { if (Directory.Exists(root)) Directory.Delete(root, true); }
     }

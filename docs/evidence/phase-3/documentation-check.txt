@@ -1,0 +1,1 @@
+PASS: checked 9 current phase-three Markdown documents; all local links resolve. Mermaid trust-boundary diagram reviewed in source.

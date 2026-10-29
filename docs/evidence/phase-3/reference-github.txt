@@ -1,0 +1,1 @@
+Error: Symlink paths are not allowed: /Users/adamkimberley/Library/Application Support/Nightshift/state

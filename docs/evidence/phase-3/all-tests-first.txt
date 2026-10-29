@@ -1,0 +1,31 @@
+  Nightshift.Core -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/bin/Debug/net10.0/Nightshift.Core.dll
+  Nightshift.Adapters -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Adapters/bin/Debug/net10.0/Nightshift.Adapters.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Debug/net10.0/Nightshift.Cli.dll
+  Nightshift.Tests -> /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/bin/Debug/net10.0/Nightshift.Tests.dll
+Test run for /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/bin/Debug/net10.0/Nightshift.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.1 (arm64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:14.59]     Nightshift.Tests.AdversarialIsolationTests.Forged_status_context_evidence_and_legacy_files_never_pass_acceptance [FAIL]
+  Failed Nightshift.Tests.AdversarialIsolationTests.Forged_status_context_evidence_and_legacy_files_never_pass_acceptance [307 ms]
+  Error Message:
+   Nightshift.Core.DotParseException : 1:72: Unsupported escape
+  Stack Trace:
+     at Nightshift.Core.Lexer.Scan() in /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/DotParser.cs:line 42
+   at Nightshift.Core.DotParser.Parse(String source) in /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/DotParser.cs:line 76
+   at Nightshift.Core.Preparation.Prepare(String dot, HandlerRegistry registry, IEnumerable`1 transforms) in /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/Configuration.cs:line 60
+   at Nightshift.Adapters.ProtectedWorkflow.RunAsync(String directory, Boolean resume, EngineOptions options, IInterviewer interviewer, CancellationToken token)
+   at Nightshift.Tests.AdversarialIsolationTests.Forged_status_context_evidence_and_legacy_files_never_pass_acceptance() in /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/IsolationTests.cs:line 126
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:25.16]     Nightshift.Tests.AdversarialIsolationTests.Cancellation_kills_the_owned_container_with_children_and_preserves_partial_logs [FAIL]
+  Failed Nightshift.Tests.AdversarialIsolationTests.Cancellation_kills_the_owned_container_with_children_and_preserves_partial_logs [10 s]
+  Error Message:
+   Assert.Contains() Failure: Sub-string not found
+String:    "{\n  "id": "nightshift-759d92811c88433aa5d"···
+Not found: "interrupted"
+  Stack Trace:
+     at Nightshift.Tests.AdversarialIsolationTests.Cancellation_kills_the_owned_container_with_children_and_preserves_partial_logs() in /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/IsolationTests.cs:line 155
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:     2, Passed:   170, Skipped:     0, Total:   172, Duration: 26 s - Nightshift.Tests.dll (net10.0)

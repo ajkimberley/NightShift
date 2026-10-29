@@ -1,0 +1,25 @@
+  Nightshift.Core -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/bin/Debug/net10.0/Nightshift.Core.dll
+  Nightshift.Adapters -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Adapters/bin/Debug/net10.0/Nightshift.Adapters.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Debug/net10.0/Nightshift.Cli.dll
+  Nightshift.Tests -> /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/bin/Debug/net10.0/Nightshift.Tests.dll
+Test run for /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/bin/Debug/net10.0/Nightshift.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.1 (arm64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.3)
+[xUnit.net 00:00:00.03]   Discovering: Nightshift.Tests
+[xUnit.net 00:00:00.06]   Discovered:  Nightshift.Tests
+[xUnit.net 00:00:00.07]   Starting:    Nightshift.Tests
+  Passed Nightshift.Tests.HostedHttpBoundaryTests.Injected_authentication_is_redacted_from_retrieved_log_text [6 ms]
+  Passed Nightshift.Tests.HostedHttpBoundaryTests.Malformed_native_metadata_is_a_protocol_error_and_never_a_success(azure: True) [7 ms]
+  Passed Nightshift.Tests.HostedHttpBoundaryTests.Malformed_native_metadata_is_a_protocol_error_and_never_a_success(azure: False) [< 1 ms]
+  Passed Nightshift.Tests.HostedHttpBoundaryTests.Service_response_bytes_are_bounded [1 ms]
+  Passed Nightshift.Tests.ProtectedDeadlineTests.Hanging_verifier_is_bounded_cancelled_and_cannot_reuse_a_prior_passing_record [2 s]
+[xUnit.net 00:00:07.22]   Finished:    Nightshift.Tests
+  Passed Nightshift.Tests.ProtectedDeadlineTests.Run_deadline_is_incomplete_resumable_and_can_resume_only_with_a_permitted_bound [4 s]
+
+Test Run Successful.
+Total tests: 6
+     Passed: 6
+ Total time: 7.4133 Seconds

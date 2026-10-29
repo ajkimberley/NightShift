@@ -80,6 +80,7 @@ public sealed class PodmanLauncher(ContainerProfile profile, WorkspaceSnapshot i
     }
     public async Task<WorkerResult> ExecuteAsync(WorkerCommand command, CancellationToken token)
     {
+        if (OperatingSystem.IsWindows()) throw new IOException("Protected execution requires Linux containers; native Windows is unsupported");
         if (UnixIdentity.UserId == 0) throw new IOException("The protected coordinator must run as a non-root user");
         if (running) throw new InvalidOperationException("One owned execution at a time");
         running = true;

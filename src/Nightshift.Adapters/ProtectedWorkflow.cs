@@ -80,6 +80,7 @@ public sealed class ProtectedWorkflow(ProtectedState state)
         var manifest = resume ? Json.Read<RunManifest>(File.ReadAllText(Path.Combine(directory, "manifest.json"))) : null;
         var savedSettings = resume && File.Exists(Path.Combine(directory, "execution.json")) ? Json.Read<ExecutionSettings>(File.ReadAllText(Path.Combine(directory, "execution.json"))) : manifest?.Execution;
         options ??= resume ? (savedSettings?.Limits ?? manifest!.Options) with { PauseAfterStages = null } : new(policy.MaxVisits, policy.MaxSeconds);
+        options = options with { InterruptOnDeadline = true };
         if (options.MaxVisits > policy.MaxVisits || options.MaxSeconds > policy.MaxSeconds) throw new ArgumentException("Run limits cannot exceed adopted policy limits");
         var settings = new ExecutionSettings(state.ProjectRoot, policy.Backend, null, runtime.Profile, policy.AllowModel,
             Path.Combine(state.ProjectDirectory, "runs"), Path.Combine(directory, "graph.dot"), [], new Dictionary<string, string> { ["policy"] = revision }, Limits: options);
@@ -100,11 +101,25 @@ public sealed class ProtectedWorkflow(ProtectedState state)
                 {
                     // Each verifier gets the exact candidate, freshly copied; verifier writes cannot alter it.
                     var verifier = new PodmanLauncher(policy.Runtime, launcher.Snapshot, directory);
-                    var executed = await verifier.ExecuteAsync(new("/bin/sh", ["-c", check.Command]), token);
-                    executionId = executed.ExecutionId; result = executed.ExitCode == 0 ? CheckState.Passed : CheckState.Failed;
-                    string logs = Path.Combine(directory, "verification-logs", Guid.NewGuid().ToString("N")); Directory.CreateDirectory(logs);
-                    await File.WriteAllTextAsync(Path.Combine(logs, "stdout.txt"), executed.Stdout, token);
-                    await File.WriteAllTextAsync(Path.Combine(logs, "stderr.txt"), executed.Stderr, token);
+                    var pending = new VerificationEvidence(EvidenceSource.ControlledLocalCheck, candidate, revision, check.Id, CheckState.Pending, "awaiting-owned-unit", DateTimeOffset.UtcNow);
+                    await EvidenceLedger.AppendAsync(directory, pending, CancellationToken.None);
+                    using var checkDeadline = CancellationTokenSource.CreateLinkedTokenSource(token);
+                    checkDeadline.CancelAfter(TimeSpan.FromSeconds(check.MaxSeconds));
+                    try
+                    {
+                        var executed = await verifier.ExecuteAsync(new("/bin/sh", ["-c", check.Command]), checkDeadline.Token);
+                        executionId = executed.ExecutionId; result = executed.ExitCode == 0 ? CheckState.Passed : CheckState.Failed;
+                        string logs = Path.Combine(directory, "verification-logs", Guid.NewGuid().ToString("N")); Directory.CreateDirectory(logs);
+                        await File.WriteAllTextAsync(Path.Combine(logs, "stdout.txt"), executed.Stdout, token);
+                        await File.WriteAllTextAsync(Path.Combine(logs, "stderr.txt"), executed.Stderr, token);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        var interrupted = pending with { State = CheckState.Cancelled, ExecutionId = verifier.LastExecutionId ?? "not-started", RecordedAt = DateTimeOffset.UtcNow };
+                        await EvidenceLedger.AppendAsync(directory, interrupted, CancellationToken.None);
+                        if (token.IsCancellationRequested) throw;
+                        executionId = interrupted.ExecutionId; result = CheckState.Cancelled;
+                    }
                 }
                 var record = new VerificationEvidence(EvidenceSource.ControlledLocalCheck, candidate, revision, check.Id, result, executionId, DateTimeOffset.UtcNow);
                 evidence.Add(record);

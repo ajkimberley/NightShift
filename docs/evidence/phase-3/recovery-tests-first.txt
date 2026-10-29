@@ -1,0 +1,22 @@
+  Nightshift.Core -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/bin/Debug/net10.0/Nightshift.Core.dll
+  Nightshift.Adapters -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Adapters/bin/Debug/net10.0/Nightshift.Adapters.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Debug/net10.0/Nightshift.Cli.dll
+  Nightshift.Tests -> /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/bin/Debug/net10.0/Nightshift.Tests.dll
+Test run for /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/bin/Debug/net10.0/Nightshift.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.1 (arm64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.3)
+[xUnit.net 00:00:00.02]   Discovering: Nightshift.Tests
+[xUnit.net 00:00:00.05]   Discovered:  Nightshift.Tests
+[xUnit.net 00:00:00.06]   Starting:    Nightshift.Tests
+  Passed Nightshift.Tests.ProtectedRecoveryTests.Full_reference_has_isolated_agent_exact_git_candidate_hosted_recovery_and_stale_rejection(repository: "github", pipeline: "github-actions") [5 s]
+  Passed Nightshift.Tests.ProtectedRecoveryTests.Full_reference_has_isolated_agent_exact_git_candidate_hosted_recovery_and_stale_rejection(repository: "azure-devops", pipeline: "azure-pipelines") [4 s]
+[xUnit.net 00:00:16.43]   Finished:    Nightshift.Tests
+  Passed Nightshift.Tests.ProtectedRecoveryTests.Abrupt_coordinator_crash_recovers_owned_execution_retains_attempts_and_accepts_replayed_candidate [6 s]
+
+Test Run Successful.
+Total tests: 3
+     Passed: 3
+ Total time: 16.6260 Seconds

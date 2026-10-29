@@ -1,0 +1,4 @@
+{
+  "error": "Symlink paths are not allowed: /Users/adamkimberley/Library/Application Support/Nightshift/state",
+  "next_action": "nightshift help"
+}

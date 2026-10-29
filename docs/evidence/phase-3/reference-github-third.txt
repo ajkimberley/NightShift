@@ -1,0 +1,11 @@
+{
+  "accepted": true,
+  "stale_rejected": true,
+  "dispatches": 1,
+  "pull_requests": 1,
+  "directory": "/Users/adamkimberley/Library/Application Support/Nightshift/state/projects/4F4C97417A182564E478A1BC/runs/20261029T110131257-787fab4b",
+  "repository_service": "github",
+  "pipeline_service": "github-actions",
+  "evidence": "/Users/adamkimberley/Library/Application Support/Nightshift/state/projects/4F4C97417A182564E478A1BC/runs/20261029T110131257-787fab4b/hosted-evidence.json",
+  "assurance": "Actual local isolation \u002B offline HTTP fixtures; live accounts unexecuted"
+}

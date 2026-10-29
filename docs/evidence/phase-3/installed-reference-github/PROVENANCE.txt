@@ -1,0 +1,1 @@
+Audit copies from the coordinator-owned run path in reference-result.json. Real local containers/Git; fake HTTP only. These checkout copies are not an authoritative run store.

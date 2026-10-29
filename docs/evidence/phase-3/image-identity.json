@@ -1,0 +1,72 @@
+[
+     {
+          "Id": "f28fb2fa6085390a967d9b74491b91c53cf00dec45bf1c7defa6aae11a52e519",
+          "Digest": "sha256:2e0b81d60597f449baa56dc25d355367869d2dca4cd57e866f1e2b52af3eb55f",
+          "RepoTags": [
+               "docker.io/library/alpine:3.22"
+          ],
+          "RepoDigests": [
+               "docker.io/library/alpine@sha256:2e0b81d60597f449baa56dc25d355367869d2dca4cd57e866f1e2b52af3eb55f",
+               "docker.io/library/alpine@sha256:3e07a4f627d12468155eb812785e10f2453a447c346872b47788a62437366764"
+          ],
+          "Parent": "",
+          "Comment": "buildkit.dockerfile.v0",
+          "Created": "2026-10-21T20:47:02.239161075Z",
+          "Config": {
+               "Env": [
+                    "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+               ],
+               "Cmd": [
+                    "/bin/sh"
+               ],
+               "WorkingDir": "/"
+          },
+          "Version": "",
+          "Author": "",
+          "Architecture": "arm64",
+          "Os": "linux",
+          "Size": 17655415,
+          "VirtualSize": 17655415,
+          "GraphDriver": {
+               "Name": "overlay",
+               "Data": {
+                    "UpperDir": "/var/home/core/.local/share/containers/storage/overlay/f27c84aef3509463528cb456fbf5bfa25cdc7dcea6912131a622883b5e005744/diff",
+                    "WorkDir": "/var/home/core/.local/share/containers/storage/overlay/f27c84aef3509463528cb456fbf5bfa25cdc7dcea6912131a622883b5e005744/work"
+               }
+          },
+          "RootFS": {
+               "Type": "layers",
+               "Layers": [
+                    "sha256:f27c84aef3509463528cb456fbf5bfa25cdc7dcea6912131a622883b5e005744"
+               ]
+          },
+          "Labels": null,
+          "Annotations": {
+               "com.docker.official-images.bashbrew.arch": "arm64v8",
+               "org.opencontainers.image.base.name": "scratch",
+               "org.opencontainers.image.created": "2026-10-21T20:46:59Z",
+               "org.opencontainers.image.revision": "0f41d588b1c2b004dfc99868bbe7ce4d37b99790",
+               "org.opencontainers.image.source": "https://github.com/alpinelinux/docker-alpine.git#0f41d588b1c2b004dfc99868bbe7ce4d37b99790:aarch64",
+               "org.opencontainers.image.url": "https://hub.docker.com/_/alpine",
+               "org.opencontainers.image.version": "3.22.7"
+          },
+          "ManifestType": "application/vnd.oci.image.manifest.v1+json",
+          "User": "",
+          "History": [
+               {
+                    "created": "2026-10-21T20:47:02.239161075Z",
+                    "created_by": "ADD alpine-minirootfs-3.22.7-aarch64.tar.gz / # buildkit",
+                    "comment": "buildkit.dockerfile.v0"
+               },
+               {
+                    "created": "2026-10-21T20:47:02.239161075Z",
+                    "created_by": "CMD [\"/bin/sh\"]",
+                    "comment": "buildkit.dockerfile.v0",
+                    "empty_layer": true
+               }
+          ],
+          "NamesHistory": [
+               "docker.io/library/alpine:3.22"
+          ]
+     }
+]

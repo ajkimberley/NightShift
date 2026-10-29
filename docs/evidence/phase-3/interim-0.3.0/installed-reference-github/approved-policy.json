@@ -1,0 +1,29 @@
+{
+  "workflow": "digraph reference { graph [default_fidelity=truncate]; start -\u003E work -\u003E exit; work [prompt=\u0022Produce fixture candidate\u0022]; }",
+  "backend": "fake-codex",
+  "agent_executable": "/workspace/fake-agent",
+  "runtime": {
+    "executable": "/opt/homebrew/bin/podman",
+    "connection": "nightshift-dev",
+    "share_root": "/Users/adamkimberley/Library/Application Support/Nightshift/container-workspaces",
+    "image": "docker.io/library/alpine@sha256:2e0b81d60597f449baa56dc25d355367869d2dca4cd57e866f1e2b52af3eb55f"
+  },
+  "checks": [
+    {
+      "id": "local-bytes",
+      "command": "printf \u0027checked candidate\\n\u0027 | cmp -s - candidate.txt"
+    }
+  ],
+  "pinned_files": [
+    {
+      "path": "fake-agent",
+      "base64": "IyEvYmluL3NoCmlmIFsgIiQxIiA9IC0tdmVyc2lvbiBdOyB0aGVuIGVjaG8gJ2Zha2UtY29kZXggMSc7IGV4aXQgMDsgZmkKY2F0ID4vdG1wL3Byb21wdApwcmludGYgJ2NoZWNrZWQgY2FuZGlkYXRlXG4nID4gY2FuZGlkYXRlLnR4dApwcmludGYgJyVzXG4nICd7InR5cGUiOiJpdGVtLmNvbXBsZXRlZCIsIml0ZW0iOnsidHlwZSI6ImFnZW50X21lc3NhZ2UiLCJ0ZXh0Ijoie1wib3V0Y29tZVwiOlwic3VjY2Vzc1wiLFwibm90ZXNcIjpcImZpeHR1cmUgY2FuZGlkYXRlXCJ9In19JyAneyJ0eXBlIjoidHVybi5jb21wbGV0ZWQifSc="
+    }
+  ],
+  "repository_service": "github",
+  "pipeline_service": "github-actions",
+  "allow_model": false,
+  "max_visits": 1000,
+  "max_seconds": 3600,
+  "schema_version": 1
+}

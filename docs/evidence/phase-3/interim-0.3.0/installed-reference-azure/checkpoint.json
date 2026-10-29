@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "timestamp": "2026-10-29T11:31:17.617716+00:00",
+  "graph_hash": "DE801AE901A235B771556FBCEFE715007A57BFA68B56C52E81058736799EE209",
+  "current_node": "exit",
+  "next_node": null,
+  "incoming_edge_index": 1,
+  "completed_nodes": [
+    "start",
+    "work",
+    "exit"
+  ],
+  "node_outcomes": {
+    "start": {
+      "outcome": "success",
+      "preferred_label": "",
+      "suggested_next_ids": [],
+      "context_updates": {},
+      "notes": "",
+      "failure_reason": ""
+    },
+    "work": {
+      "outcome": "success",
+      "preferred_label": "",
+      "suggested_next_ids": [],
+      "context_updates": {},
+      "notes": "Untrusted worker claim: fixture candidate",
+      "failure_reason": ""
+    }
+  },
+  "node_visits": {
+    "start": 1,
+    "work": 1,
+    "exit": 1
+  },
+  "node_retries": {
+    "start": 0,
+    "work": 0
+  },
+  "context_values": {
+    "graph.default_fidelity": "truncate",
+    "run.id": "20261029T113113716-7e0db024",
+    "current_node": "exit",
+    "internal.retry_count.start": 0,
+    "outcome": "success",
+    "preferred_label": "",
+    "internal.retry_count.work": 0
+  },
+  "transitions": [
+    {
+      "from": "start",
+      "to": "work",
+      "edge_index": 0,
+      "reason": "edge"
+    },
+    {
+      "from": "work",
+      "to": "exit",
+      "edge_index": 1,
+      "reason": "edge"
+    }
+  ],
+  "logs": [],
+  "pending_visit": null,
+  "attempt_ordinal": 0,
+  "pending_retries": 0,
+  "total_visits": 3,
+  "revision": 7,
+  "elapsed_seconds": 1.0215677,
+  "state": "success",
+  "final_outcome": {
+    "outcome": "success",
+    "preferred_label": "",
+    "suggested_next_ids": [],
+    "context_updates": {},
+    "notes": "Pipeline reached exit; visited goal gates satisfied",
+    "failure_reason": ""
+  }
+}

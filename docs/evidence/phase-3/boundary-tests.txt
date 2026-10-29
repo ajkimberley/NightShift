@@ -1,0 +1,20 @@
+  Nightshift.Core -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/bin/Debug/net10.0/Nightshift.Core.dll
+  Nightshift.Adapters -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Adapters/bin/Debug/net10.0/Nightshift.Adapters.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Debug/net10.0/Nightshift.Cli.dll
+  Nightshift.Tests -> /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/bin/Debug/net10.0/Nightshift.Tests.dll
+Test run for /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/bin/Debug/net10.0/Nightshift.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.1 (arm64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:04.38]     Nightshift.Tests.ProcessTests.OptInCodexProcessUsesDocumentedArgumentsStructuredOutcomeAndMinimalFidelity [FAIL]
+  Failed Nightshift.Tests.ProcessTests.OptInCodexProcessUsesDocumentedArgumentsStructuredOutcomeAndMinimalFidelity [431 ms]
+  Error Message:
+   System.InvalidOperationException : Sequence contains no elements
+  Stack Trace:
+     at System.Linq.ThrowHelper.ThrowNoElementsException()
+   at System.Linq.Enumerable.Single[TSource](IEnumerable`1 source)
+   at Nightshift.Tests.ProcessTests.OptInCodexProcessUsesDocumentedArgumentsStructuredOutcomeAndMinimalFidelity() in /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/ProcessTests.cs:line 75
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:     1, Passed:   116, Skipped:     0, Total:   117, Duration: 6 s - Nightshift.Tests.dll (net10.0)

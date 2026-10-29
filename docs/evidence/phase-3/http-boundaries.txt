@@ -1,0 +1,48 @@
+  Nightshift.Core -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/bin/Debug/net10.0/Nightshift.Core.dll
+  Nightshift.Adapters -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Adapters/bin/Debug/net10.0/Nightshift.Adapters.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Debug/net10.0/Nightshift.Cli.dll
+  Nightshift.Tests -> /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/bin/Debug/net10.0/Nightshift.Tests.dll
+Test run for /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/bin/Debug/net10.0/Nightshift.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.1 (arm64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.3)
+[xUnit.net 00:00:00.03]   Discovering: Nightshift.Tests
+[xUnit.net 00:00:00.07]   Discovered:  Nightshift.Tests
+[xUnit.net 00:00:00.08]   Starting:    Nightshift.Tests
+  Passed Nightshift.Tests.HostedHttpBoundaryTests.Injected_authentication_is_redacted_from_retrieved_log_text [8 ms]
+  Passed Nightshift.Tests.HostedHttpBoundaryTests.Malformed_native_metadata_is_a_protocol_error_and_never_a_success(azure: True) [8 ms]
+  Passed Nightshift.Tests.HostedHttpBoundaryTests.Malformed_native_metadata_is_a_protocol_error_and_never_a_success(azure: False) [< 1 ms]
+  Passed Nightshift.Tests.HostedHttpBoundaryTests.Service_response_bytes_are_bounded [1 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Repository_and_pipeline_selections_work_independently_and_reconcile_lost_post_response(azureRepo: False, azurePipeline: False) [144 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Repository_and_pipeline_selections_work_independently_and_reconcile_lost_post_response(azureRepo: True, azurePipeline: False) [53 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Repository_and_pipeline_selections_work_independently_and_reconcile_lost_post_response(azureRepo: False, azurePipeline: True) [59 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Repository_and_pipeline_selections_work_independently_and_reconcile_lost_post_response(azureRepo: True, azurePipeline: True) [41 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Authentication_authorization_and_transport_errors_are_distinct_and_redacted(azure: False, status: Forbidden, expected: Authorization) [5 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Authentication_authorization_and_transport_errors_are_distinct_and_redacted(azure: True, status: Forbidden, expected: Authorization) [4 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Authentication_authorization_and_transport_errors_are_distinct_and_redacted(azure: True, status: ServiceUnavailable, expected: Transport) [5 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Authentication_authorization_and_transport_errors_are_distinct_and_redacted(azure: False, status: ServiceUnavailable, expected: Transport) [4 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Authentication_authorization_and_transport_errors_are_distinct_and_redacted(azure: False, status: Unauthorized, expected: Authentication) [6 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Authentication_authorization_and_transport_errors_are_distinct_and_redacted(azure: True, status: Unauthorized, expected: Authentication) [6 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Native_states_are_mapped_conservatively(azure: False, status: "in_progress", result: "", expected: Running) [27 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Native_states_are_mapped_conservatively(azure: True, status: "completed", result: "cancelled", expected: Cancelled) [25 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Native_states_are_mapped_conservatively(azure: True, status: "completed", result: "none", expected: Unknown) [29 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Native_states_are_mapped_conservatively(azure: False, status: "completed", result: "neutral", expected: Unknown) [40 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Native_states_are_mapped_conservatively(azure: False, status: "queued", result: "", expected: Pending) [32 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Native_states_are_mapped_conservatively(azure: True, status: "completed", result: "failed", expected: Failed) [34 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Native_states_are_mapped_conservatively(azure: True, status: "in_progress", result: "", expected: Running) [45 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Native_states_are_mapped_conservatively(azure: True, status: "queued", result: "", expected: Pending) [28 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Native_states_are_mapped_conservatively(azure: False, status: "completed", result: "failure", expected: Failed) [29 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Native_states_are_mapped_conservatively(azure: False, status: "completed", result: "cancelled", expected: Cancelled) [45 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Changed_commit_definition_duplicate_correlation_and_ambiguous_dispatch_never_pass(azure: True) [89 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Changed_commit_definition_duplicate_correlation_and_ambiguous_dispatch_never_pass(azure: False) [82 ms]
+  Passed Nightshift.Tests.HostedAdapterTests.Credentials_are_never_forwarded_to_arbitrary_log_redirects_or_cross_origin_requests [40 ms]
+  Passed Nightshift.Tests.ProtectedRecoveryTests.Full_reference_has_isolated_agent_exact_git_candidate_hosted_recovery_and_stale_rejection(repository: "github", pipeline: "github-actions") [4 s]
+[xUnit.net 00:00:09.31]   Finished:    Nightshift.Tests
+  Passed Nightshift.Tests.ProtectedRecoveryTests.Full_reference_has_isolated_agent_exact_git_candidate_hosted_recovery_and_stale_rejection(repository: "azure-devops", pipeline: "azure-pipelines") [4 s]
+
+Test Run Successful.
+Total tests: 29
+     Passed: 29
+ Total time: 9.5662 Seconds

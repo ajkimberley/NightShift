@@ -1,0 +1,1 @@
+PASS: user installation 0.3.1; doctor, enforced demo, explicit-path status/result outside project, GitHub and ADO references; no model or live account.

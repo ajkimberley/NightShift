@@ -1,0 +1,8 @@
+{
+  "reason": "Remove only two owned workspaces retained by the recorded initial cancellation grace-timeout failures",
+  "containers_before": [],
+  "removed": [
+    "/Users/adamkimberley/Library/Application Support/Nightshift/container-workspaces/nightshift-3a5d732b293f40a990c23e40ea17ff98",
+    "/Users/adamkimberley/Library/Application Support/Nightshift/container-workspaces/nightshift-759d92811c88433aa5df4cc068baa474"
+  ]
+}

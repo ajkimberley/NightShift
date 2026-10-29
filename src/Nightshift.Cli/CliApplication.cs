@@ -86,7 +86,7 @@ public sealed class CliApplication(TextWriter output, TextWriter error, string i
             var settings = new ExecutionSettings(project.Root, backend, executable, sandbox, enabled, outputRoot, workflow, args.Outputs.Count > 0 ? args.Outputs.Select(p => Project.FullPath(p, invocationDirectory)).ToList() : project.Configuration.Outputs.Select(project.Resolve).ToList(), sources);
             return await Execute(args, settings, workingDirectory, NewRunDirectory(args, outputRoot), Options(args, project.Configuration), false, token);
         }
-        catch (OperationCanceledException) { WriteError(args, "Cancelled before a resumable run was initialized."); return 130; }
+        catch (OperationCanceledException) { WriteError(args, "Cancelled; use status --latest to inspect any initialized run. Protected pending execution or verification can be resumed."); return 130; }
         catch (Exception e) when (e is ServiceException or ArgumentException or IOException or FormatException or OverflowException or PipelineException or DotParseException or JsonException or UnauthorizedAccessException or System.ComponentModel.Win32Exception or InvalidOperationException)
         { WriteError(args, e.Message); return 2; }
     }

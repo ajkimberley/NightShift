@@ -1,0 +1,38 @@
+{
+  "candidate": {
+    "repository": {
+      "service": "fixture",
+      "namespace": "owner",
+      "name": "repo"
+    },
+    "revision": "98a4f97cf919866fa3b6c66eea3146c48b7ec4b5",
+    "snapshot_digest": "6FABA107FAF13F71153C5DCC053420EF7B8013A6496DC10A21783A95A952CE49"
+  },
+  "pipeline": {
+    "id": "17",
+    "revision": "3:D4614C1CE708FD548F110457D043819985764B12F0B9A502A276F4238A81A1C3",
+    "ref": "refs/heads/candidate"
+  },
+  "source_ref": "candidate",
+  "target_ref": "main",
+  "repository_adapter": "azure-devops",
+  "pipeline_adapter": "azure-pipelines",
+  "correlation": "ca8b27d659b44fa09094b5dab5eedfbf",
+  "pr_dispatched": true,
+  "pull_request": {
+    "id": "8",
+    "url": "https://fixture.invalid/pr/8",
+    "candidate_revision": "98a4f97cf919866fa3b6c66eea3146c48b7ec4b5",
+    "correlation": "ca8b27d659b44fa09094b5dab5eedfbf"
+  },
+  "check_dispatched": true,
+  "run": {
+    "id": "27",
+    "url": "https://fixture.invalid/run/27",
+    "candidate_revision": "98a4f97cf919866fa3b6c66eea3146c48b7ec4b5",
+    "pipeline_id": "17",
+    "correlation": "ca8b27d659b44fa09094b5dab5eedfbf",
+    "state": "passed"
+  },
+  "state": "passed"
+}

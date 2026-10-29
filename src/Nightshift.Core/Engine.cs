@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Nightshift.Core;
 
-public sealed record EngineOptions(int MaxVisits = 1000, double MaxSeconds = 3600, int? PauseAfterStages = null);
+public sealed record EngineOptions(int MaxVisits = 1000, double MaxSeconds = 3600, int? PauseAfterStages = null, bool InterruptOnDeadline = false);
 public sealed record RunResult(Outcome Outcome, string State, Checkpoint Checkpoint);
 public sealed record Backoff(double InitialMilliseconds = 200, double Factor = 2, double MaxMilliseconds = 60000, bool Jitter = true)
 {
@@ -136,7 +136,9 @@ public sealed class Engine(HandlerRegistry handlers, IRetryDelay? retryDelay = n
         }
         catch (OperationCanceledException)
         {
-            if (deadline.IsCancellationRequested && !cancellationToken.IsCancellationRequested) return await Finish(Outcome.Fail("Run time limit reached; incomplete"), "incomplete");
+            if (deadline.IsCancellationRequested && !cancellationToken.IsCancellationRequested) return options.InterruptOnDeadline
+                ? await Interrupt("Run time limit reached; incomplete; pending execution can replay with an explicit permitted bound increase")
+                : await Finish(Outcome.Fail("Run time limit reached; incomplete"), "incomplete");
             return await Interrupt("Cancelled; pending stage can replay on resume");
         }
         catch (Exception e) { return await Finish(Outcome.Fail($"Pipeline error: {e.GetType().Name}: {e.Message}"), "failed"); }

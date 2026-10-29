@@ -82,3 +82,12 @@
     Linux-rootless composition is implemented but unexecuted here. Native Windows/
     macOS security, live agent images/network/auth, work systems, ADO Server,
     deployments and production/security certification remain unverified/out of scope.
+
+13. **Protected deadlines:** the protected composition opts into `InterruptOnDeadline`;
+    the default Core/native terminal-deadline behavior is retained for compatibility.
+    A graph deadline records an incomplete resumable checkpoint. Explicit bound
+    increases must stay within adopted policy. Each approved check has a separate
+    `max_seconds` (default 60, at most 3600); its pending record is durable before
+    launch, and cancellation/deadline records a nonpassing terminal verdict. Thus a
+    cancelled rerun cannot reuse older passing evidence. `resume --latest` includes
+    successful graph runs whose verification remains incomplete/nonpassing.

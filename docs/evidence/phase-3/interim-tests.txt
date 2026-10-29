@@ -1,0 +1,30 @@
+  Nightshift.Core -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/bin/Debug/net10.0/Nightshift.Core.dll
+  Nightshift.Adapters -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Adapters/bin/Debug/net10.0/Nightshift.Adapters.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Debug/net10.0/Nightshift.Cli.dll
+  Nightshift.Tests -> /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/bin/Debug/net10.0/Nightshift.Tests.dll
+Test run for /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/bin/Debug/net10.0/Nightshift.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.1 (arm64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.29]     Nightshift.Tests.CliRecoveryTests.CliPauseResumeInspectEventsValidationAndWorkerOptInHaveExplicitExitCodes [FAIL]
+  Failed Nightshift.Tests.CliRecoveryTests.CliPauseResumeInspectEventsValidationAndWorkerOptInHaveExplicitExitCodes [203 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 3
+Actual:   2
+  Stack Trace:
+     at Nightshift.Tests.CliRecoveryTests.CliPauseResumeInspectEventsValidationAndWorkerOptInHaveExplicitExitCodes() in /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/CliRecoveryTests.cs:line 58
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:05.32]     Nightshift.Tests.CliRecoveryTests.AbruptProcessInterruptionBeforeCompletionResumesFromDurableContinuation [FAIL]
+  Failed Nightshift.Tests.CliRecoveryTests.AbruptProcessInterruptionBeforeCompletionResumesFromDurableContinuation [5 s]
+  Error Message:
+   Condition was not met within five seconds
+  Stack Trace:
+     at Nightshift.Tests.ProcessTests.WaitUntil(Func`1 predicate) in /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/ProcessTests.cs:line 114
+   at Nightshift.Tests.ProcessTests.WaitForFile(String path) in /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/ProcessTests.cs:line 111
+   at Nightshift.Tests.CliRecoveryTests.AbruptProcessInterruptionBeforeCompletionResumesFromDurableContinuation() in /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/CliRecoveryTests.cs:line 33
+   at Nightshift.Tests.CliRecoveryTests.AbruptProcessInterruptionBeforeCompletionResumesFromDurableContinuation() in /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/CliRecoveryTests.cs:line 34
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:     2, Passed:   115, Skipped:     0, Total:   117, Duration: 6 s - Nightshift.Tests.dll (net10.0)

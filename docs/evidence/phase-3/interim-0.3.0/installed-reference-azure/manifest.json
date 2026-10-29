@@ -1,0 +1,31 @@
+{
+  "graph_name": "reference",
+  "goal": "",
+  "graph_hash": "DE801AE901A235B771556FBCEFE715007A57BFA68B56C52E81058736799EE209",
+  "working_directory": "/Users/adamkimberley/Library/Application Support/Nightshift/reference-projects/6e78513e0b4b46f09adb8ea832c2fdd3",
+  "started_at": "2026-10-29T11:31:14.998184+00:00",
+  "options": {
+    "max_visits": 10,
+    "max_seconds": 60,
+    "pause_after_stages": 1
+  },
+  "execution": {
+    "project_root": "/Users/adamkimberley/Library/Application Support/Nightshift/reference-projects/6e78513e0b4b46f09adb8ea832c2fdd3",
+    "backend": "fake-codex",
+    "codex_executable": null,
+    "sandbox": "linux-container-v1",
+    "enable_codex": false,
+    "run_output_root": "/Users/adamkimberley/Library/Application Support/Nightshift/state/projects/D30BC595F025A1E1AB9E1C0E/runs",
+    "workflow_path": "/Users/adamkimberley/Library/Application Support/Nightshift/state/projects/D30BC595F025A1E1AB9E1C0E/runs/20261029T113113716-7e0db024/graph.dot",
+    "outputs": [],
+    "sources": {
+      "policy": "90D61F670711DB082D4A24B2B5DEC05C2EE6ED48A033D2545CCD5655FBAEA625"
+    },
+    "schema_version": 1,
+    "limits": {
+      "max_visits": 10,
+      "max_seconds": 60,
+      "pause_after_stages": 1
+    }
+  }
+}

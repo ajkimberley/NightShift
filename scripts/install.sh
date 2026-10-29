@@ -4,7 +4,7 @@ set -euo pipefail
 repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 action=${1:-install}
 package_id=Nightshift.Cli
-package_version=0.3.0
+package_version=0.3.1
 tool_dir="$HOME/.dotnet/tools"
 case "$action" in
   install|update|uninstall) ;;

@@ -3,7 +3,7 @@ using Nightshift.Core;
 
 namespace Nightshift.Adapters;
 
-public sealed record ApprovedCheck(string Id, string Command);
+public sealed record ApprovedCheck(string Id, string Command, double MaxSeconds = 60);
 public sealed record PinnedFile(string Path, string Base64);
 public sealed record ApprovedPolicy(string Workflow, string Backend, string AgentExecutable, ContainerProfile Runtime,
     ApprovedCheck[] Checks, PinnedFile[] PinnedFiles, string RepositoryService = "none", string PipelineService = "none", bool AllowModel = false,
@@ -50,7 +50,7 @@ public sealed class ProtectedState
         if (Within(Root, policy.Runtime.ShareRoot) || Within(ProjectRoot, policy.Runtime.ShareRoot)) throw new IOException("Policy exposes protected paths");
         if (policy.Backend is not "scripted" and not "codex" and not "claude-code" and not "fake-codex" and not "fake-claude") throw new ArgumentException("Unsupported agent backend");
         if (policy.Backend is "codex" or "claude-code" && !policy.AllowModel) throw new ArgumentException("Live backend adoption requires explicit model permission");
-        if (policy.Checks.Select(c => c.Id).Distinct().Count() != policy.Checks.Length || policy.Checks.Any(c => string.IsNullOrWhiteSpace(c.Id) || string.IsNullOrWhiteSpace(c.Command))) throw new ArgumentException("Check IDs must be unique/nonempty");
+        if (policy.Checks.Select(c => c.Id).Distinct().Count() != policy.Checks.Length || policy.Checks.Any(c => string.IsNullOrWhiteSpace(c.Id) || string.IsNullOrWhiteSpace(c.Command) || c.MaxSeconds <= 0 || c.MaxSeconds > 3600 || !double.IsFinite(c.MaxSeconds))) throw new ArgumentException("Check IDs must be unique/nonempty");
         foreach (var f in policy.PinnedFiles) { WorkspaceSnapshot.ValidateName(f.Path); Convert.FromBase64String(f.Base64); }
         string revision = Engine.Hash(Json.Serialize(policy));
         Directory.CreateDirectory(Path.Combine(ProjectDirectory, "policies"));

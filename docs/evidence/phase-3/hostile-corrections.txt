@@ -1,0 +1,21 @@
+  Nightshift.Core -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/bin/Debug/net10.0/Nightshift.Core.dll
+  Nightshift.Adapters -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Adapters/bin/Debug/net10.0/Nightshift.Adapters.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Debug/net10.0/Nightshift.Cli.dll
+  Nightshift.Tests -> /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/bin/Debug/net10.0/Nightshift.Tests.dll
+Test run for /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/bin/Debug/net10.0/Nightshift.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.1 (arm64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.3)
+[xUnit.net 00:00:00.03]   Discovering: Nightshift.Tests
+[xUnit.net 00:00:00.07]   Discovered:  Nightshift.Tests
+[xUnit.net 00:00:00.07]   Starting:    Nightshift.Tests
+  Passed Nightshift.Tests.AdversarialIsolationTests.Forged_status_context_evidence_and_legacy_files_never_pass_acceptance [2 s]
+[xUnit.net 00:00:03.06]   Finished:    Nightshift.Tests
+  Passed Nightshift.Tests.AdversarialIsolationTests.Cancellation_kills_the_owned_container_with_children_and_preserves_partial_logs [659 ms]
+
+Test Run Successful.
+Total tests: 2
+     Passed: 2
+ Total time: 3.3069 Seconds

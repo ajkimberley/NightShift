@@ -32,8 +32,8 @@ def run(args, expected=0, cwd=project, tool=True):
 
 try:
     run(['dotnet', 'pack', repo / 'src/Nightshift.Cli', '-c', 'Release', '--no-restore', '-o', root / 'packages'], cwd=repo, tool=False)
-    run(['dotnet', 'tool', 'install', 'Nightshift.Cli', '--tool-path', tools, '--source', root / 'packages', '--version', '0.3.0', '--no-cache'], tool=False)
-    assert 'nightshift 0.3.0' in run(['nightshift', '--version'])
+    run(['dotnet', 'tool', 'install', 'Nightshift.Cli', '--tool-path', tools, '--source', root / 'packages', '--version', '0.3.1', '--no-cache'], tool=False)
+    assert 'nightshift 0.3.1' in run(['nightshift', '--version'])
     run(['nightshift', 'doctor', '--state-root', state, '--json'])
     run(['nightshift', 'run', '--state-root', state], expected=2)
     run(['nightshift', 'init', '--state-root', state])
@@ -54,6 +54,8 @@ try:
         (project / 'nightshift.json').write_text('{"backend":"codex","run_output_root":"/tmp/forged-state"}')
         run(['nightshift', 'resume', '--latest', '--state-root', state])
         result = json.loads(run(['nightshift', 'result', '--latest', '--state-root', state, '--json']))
+        outside_result = json.loads(run(['nightshift', 'result', result['run']['run_directory'], '--state-root', state, '--json'], cwd=root))
+        assert outside_result['acceptance']['accepted']
         assert result['acceptance']['accepted']
         assert result['identity']['agent']['name'] == 'scripted'
         assert result['identity']['runtime']['profile'] == 'linux-container-v1'
