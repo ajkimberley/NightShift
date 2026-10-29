@@ -1,1 +1,1 @@
-PASS: checked 9 current phase-three Markdown documents; all local links resolve. Mermaid trust-boundary diagram reviewed in source.
+PASS: all local links in 9 current phase-three Markdown documents resolve; Mermaid diagram reviewed in source; install helper and Python verifiers syntax checked.

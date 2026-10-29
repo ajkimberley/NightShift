@@ -1,0 +1,1 @@
+The first final-handoff collation script had an invalid Python assignment and did not execute. Corrected syntax, reran every collation assertion/link/hash check, and completed the review record. Implementation/tests/packages were unaffected.

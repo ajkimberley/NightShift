@@ -187,4 +187,11 @@ package is 0.3.1. Existing native deadline/routing/retry semantics remain unchan
 
 ## Closing verification record
 
-Pending final transcript/installation collation.
+- **193/193 passed in Debug and Release; zero skips.** [Debug](docs/evidence/phase-3/tests-debug-final-state.txt), [Release](docs/evidence/phase-3/tests-release-final-state.txt). Final restore/build succeeded with zero warnings/errors.
+- Both isolated package lifecycle checks passed: [native compatibility](docs/evidence/phase-3/package-legacy.txt), [protected installed commands](docs/evidence/phase-3/package-protected.txt). Source assets were restored.
+- Current-user Nightshift updated **0.2.1 → 0.3.0 → 0.3.1**; [final update](docs/evidence/phase-3/user-update.txt) and [installed smoke](docs/evidence/phase-3/user-installed-smoke.txt). No shell profile was changed; the tools folder still needs the documented current-session PATH addition.
+- Installed 0.3.1 doctor, enforced demo, explicit-path status/result outside the project, and both full references passed. [GitHub audit copy](docs/evidence/phase-3/installed-reference-github/reference-result.json), [ADO audit copy](docs/evidence/phase-3/installed-reference-azure/reference-result.json). Authoritative run paths are recorded there outside the checkout.
+- Hostile execution denied five operations per protected target; all before/after hashes matched, including an actual coordinator assembly and private Git administration. [Hashes/probes](docs/evidence/phase-3/hostile-enforcement.json).
+- [Machine summary](docs/evidence/phase-3/completion.json), [OS](docs/evidence/phase-3/host-os.txt), [runtime](docs/evidence/phase-3/runtime-version.txt), [image identity](docs/evidence/phase-3/image-identity.json). Image: `docker.io/library/alpine@sha256:2e0b81d60597f449baa56dc25d355367869d2dca4cd57e866f1e2b52af3eb55f`; no image download occurred.
+- No owned containers or disposable worker workspaces remain. The operator-started VM remains running. Protected fixture projects/run stores remain for review.
+- No in-scope blocker remains. Live agent/accounts/network, work integration, Linux-host enforcement and ADO Server remain explicitly unexecuted separate steps.

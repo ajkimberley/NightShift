@@ -1,0 +1,21 @@
+{
+  "version": "0.3.1",
+  "debug_passed": 193,
+  "release_passed": 193,
+  "skipped": 0,
+  "runtime": {
+    "profile": "linux-container-v1",
+    "runtime_version": "6.1.4",
+    "connection": "nightshift-dev",
+    "image": "docker.io/library/alpine@sha256:2e0b81d60597f449baa56dc25d355367869d2dca4cd57e866f1e2b52af3eb55f",
+    "platform": "linux/arm64"
+  },
+  "protected_paths_with_identical_hashes": 11,
+  "denied_operations_per_path": 5,
+  "package_legacy": "passed",
+  "package_protected": "passed",
+  "user_installation": "updated and smoke tested",
+  "remaining_owned_containers": 0,
+  "live_integrations": "unexecuted",
+  "work_system_access": "none"
+}

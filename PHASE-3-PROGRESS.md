@@ -27,3 +27,12 @@
   focused tests passed. Debug 185 (before two ledger/Git tests) and Release 187 passed.
 - Installed protected package check passed outside source with source assets hidden.
   Legacy package lifecycle is being retained and verified separately.
+
+- Final audit corrected protected graph deadlines to leave resumable state, added
+  independent verifier deadlines and durable pending/cancelled evidence, and kept
+  native deadline semantics unchanged. Added two real-runtime deadline tests.
+- Full final suite: 193/193 Debug and Release, zero skips. Both isolated package
+  checks passed. User installation updated through 0.3.0 to corrected 0.3.1;
+  installed doctor/demo/result and both reference fixtures passed outside source.
+- No owned containers/workspaces remain. Operator-started VM left running.
+  Completion/evidence/limits/porting handoff recorded; no live model/account/work use.
