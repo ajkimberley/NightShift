@@ -41,7 +41,8 @@ public class ProcessTests
     public async Task StageTimeoutIsTransientAndExhaustsIntoFail()
     {
         using var w = new TestWorkspace();
-        var r = await new Engine(EngineTests.Registry(w.Root), new NoWait()).RunAsync(EngineTests.StageGraph(", type=tool, tool_command=\"sleep 30\", timeout=50ms, max_retries=1"), w.RunDirectory(), w.Root);
+        // Allow process startup under parallel container tests; the command still exceeds the deadline by 60x.
+        var r = await new Engine(EngineTests.Registry(w.Root), new NoWait()).RunAsync(EngineTests.StageGraph(", type=tool, tool_command=\"sleep 30\", timeout=500ms, max_retries=1"), w.RunDirectory(), w.Root);
         Assert.False(r.Outcome.IsSuccess); Assert.Contains("Max retries exceeded", r.Outcome.FailureReason);
         Assert.Equal(2, Directory.GetFiles(w.RunDirectory(), "process.pid", SearchOption.AllDirectories).Length);
     }

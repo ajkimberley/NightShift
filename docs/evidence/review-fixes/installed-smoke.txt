@@ -1,0 +1,131 @@
+$ /Users/adamkimberley/.dotnet/tools/nightshift --version
+nightshift 0.3.2
+
+
+exit=0
+$ /Users/adamkimberley/.dotnet/tools/nightshift init --state-root '/Users/adamkimberley/Library/Application Support/Nightshift/review-fixes-installed-smoke/938dddb0bd934005b76001ffa7b2f4e4/state'
+Created reviewable policy: /Users/adamkimberley/Library/Application Support/Nightshift/review-fixes-installed-smoke/938dddb0bd934005b76001ffa7b2f4e4/project/nightshift-policy.json
+Edit task and checks, then: nightshift adopt --policy /Users/adamkimberley/Library/Application Support/Nightshift/review-fixes-installed-smoke/938dddb0bd934005b76001ffa7b2f4e4/project/nightshift-policy.json
+
+
+exit=0
+$ /Users/adamkimberley/.dotnet/tools/nightshift adopt --state-root '/Users/adamkimberley/Library/Application Support/Nightshift/review-fixes-installed-smoke/938dddb0bd934005b76001ffa7b2f4e4/state'
+Adopted immutable policy 649EA01D7525AE7EA72A99E2795835C98810C82CCCBF77D436CA3272DE4B1B23
+Protected state: /Users/adamkimberley/Library/Application Support/Nightshift/review-fixes-installed-smoke/938dddb0bd934005b76001ffa7b2f4e4/state/projects/BF022B761404F8AF011E31D7
+
+
+exit=0
+$ /Users/adamkimberley/.dotnet/tools/nightshift run --state-root '/Users/adamkimberley/Library/Application Support/Nightshift/review-fixes-installed-smoke/938dddb0bd934005b76001ffa7b2f4e4/state' --max-seconds 15 --json
+{
+  "run": {
+    "run_directory": "/Users/adamkimberley/Library/Application Support/Nightshift/review-fixes-installed-smoke/938dddb0bd934005b76001ffa7b2f4e4/state/projects/BF022B761404F8AF011E31D7/runs/20261029T122928507-71ae7195",
+    "state": "success",
+    "working_directory": "/Users/adamkimberley/Library/Application Support/Nightshift/review-fixes-installed-smoke/938dddb0bd934005b76001ffa7b2f4e4/project",
+    "backend": "scripted",
+    "sandbox": "linux-container-v1",
+    "current_node": "exit",
+    "next_node": null,
+    "visits": 4,
+    "active_seconds": 2.0803006,
+    "summary": "Pipeline reached exit; visited goal gates satisfied",
+    "checkpoint": "/Users/adamkimberley/Library/Application Support/Nightshift/review-fixes-installed-smoke/938dddb0bd934005b76001ffa7b2f4e4/state/projects/BF022B761404F8AF011E31D7/runs/20261029T122928507-71ae7195/checkpoint.json",
+    "events": "/Users/adamkimberley/Library/Application Support/Nightshift/review-fixes-installed-smoke/938dddb0bd934005b76001ffa7b2f4e4/state/projects/BF022B761404F8AF011E31D7/runs/20261029T122928507-71ae7195/events.jsonl",
+    "response": null,
+    "logs": "/Users/adamkimberley/Library/Application Support/Nightshift/review-fixes-installed-smoke/938dddb0bd934005b76001ffa7b2f4e4/state/projects/BF022B761404F8AF011E31D7/runs/20261029T122928507-71ae7195/expected/visit-0001/attempt-0001",
+    "outputs": [],
+    "tool_verdicts": [
+      "probe: success (isolated command; acceptance separate)",
+      "expected: success (isolated command; acceptance separate)"
+    ]
+  },
+  "provenance": "protected coordinator record",
+  "identity": {
+    "policy_revision": "649EA01D7525AE7EA72A99E2795835C98810C82CCCBF77D436CA3272DE4B1B23",
+    "runtime": {
+      "profile": "linux-container-v1",
+      "runtime_version": "6.1.4",
+      "connection": "nightshift-dev",
+      "image": "docker.io/library/alpine@sha256:2e0b81d60597f449baa56dc25d355367869d2dca4cd57e866f1e2b52af3eb55f",
+      "platform": "linux/arm64"
+    },
+    "agent": {
+      "name": "scripted",
+      "version": "deterministic-1",
+      "fresh_tasks": true,
+      "structured_claims": true,
+      "progress": false,
+      "cancellation": true,
+      "sessions": false,
+      "steering": false,
+      "hooks": false
+    },
+    "project_root": "/Users/adamkimberley/Library/Application Support/Nightshift/review-fixes-installed-smoke/938dddb0bd934005b76001ffa7b2f4e4/project",
+    "coordinator_version": "B62E85397BE4716DDADB124E84357C4D1B727F6EF726FCE7B79C1DC577511394:FD56EDFEC647A4401170D46CA76EC389CEC179227561ED2B465BDE42859EEE17",
+    "repository_service": "none",
+    "pipeline_service": "none"
+  },
+  "candidate": {
+    "repository": {
+      "service": "local",
+      "namespace": "BF022B761404F8AF011E31D7",
+      "name": "workspace"
+    },
+    "revision": "snapshot:AE3FCA5096F523FA62A96E0A14E47143AF4D49AC4E5B801B66C5199710C7EFE3",
+    "snapshot_digest": "AE3FCA5096F523FA62A96E0A14E47143AF4D49AC4E5B801B66C5199710C7EFE3"
+  },
+  "acceptance": {
+    "accepted": true,
+    "reason": "Specified approved checks passed for the exact candidate; no general correctness claim"
+  },
+  "evidence": [
+    {
+      "source": "controlled_local_check",
+      "candidate": {
+        "repository": {
+          "service": "local",
+          "namespace": "BF022B761404F8AF011E31D7",
+          "name": "workspace"
+        },
+        "revision": "snapshot:AE3FCA5096F523FA62A96E0A14E47143AF4D49AC4E5B801B66C5199710C7EFE3",
+        "snapshot_digest": "AE3FCA5096F523FA62A96E0A14E47143AF4D49AC4E5B801B66C5199710C7EFE3"
+      },
+      "policy_revision": "649EA01D7525AE7EA72A99E2795835C98810C82CCCBF77D436CA3272DE4B1B23",
+      "check_id": "bytes",
+      "state": "pending",
+      "execution_id": "awaiting-owned-unit",
+      "recorded_at": "2026-10-29T12:29:31.051979+00:00"
+    },
+    {
+      "source": "controlled_local_check",
+      "candidate": {
+        "repository": {
+          "service": "local",
+          "namespace": "BF022B761404F8AF011E31D7",
+          "name": "workspace"
+        },
+        "revision": "snapshot:AE3FCA5096F523FA62A96E0A14E47143AF4D49AC4E5B801B66C5199710C7EFE3",
+        "snapshot_digest": "AE3FCA5096F523FA62A96E0A14E47143AF4D49AC4E5B801B66C5199710C7EFE3"
+      },
+      "policy_revision": "649EA01D7525AE7EA72A99E2795835C98810C82CCCBF77D436CA3272DE4B1B23",
+      "check_id": "bytes",
+      "state": "passed",
+      "execution_id": "nightshift-2522def14a4745339fdedb37c6a8136d",
+      "recorded_at": "2026-10-29T12:29:32.101136+00:00"
+    }
+  ]
+}
+
+Stage start: running | visit 1, attempt 1
+Stage start: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Stage probe: running | visit 1, attempt 1
+Stage probe: completed | visit 1, attempt 1 | 1.0s | success; will_retry=False; 
+Stage expected: running | visit 1, attempt 1
+Stage expected: completed | visit 1, attempt 1 | 1.0s | success; will_retry=False; 
+
+exit=0
+$ /Users/adamkimberley/.dotnet/tools/nightshift run --state-root '/Users/adamkimberley/Library/Application Support/Nightshift/review-fixes-installed-smoke/938dddb0bd934005b76001ffa7b2f4e4/state' --max-seconds 1
+
+Error: Snapshot input is not a regular file: /Users/adamkimberley/Library/Application Support/Nightshift/review-fixes-installed-smoke/938dddb0bd934005b76001ffa7b2f4e4/project/named-pipe
+
+exit=2
+PASS: installed 0.3.2 routes on untrusted tool output and exit code; initial FIFO refuses promptly; protected acceptance remains independent.

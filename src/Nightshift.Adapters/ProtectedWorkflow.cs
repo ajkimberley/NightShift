@@ -17,7 +17,7 @@ public sealed class ProtectedWorkflow(ProtectedState state)
             ? Json.Read<ProtectedIdentity>(await File.ReadAllTextAsync(Path.Combine(directory, "protected-identity.json"), token)) : null;
         if (resume && prior == null) throw new IOException("Legacy/agent-writable checkpoints cannot resume under protected execution; adopt policy and start a fresh run");
         var (revision, policy) = state.Policy(prior?.PolicyRevision);
-        var snapshot = resume ? ProtectedState.ReadSnapshot(directory) : WorkspaceSnapshot.Capture(state.ProjectRoot);
+        var snapshot = resume ? ProtectedState.ReadSnapshot(directory) : WorkspaceSnapshot.Capture(state.ProjectRoot, token);
         var launcher = new PodmanLauncher(policy.Runtime, snapshot, directory);
         var runtime = await launcher.VerifyAsync(token); // fail closed before any agent starts
         string coordinator = Engine.Hash(Convert.ToBase64String(File.ReadAllBytes(typeof(ProtectedWorkflow).Assembly.Location)))
@@ -54,7 +54,9 @@ public sealed class ProtectedWorkflow(ProtectedState state)
             await File.WriteAllTextAsync(Path.Combine(request.Directory, "stdout.txt"), result.Stdout, ct);
             await File.WriteAllTextAsync(Path.Combine(request.Directory, "stderr.txt"), result.Stderr, ct);
             await AtomicFile.WriteJsonAsync(Path.Combine(request.Directory, "execution-unit.json"), result.ExecutionId, ct);
-            return result.ExitCode == 0 ? Outcome.Success("Isolated command exit zero; not a protected acceptance decision") : Outcome.Fail("Isolated command exited " + result.ExitCode);
+            if (result.ExitCode != 0) return Outcome.Fail("Isolated command exited " + result.ExitCode);
+            var updates = new RunContext(); updates.Set("tool.output", result.Stdout); updates.Set("tool.exit_code", result.ExitCode);
+            return new Outcome { Status = StageStatus.Success, ContextUpdates = updates.Snapshot(), Notes = "Isolated command exit zero; untrusted routing context, not a protected acceptance decision" };
         }));
         foreach (string type in new[] { "codergen", "tool" })
         {

@@ -1,0 +1,1 @@
+PASS: installed 0.3.2 routes on untrusted tool output and exit code; initial FIFO refuses promptly; protected acceptance remains independent.

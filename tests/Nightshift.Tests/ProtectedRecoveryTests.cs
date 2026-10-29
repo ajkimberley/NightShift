@@ -118,3 +118,37 @@ public class ProtectedDeadlineTests
         finally { if (Directory.Exists(root)) Directory.Delete(root, true); }
     }
 }
+
+[Trait("Category", "Isolation")]
+public class ProtectedToolRoutingTests
+{
+    [Fact]
+    public async Task Captured_tool_output_and_exit_code_remain_available_to_conditional_edges()
+    {
+        string root = Path.Combine(Path.GetDirectoryName(ProtectedState.DefaultRoot)!, "tool-routing-review-tests", Guid.NewGuid().ToString("N"));
+        string project = Path.Combine(root, "project"); Directory.CreateDirectory(project);
+        try
+        {
+            var state = new ProtectedState(project, Path.Combine(root, "state"));
+            string graph = """
+                digraph routing {
+                  start -> probe;
+                  probe [type=tool, tool_command="printf ready"];
+                  probe -> expected [condition="context.tool.output=ready && context.tool.exit_code=0"];
+                  probe -> wrong;
+                  expected [type=tool, tool_command="printf checked > candidate.txt"];
+                  wrong [type=tool, tool_command="exit 9"];
+                  expected -> exit; wrong -> exit;
+                }
+                """;
+            await state.AdoptAsync(new(graph, "scripted", "/bin/sh", ContainerProfile.LocalDefault, [new("bytes", "printf checked | cmp -s - candidate.txt")], []), CancellationToken.None);
+            var result = await new ProtectedWorkflow(state).RunAsync(state.NewRun(), false, null, new QueueInterviewer([]), CancellationToken.None);
+            Assert.True(result.Acceptance.Accepted, result.Acceptance.Reason);
+            Assert.Equal(new[] { "start", "probe", "expected", "exit" }, result.Pipeline.Checkpoint.CompletedNodes);
+            var updates = result.Pipeline.Checkpoint.NodeOutcomes["probe"].ContextUpdates;
+            Assert.Equal("ready", updates["tool.output"].GetString()); Assert.Equal(0, updates["tool.exit_code"].GetInt32());
+            Assert.All(EvidenceLedger.Read(result.RunDirectory), e => Assert.Equal(EvidenceSource.ControlledLocalCheck, e.Source));
+        }
+        finally { if (Directory.Exists(root)) Directory.Delete(root, true); }
+    }
+}

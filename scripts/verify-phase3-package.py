@@ -32,8 +32,8 @@ def run(args, expected=0, cwd=project, tool=True):
 
 try:
     run(['dotnet', 'pack', repo / 'src/Nightshift.Cli', '-c', 'Release', '--no-restore', '-o', root / 'packages'], cwd=repo, tool=False)
-    run(['dotnet', 'tool', 'install', 'Nightshift.Cli', '--tool-path', tools, '--source', root / 'packages', '--version', '0.3.1', '--no-cache'], tool=False)
-    assert 'nightshift 0.3.1' in run(['nightshift', '--version'])
+    run(['dotnet', 'tool', 'install', 'Nightshift.Cli', '--tool-path', tools, '--source', root / 'packages', '--version', '0.3.2', '--no-cache'], tool=False)
+    assert 'nightshift 0.3.2' in run(['nightshift', '--version'])
     run(['nightshift', 'doctor', '--state-root', state, '--json'])
     run(['nightshift', 'run', '--state-root', state], expected=2)
     run(['nightshift', 'init', '--state-root', state])

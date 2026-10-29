@@ -1,0 +1,1 @@
+PASS: isolated native lifecycle and protected package checks; historical logs retained.

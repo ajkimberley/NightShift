@@ -36,20 +36,23 @@ public sealed class WorkspaceSnapshot
             || name.Split('/').Any(p => p is "" or "." or ".." || p.Equals(".git", StringComparison.OrdinalIgnoreCase)))
             throw new IOException("Unsafe artifact path");
     }
-    public static WorkspaceSnapshot Capture(string root)
+    public static WorkspaceSnapshot Capture(string root, CancellationToken token = default)
     {
+        token.ThrowIfCancellationRequested();
         root = Path.GetFullPath(root); RejectLinks(root);
         var list = new List<SnapshotFile>(); long total = 0;
         void Walk(string dir)
         {
             foreach (string path in Directory.EnumerateFileSystemEntries(dir).Order(StringComparer.Ordinal))
             {
+                token.ThrowIfCancellationRequested();
                 if (new[] { ".git", ".nightshift", "bin", "obj", "runs", "artifacts", ".test-runs" }.Contains(Path.GetFileName(path))) continue;
                 RejectLinks(path);
                 if (Directory.Exists(path)) { Walk(path); continue; }
-                var info = new FileInfo(path);
-                if (info.Length > MaximumBytes || (total += info.Length) > MaximumBytes || list.Count >= MaximumFiles) throw new IOException("Snapshot exceeds collection limits");
-                list.Add(new(Path.GetRelativePath(root, path).Replace('\\', '/'), File.ReadAllBytes(path), !OperatingSystem.IsWindows() && (File.GetUnixFileMode(path) & UnixFileMode.UserExecute) != 0));
+                if (list.Count >= MaximumFiles) throw new IOException("Snapshot exceeds collection limits");
+                var file = RegularSnapshotFile.Read(path, (int)(MaximumBytes - total), token);
+                total += file.Bytes.Length;
+                list.Add(new(Path.GetRelativePath(root, path).Replace('\\', '/'), file.Bytes, file.Executable));
             }
         }
         Walk(root); return new(list);

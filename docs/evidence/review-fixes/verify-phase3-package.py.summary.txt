@@ -1,0 +1,3 @@
+PASS: installed protected commands, external state, source-independent assets, actual containers, both hosted fixtures, package uninstall.
+
+exit=0

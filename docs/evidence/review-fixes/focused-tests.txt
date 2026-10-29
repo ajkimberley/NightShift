@@ -1,0 +1,24 @@
+  Nightshift.Core -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/bin/Debug/net10.0/Nightshift.Core.dll
+  Nightshift.Adapters -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Adapters/bin/Debug/net10.0/Nightshift.Adapters.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Debug/net10.0/Nightshift.Cli.dll
+  Nightshift.Tests -> /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/bin/Debug/net10.0/Nightshift.Tests.dll
+Test run for /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/bin/Debug/net10.0/Nightshift.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.1 (arm64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.3)
+[xUnit.net 00:00:00.03]   Discovering: Nightshift.Tests
+[xUnit.net 00:00:00.07]   Discovered:  Nightshift.Tests
+[xUnit.net 00:00:00.08]   Starting:    Nightshift.Tests
+  Passed Nightshift.Tests.SnapshotCaptureTests.Regular_files_preserve_bytes_and_executable_mode_with_bounded_capture [10 ms]
+  Passed Nightshift.Tests.SnapshotCaptureTests.Cancelled_capture_and_symlink_inputs_are_refused [1 ms]
+  Passed Nightshift.Tests.SnapshotCaptureTests.Fifo_in_initial_project_fails_promptly_before_any_worker_starts [128 ms]
+  Passed Nightshift.Tests.SnapshotCaptureTests.Unix_socket_in_initial_project_is_refused_as_a_special_file [1 ms]
+[xUnit.net 00:00:03.59]   Finished:    Nightshift.Tests
+  Passed Nightshift.Tests.ProtectedToolRoutingTests.Captured_tool_output_and_exit_code_remain_available_to_conditional_edges [3 s]
+
+Test Run Successful.
+Total tests: 5
+     Passed: 5
+ Total time: 3.8232 Seconds

@@ -1,12 +1,13 @@
 # Nightshift
 
 Nightshift runs small DOT workflows with durable checkpoints, interchangeable
-coding-agent backends and separate candidate verification. Version **0.3.1** defaults
+coding-agent backends and separate candidate verification. Version **0.3.2** defaults
 to a protected local Linux-container profile. Worker success is a claim; approved
 independent checks decide acceptance for an exact captured candidate.
 
 [Protected workflow guide](docs/guides/protected-workflows.md) ·
 [Phase-three results and limits](PHASE-3-REVIEW.md) ·
+[Post-review fixes](docs/review-fixes.md) ·
 [Later work-porting guide](docs/work-porting-guide.md)
 
 ## Install and try offline
