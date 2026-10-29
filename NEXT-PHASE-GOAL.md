@@ -1,10 +1,10 @@
-# Draft goal: make Nightshift practical to install and use
+# Approved implementation brief: make Nightshift practical to install and use
 
-**For review only. This goal is not active.** No implementation, installation or real model run is authorized by creating this document. Once approved, the text below can be submitted as the next `/goal` request. Command names below describe the intended interface; they are not implemented yet.
+**Approved by the user on 2026-10-29.** This document is ready to be linked or attached to a `/goal` request. Execute it when the user submits that request; the document-preparation turn does not start implementation. The scope and authorizations below apply during that execution. Real model runs remain excluded unless separately authorized.
+
+Command examples describe the target interface to implement; they are not claims that those commands already exist.
 
 ---
-
-/goal
 
 Turn the existing Nightshift prototype into an installable, understandable CLI for everyday use on my Mac. A new user should be able to install it, configure a personal project, run a workflow with Codex, understand progress, find the result, and resume without rebuilding commands from source paths or maintaining shell variables.
 
@@ -41,7 +41,7 @@ These commands must work without user-created shell variables or paths into Nigh
 - Do not expand engine semantics into parallel execution, manager supervision, new providers, session reuse or other deferred spec coverage. Preserve existing routing, retry, status, cancellation and checkpoint contracts.
 - Use fake Codex executables for development and automated integration tests. Do not invoke real models, paid APIs, login flows or account changes during implementation without a separate explicit instruction. Previously observed real smoke-test success may be recorded as historical evidence, not claimed as a new live test.
 - Do not push, open PRs, publish packages to registries, deploy, send messages, change permissions or use sudo. Local package creation and local commits are allowed.
-- After this goal is approved and resubmitted, installing/updating **Nightshift itself for the current user** is authorized, after isolated package tests pass. Do not alter unrelated tools, the .NET SDK, Codex or shell startup files. If the command's installation directory is absent from PATH, explain the exact one-time setup step and report that limitation. Do not overwrite an unrelated package/command with a colliding name.
+- When executing this goal, installing/updating **Nightshift itself for the current user** is authorized, after isolated package tests pass. Do not alter unrelated tools, the .NET SDK, Codex or shell startup files. If the command's installation directory is absent from PATH, explain the exact one-time setup step and report that limitation. Do not overwrite an unrelated package/command with a colliding name.
 
 ## 3. Implement in this order
 
@@ -149,11 +149,11 @@ Stop when the scope and acceptance evidence are complete. Do not broaden into ne
 
 ---
 
-## Review notes for this draft
+## Approved design decisions
 
-The three main choices proposed for approval are:
+The user approved these choices as part of this brief:
 
-1. **Distribution:** a locally built .NET tool, including a user-level Nightshift installation after acceptance; no public package release or SDK/Codex upgrade.
+1. **Distribution:** a locally built .NET tool, including a user-level Nightshift installation after isolated verification; no public package release or SDK/Codex upgrade.
 2. **Daily operation:** project JSON configuration can retain an explicit real-worker opt-in, enabling short later run/resume commands. Initialization is explicit and defaults to read-only.
 3. **Scope:** improve installation, configuration, diagnostics, progress/results and onboarding while keeping the existing engine feature set. Real-model calls remain outside autonomous implementation verification.
 
