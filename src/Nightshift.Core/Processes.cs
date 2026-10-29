@@ -60,10 +60,13 @@ public sealed class CodexProcessBackend(CodexProcessOptions options) : ICodergen
         if (r.Handoff.Fidelity != "truncate") return new("", Outcome.Fail("Codex process adapter only implements truncate fidelity"));
         if (r.Node.Attributes.Text("llm_provider") is { Length: > 0 } provider && provider != "openai") return new("", Outcome.Fail($"Provider '{provider}' not supported by this adapter"));
         string schema = Path.Combine(r.Directory, "outcome-schema.json"), last = Path.Combine(r.Directory, "last-message.json");
-        await AtomicFile.WriteJsonAsync(schema, new
+        // JSON Schema keywords have protocol-defined casing, independent of run-state naming.
+        await AtomicFile.WriteJsonAsync(schema, new Dictionary<string, object>
         {
-            type = "object", properties = new { outcome = new { type = "string", @enum = new[] { "success", "partial_success", "fail", "retry" } }, notes = new { type = "string" } },
-            required = new[] { "outcome", "notes" }, additionalProperties = false
+            ["type"] = "object",
+            ["properties"] = new { outcome = new { type = "string", @enum = new[] { "success", "partial_success", "fail", "retry" } }, notes = new { type = "string" } },
+            ["required"] = new[] { "outcome", "notes" },
+            ["additionalProperties"] = false
         }, cancellationToken);
         var args = new List<string> { "exec", "--json", "--ephemeral", "--sandbox", options.Sandbox, "-C", options.WorkingDirectory, "--output-schema", schema, "--output-last-message", last };
         if (r.Node.Attributes.Text("llm_model") is { Length: > 0 } model) args.AddRange(["--model", model]);

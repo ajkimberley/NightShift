@@ -2,6 +2,12 @@
 
 No real model-backed worker was invoked during implementation. `CodexProcessBackend` was implemented and tested with controllable local shell executables. No spend, authentication, real model output or real sandbox behavior was exercised.
 
+## Practical readiness
+
+Ready for a controlled experimental trial; live end-to-end compatibility remains unverified. Existing CLI authentication is required. The read-only example is the intended first live test; editing workflows may opt into workspace-write. Stages share filesystem state, not a persistent conversation.
+
+On 2026-10-29 a regression test exposed shared serializer rewriting of the JSON Schema keyword `additionalProperties`. Schema emission now preserves keyword casing explicitly. The updated full Debug and Release suites each passed 91 tests ([results](evidence/codex-schema-followup.txt)). No real Codex session was run.
+
 ## Interface sources
 
 Checked local help without running a worker:

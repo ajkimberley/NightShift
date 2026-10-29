@@ -75,6 +75,8 @@ public class ProcessTests
         string schemaPath = Directory.GetFiles(w.RunDirectory(), "outcome-schema.json", SearchOption.AllDirectories).Single();
         using var schema = System.Text.Json.JsonDocument.Parse(await File.ReadAllTextAsync(schemaPath));
         Assert.Equal("object", schema.RootElement.GetProperty("type").GetString());
+        Assert.False(schema.RootElement.GetProperty("additionalProperties").GetBoolean());
+        Assert.False(schema.RootElement.TryGetProperty("additional_properties", out _));
         Assert.Equal(4, schema.RootElement.GetProperty("properties").GetProperty("outcome").GetProperty("enum").GetArrayLength());
         string configPath = Directory.GetFiles(w.RunDirectory(), "configuration.json", SearchOption.AllDirectories).Single();
         using var config = System.Text.Json.JsonDocument.Parse(await File.ReadAllTextAsync(configPath));

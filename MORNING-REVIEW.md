@@ -4,6 +4,12 @@
 
 Repository started empty with no repository/ancestor AGENTS.md or visual guide present. Git initialized on **`implement/attractor`**; local commits retain the implementation. Existing visual content outside this checkout was not accessed or modified.
 
+## Can I use this with real Codex?
+
+The adapter is ready for a **controlled experimental trial**, but real Codex integration is still **unverified**. All worker tests use fake executables. It launches the installed `codex exec` CLI after explicit opt-in and requires existing CLI authentication. Each stage starts fresh with `truncate` fidelity; shared files can carry work between stages, while conversation/session reuse is unsupported. The example defaults to read-only inspection; editing workflows need `--sandbox workspace-write` and independent verifier stages.
+
+Follow-up on 2026-10-29 found and fixed a real adapter defect: the shared snake-case serializer changed JSON Schema's `additionalProperties` keyword. A regression assertion first failed, then passed after preserving protocol-defined keyword casing. Both complete 91-test suites passed again; see [follow-up results](docs/evidence/codex-schema-followup.txt). No real model was invoked during this fix. A bounded read-only live smoke test is still needed before recommending unattended practical use.
+
 ## Run it
 
 From `/Users/adamkimberley/Repos/nightshift`:
