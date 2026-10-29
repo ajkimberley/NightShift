@@ -1,0 +1,12 @@
+  Determining projects to restore...
+  Restored /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/Nightshift.Core.csproj (in 37 ms).
+  Restored /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/Nightshift.Cli.csproj (in 40 ms).
+  Nightshift.Core -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/bin/Release/net10.0/Nightshift.Core.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Release/net10.0/Nightshift.Cli.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Release/net10.0/Nightshift.Cli.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Release/net10.0/publish/
+/usr/local/share/dotnet/sdk/10.0.103/NuGet.Build.Tasks.Pack.targets(222,5): error NU5118: Warning As Error: File '/Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/Assets/codex-read.dot' is not added because the package already contains file 'tools/net10.0/any/Assets/codex-read.dot' [/Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/Nightshift.Cli.csproj]
+/usr/local/share/dotnet/sdk/10.0.103/NuGet.Build.Tasks.Pack.targets(222,5): error NU5118: Warning As Error: File '/Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/Assets/codex-write.dot' is not added because the package already contains file 'tools/net10.0/any/Assets/codex-write.dot' [/Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/Nightshift.Cli.csproj]
+/usr/local/share/dotnet/sdk/10.0.103/NuGet.Build.Tasks.Pack.targets(222,5): error NU5118: Warning As Error: File '/Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/Assets/demo.dot' is not added because the package already contains file 'tools/net10.0/any/Assets/demo.dot' [/Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/Nightshift.Cli.csproj]
+/usr/local/share/dotnet/sdk/10.0.103/NuGet.Build.Tasks.Pack.targets(222,5): error NU5118: Warning As Error: File '/Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/Assets/workflow.dot' is not added because the package already contains file 'tools/net10.0/any/Assets/workflow.dot' [/Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/Nightshift.Cli.csproj]
+  The package Nightshift.Cli.0.2.0 is missing a readme. Go to https://aka.ms/nuget/authoring-best-practices/readme to learn why package readmes are important.

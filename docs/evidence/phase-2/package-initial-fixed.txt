@@ -1,0 +1,5 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Nightshift.Core -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/bin/Release/net10.0/Nightshift.Core.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Release/net10.0/Nightshift.Cli.dll
+/Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/Projects.cs(84,45): error CS0103: The name 'CodexDiscovery' does not exist in the current context [/Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/Nightshift.Cli.csproj]

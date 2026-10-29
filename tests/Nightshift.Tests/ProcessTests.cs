@@ -30,7 +30,7 @@ public class ProcessTests
     {
         using var w = new TestWorkspace(); string path = w.RunDirectory(); Directory.CreateDirectory(path);
         using var cancel = new CancellationTokenSource();
-        var task = ProcessRunner.RunAsync("/bin/sh", ["-c", "sleep 30 & child=$!; echo $child > child.pid; echo ready; wait"], w.Root, "", path, cancel.Token);
+        var task = ProcessRunner.RunAsync("/bin/sh", ["-c", "sleep 30 & child=$!; echo ready; echo $child > child.pid; wait"], w.Root, "", path, cancel.Token);
         string childFile = Path.Combine(w.Root, "child.pid");
         await WaitForFile(childFile); int pid = int.Parse(await File.ReadAllTextAsync(childFile));
         cancel.Cancel(); await Assert.ThrowsAnyAsync<OperationCanceledException>(() => task);

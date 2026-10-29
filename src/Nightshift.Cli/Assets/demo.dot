@@ -1,0 +1,9 @@
+digraph OfflineDemo {
+  graph [goal="Demonstrate a bounded local workflow without a model"]
+  start [shape=Mdiamond]
+  plan [prompt="Simulate a planning stage"]
+  create [type=tool, tool_command="printf 'NIGHTSHIFT_DEMO_OK\\n' > demo-output.txt", timeout=5s]
+  verify [type=tool, tool_command="printf 'NIGHTSHIFT_DEMO_OK\\n' | cmp -s - demo-output.txt", timeout=5s, goal_gate=true]
+  exit [shape=Msquare]
+  start -> plan -> create -> verify -> exit
+}

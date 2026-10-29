@@ -1,0 +1,18 @@
+digraph CodexWriteSmoke {
+  graph [goal="Verify real Codex can create a tiny artifact that an independent shell check accepts", default_fidelity=truncate]
+  start [shape=Mdiamond]
+  write [
+    prompt="Create codex-output.txt in the current workspace with exactly the single line NIGHTSHIFT_WRITE_OK followed by one newline. Change no other workspace files. Return success only after the file has been written; otherwise return fail and explain the blocker.",
+    reasoning_effort=low,
+    timeout=120s,
+    max_retries=0
+  ]
+  verify [
+    type=tool,
+    tool_command="printf 'NIGHTSHIFT_WRITE_OK\\n' | cmp -s - codex-output.txt",
+    timeout=5s,
+    goal_gate=true
+  ]
+  exit [shape=Msquare]
+  start -> write -> verify -> exit
+}

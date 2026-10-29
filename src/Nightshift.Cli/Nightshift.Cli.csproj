@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
     <ProjectReference Include="..\Nightshift.Core\Nightshift.Core.csproj" />
@@ -6,9 +6,18 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>nightshift</ToolCommandName>
+    <PackageId>Nightshift.Cli</PackageId>
+    <Version>0.2.0</Version>
+    <Authors>Nightshift contributors</Authors>
+    <Description>Personal DOT workflow orchestration with durable runs and a Codex process adapter.</Description>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Include="Assets/**/*" CopyToOutputDirectory="PreserveNewest" Pack="false" />
+  </ItemGroup>
 </Project>

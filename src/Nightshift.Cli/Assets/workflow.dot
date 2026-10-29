@@ -1,0 +1,7 @@
+digraph PersonalWorkflow {
+  graph [goal="Inspect this personal project and report a useful next step", default_fidelity=truncate]
+  start [shape=Mdiamond]
+  inspect [prompt="Read this project's README if present and inspect its structure. Do not change files. Summarize what the project does and suggest one concrete next step in your final notes.", timeout=120s, max_retries=0]
+  exit [shape=Msquare]
+  start -> inspect -> exit
+}

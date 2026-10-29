@@ -4,3 +4,6 @@ TestResults/
 runs/
 .DS_Store
 .test-runs/
+
+artifacts/
+.nightshift/

@@ -1,0 +1,13 @@
+digraph CodexReadSmoke {
+  graph [goal="Verify real Codex can read a scratch file and return a structured outcome", default_fidelity=truncate]
+  start [shape=Mdiamond]
+  inspect [
+    prompt="Read smoke-input.txt in the current workspace. Include its exact single-line contents in your final notes. Do not change or create any workspace files. Report success only if you actually read the file; otherwise report fail with the reason.",
+    reasoning_effort=low,
+    timeout=120s,
+    max_retries=0
+  ]
+  verify [type=tool, tool_command="DEMO_READ_VERIFY", timeout=5s, goal_gate=true]
+  exit [shape=Msquare]
+  start -> inspect -> verify -> exit
+}

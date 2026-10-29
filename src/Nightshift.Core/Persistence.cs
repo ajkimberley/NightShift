@@ -49,7 +49,9 @@ public sealed class Checkpoint
     public string State { get; set; } = "running";
     public Outcome? FinalOutcome { get; set; }
 }
-public sealed record RunManifest(string GraphName, string Goal, string GraphHash, string WorkingDirectory, DateTimeOffset StartedAt, EngineOptions Options);
+// CLI execution identity is optional so older core-only runs remain readable.
+public sealed record ExecutionSettings(string ProjectRoot, string Backend, string? CodexExecutable, string Sandbox, bool EnableCodex, string RunOutputRoot, string WorkflowPath, IReadOnlyList<string> Outputs, IReadOnlyDictionary<string, string> Sources, int SchemaVersion = 1);
+public sealed record RunManifest(string GraphName, string Goal, string GraphHash, string WorkingDirectory, DateTimeOffset StartedAt, EngineOptions Options, ExecutionSettings? Execution = null);
 public sealed class RunStore : IDisposable
 {
     public string Root { get; }

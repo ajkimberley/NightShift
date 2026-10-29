@@ -28,9 +28,16 @@ public static class ProcessRunner
         using var process = new Process { StartInfo = start };
         process.Start();
         await File.WriteAllTextAsync(Path.Combine(artifactDirectory, "process.pid"), process.Id.ToString(), CancellationToken.None);
-        var stdout = CaptureAsync(process.StandardOutput, Path.Combine(artifactDirectory, "stdout.txt"), cancellationToken);
-        var stderr = CaptureAsync(process.StandardError, Path.Combine(artifactDirectory, "stderr.txt"), cancellationToken);
-        using var registration = cancellationToken.Register(() => { try { if (!process.HasExited) process.Kill(entireProcessTree: true); } catch (InvalidOperationException) { } catch (System.ComponentModel.Win32Exception) { } });
+        // Kill on cancellation, then briefly drain already-emitted output. Immediate read
+        // cancellation can discard audit evidence; an unbounded drain can hang on a daemon.
+        using var drainStop = new CancellationTokenSource();
+        var stdout = CaptureAsync(process.StandardOutput, Path.Combine(artifactDirectory, "stdout.txt"), drainStop.Token);
+        var stderr = CaptureAsync(process.StandardError, Path.Combine(artifactDirectory, "stderr.txt"), drainStop.Token);
+        using var registration = cancellationToken.Register(() =>
+        {
+            try { if (!process.HasExited) process.Kill(entireProcessTree: true); } catch (InvalidOperationException) { } catch (System.ComponentModel.Win32Exception) { }
+            drainStop.CancelAfter(TimeSpan.FromSeconds(1));
+        });
         try
         {
             try { await process.StandardInput.WriteAsync(input.AsMemory(), cancellationToken); }

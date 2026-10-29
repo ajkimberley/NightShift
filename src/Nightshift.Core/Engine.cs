@@ -19,7 +19,7 @@ public sealed class Engine(HandlerRegistry handlers, IRetryDelay? retryDelay = n
     private readonly Backoff backoff = backoff ?? new();
     public event Action<RunEvent>? Event;
     public static string Hash(string source) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(source)));
-    public async Task<RunResult> RunAsync(string dot, string directory, string workingDirectory, EngineOptions? options = null, bool resume = false, CancellationToken cancellationToken = default)
+    public async Task<RunResult> RunAsync(string dot, string directory, string workingDirectory, EngineOptions? options = null, bool resume = false, CancellationToken cancellationToken = default, ExecutionSettings? executionSettings = null)
     {
         options ??= new();
         if (options.MaxVisits <= 0 || options.MaxSeconds <= 0 || !double.IsFinite(options.MaxSeconds) || options.PauseAfterStages is <= 0) throw new ArgumentException("Run limits must be positive and finite");
@@ -32,6 +32,11 @@ public sealed class Engine(HandlerRegistry handlers, IRetryDelay? retryDelay = n
             state = store.Load();
             if (state.SchemaVersion != 1 || state.GraphHash != Hash(dot)) throw new PipelineException("Checkpoint schema or graph hash mismatch");
             if (state.FinalOutcome != null) return new(state.FinalOutcome, state.State, state);
+            if (executionSettings != null)
+            {
+                await AtomicFile.WriteJsonAsync(Path.Combine(store.Root, "execution-history", Guid.NewGuid().ToString("N") + ".json"), executionSettings, cancellationToken);
+                await AtomicFile.WriteJsonAsync(Path.Combine(store.Root, "execution.json"), executionSettings, cancellationToken);
+            }
             store.Emit(new(RunEventKind.PipelineResumed));
         }
         else
@@ -39,7 +44,7 @@ public sealed class Engine(HandlerRegistry handlers, IRetryDelay? retryDelay = n
             if (File.Exists(Path.Combine(store.Root, "manifest.json")) || File.Exists(Path.Combine(store.Root, "checkpoint.json"))) throw new PipelineException("Run directory already initialized; use resume or a new directory");
             state = new() { GraphHash = Hash(dot), NextNode = graph.Nodes.Values.Single(n => n.IsStart).Id };
             await File.WriteAllTextAsync(Path.Combine(store.Root, "graph.dot"), dot, cancellationToken);
-            await AtomicFile.WriteJsonAsync(Path.Combine(store.Root, "manifest.json"), new RunManifest(graph.Id, graph.Attributes.Text("goal"), state.GraphHash, Path.GetFullPath(workingDirectory), DateTimeOffset.UtcNow, options), cancellationToken);
+            await AtomicFile.WriteJsonAsync(Path.Combine(store.Root, "manifest.json"), new RunManifest(graph.Id, graph.Attributes.Text("goal"), state.GraphHash, Path.GetFullPath(workingDirectory), DateTimeOffset.UtcNow, options, executionSettings), cancellationToken);
             var initial = new RunContext(); foreach (var (key, value) in graph.Attributes) initial.Set("graph." + key, value.Text); initial.Set("run.id", Path.GetFileName(store.Root)); state.ContextValues = initial.Snapshot();
             store.Emit(new(RunEventKind.PipelineStarted, Message: graph.Id)); await store.SaveAsync(state);
         }

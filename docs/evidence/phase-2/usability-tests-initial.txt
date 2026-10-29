@@ -1,0 +1,19 @@
+  Nightshift.Core -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/bin/Debug/net10.0/Nightshift.Core.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Debug/net10.0/Nightshift.Cli.dll
+  Nightshift.Tests -> /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/bin/Debug/net10.0/Nightshift.Tests.dll
+Test run for /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/bin/Debug/net10.0/Nightshift.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.1 (arm64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:03.22]     Nightshift.Tests.ProcessTests.ProcessTimeoutKillsTheChildAndPreservesOutput [FAIL]
+  Failed Nightshift.Tests.ProcessTests.ProcessTimeoutKillsTheChildAndPreservesOutput [48 ms]
+  Error Message:
+   Assert.Contains() Failure: Sub-string not found
+String:    ""
+Not found: "ready"
+  Stack Trace:
+     at Nightshift.Tests.ProcessTests.ProcessTimeoutKillsTheChildAndPreservesOutput() in /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/ProcessTests.cs:line 37
+--- End of stack trace from previous location ---
+
+Failed!  - Failed:     1, Passed:   110, Skipped:     0, Total:   111, Duration: 6 s - Nightshift.Tests.dll (net10.0)
