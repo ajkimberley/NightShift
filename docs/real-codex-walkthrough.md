@@ -17,6 +17,9 @@ dotnet test --no-build
 
 nightshift_cli="$nightshift_repo/src/Nightshift.Cli/bin/Debug/net10.0/Nightshift.Cli.dll"
 nightshift_codex="$(command -v codex)"
+if [ ! -f "$nightshift_codex" ] || [ ! -x "$nightshift_codex" ]; then
+  nightshift_codex=/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex
+fi
 ```
 
 Expected SDK: `10.0.103`; expected test result for this revision: **91 passed**. The walkthrough's JSON checks also use the already available `python3`; no Python packages are required.
@@ -34,11 +37,17 @@ nightshift_codex=/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI
 Use your actual CLI location if different; no global installation or PATH change is needed. Confirm the selected executable:
 
 ```sh
-test -x "$nightshift_codex"
-"$nightshift_codex" --version
-"$nightshift_codex" exec --help
-"$nightshift_codex" login status
+printf 'Codex executable: <%s>\n' "$nightshift_codex"
+if [ -f "$nightshift_codex" ] && [ -x "$nightshift_codex" ]; then
+  "$nightshift_codex" --version
+  "$nightshift_codex" exec --help
+  "$nightshift_codex" login status
+else
+  printf 'Set nightshift_codex to an existing executable file before continuing.\n' >&2
+fi
 ```
+
+If zsh reports `permission denied:` with no path after the colon, check whether the variable is empty: `printf '<%s>\n' "$nightshift_codex"`. An empty quoted command reproduces that error. Reassign the executable path in the current Terminal tab; shell variables do not carry into a new tab. A directory path is also unsuitable, even if `test -x` alone succeeds. The guard above checks for an executable file and falls back to the observed bundled path; no permission change is required for that copy.
 
 The version checked when writing this guide was `codex-cli 0.164.0-alpha.11.1`. Its help supports `exec`, `--json`, `--ephemeral`, `--sandbox`, `-C`, `--output-schema`, `--output-last-message` and stdin prompt `-`. The adapter uses those flags. If your version rejects one, keep the error evidence and resolve compatibility before retrying.
 
