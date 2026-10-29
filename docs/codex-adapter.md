@@ -1,12 +1,14 @@
 # Opt-in Codex process boundary
 
-No real model-backed worker was invoked during implementation. `CodexProcessBackend` was implemented and tested with controllable local shell executables. No spend, authentication, real model output or real sandbox behavior was exercised.
+No real model-backed worker was invoked by the implementation agent during development. `CodexProcessBackend` was implemented and tested with controllable local shell executables. No model spend, real worker output or real sandbox execution was exercised by the agent. Phase-two doctor additionally checked the actual installed CLI using read-only version/help/login-status probes; it did not perform a login or establish live model access.
 
-For step-by-step setup, evidence checks and troubleshooting, follow the [real Codex walkthrough](real-codex-walkthrough.md).
+For installed usage, follow [configure a Codex project](guides/codex-project.md) and [results/resume](guides/results-and-resume.md). The [original source-based walkthrough](real-codex-walkthrough.md) remains a historical/manual diagnostic reference.
+
+Phase 2 adds automatic executable discovery, doctor, and saved project opt-in. New runs record their backend/executable/sandbox/consent, and resume restores those settings. Repeating opt-in flags is no longer required for those recorded runs; legacy manifests missing identity require explicit selection. Phase-two development tests use fake workers only. User-run phase-one read/write/resume evidence already exists under runs/real-codex-2W4pNMHw/; no new live invocation is claimed.
 
 ## Practical readiness
 
-Ready for a controlled experimental trial; live end-to-end compatibility remains unverified. Existing CLI authentication is required. The read-only example is the intended first live test; editing workflows may opt into workspace-write. Stages share filesystem state, not a persistent conversation.
+The user successfully ran phase-one live read/write/resume trials. The revised installed 0.2.1 workflow remains ready for a controlled trial: its model-executing paths were tested with fake workers, not a fresh live model call. Existing CLI authentication is required. The read-only example is the intended first live test; editing workflows may opt into workspace-write. Stages share filesystem state, not a persistent conversation.
 
 On 2026-10-29 a regression test exposed shared serializer rewriting of the JSON Schema keyword `additionalProperties`. Schema emission now preserves keyword casing explicitly. The updated full Debug and Release suites each passed 91 tests ([results](evidence/codex-schema-followup.txt)). No real Codex session was run.
 
@@ -42,7 +44,7 @@ The worker must exit zero, emit `turn.completed`, emit no `turn.failed`/`error` 
 | Per-tool hooks / compaction | Unsupported |
 | Cancellation / timeout / process tree kill | Local process tests; real Codex untested |
 | Sandboxing | Explicit read-only default or workspace-write; actual enforcement untested |
-| Credential/authentication management | Delegated to installed CLI; not accessed or tested |
+| Credential/authentication management | Delegated to CLI; stored-auth status checked by doctor, no login flow/credential-file access/live model verification |
 
 Adapter arguments never enable bypass/yolo/full-access modes. Installed CLI configuration may still influence a later opted-in real invocation. The engine does not implement a sandbox or inspect user configuration. Process-tree cleanup was verified for attached children on macOS; detached/reparented daemons can escape this boundary. Cancellation also interrupts pipe reads so escaped descendants cannot hold the runner's output wait indefinitely. Custom in-process handlers/interviewers must cooperate with cancellation.
 

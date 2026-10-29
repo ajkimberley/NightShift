@@ -70,7 +70,7 @@ public static class CodexDiscovery
             string safeVersion = Regex.Match(version.Output, @"\bcodex-cli\s+[0-9]+\.[0-9]+\.[0-9]+(?:[-.+][A-Za-z0-9.-]+)?").Value;
             checks.Add(new("Codex version", version.ExitCode == 0 && safeVersion.Length > 0 ? "ok" : failure, safeVersion.Length > 0 ? safeVersion : "Could not recognize Codex version", "Use a compatible Codex CLI executable."));
             var help = await ProbeAsync(executable.Path, ["exec", "--help"], timeout, token);
-            string[] requiredFlags = ["--json", "--ephemeral", "--sandbox", "--output-schema", "--output-last-message"];
+            string[] requiredFlags = ["--json", "--ephemeral", "--sandbox", "--output-schema", "--output-last-message", "--cd", "--config", "--model"];
             var missing = requiredFlags.Where(flag => !help.Output.Contains(flag, StringComparison.Ordinal)).ToList();
             checks.Add(new("Codex interface", help.ExitCode == 0 && missing.Count == 0 ? "ok" : failure, missing.Count == 0 && help.ExitCode == 0 ? "Required exec flags available" : "Missing/unsupported exec flags: " + string.Join(", ", missing), "Compare codex exec --help with the adapter requirements."));
             var auth = await ProbeAsync(executable.Path, ["login", "status"], timeout, token);

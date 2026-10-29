@@ -1,0 +1,24 @@
+# Phase-two implementation decisions
+
+The approved [brief](../NEXT-PHASE-GOAL.md) defines the usability scope. Engine routing/retry/gate semantics remain those in [spec decisions](spec-decisions.md).
+
+| Area | Chosen behavior | Evidence |
+|---|---|---|
+| Distribution | Local `Nightshift.Cli` .NET tool package, command `nightshift`, version 0.2.1. CLI/core assemblies and assets packaged; .NET 10 runtime required, pinned SDK only for build. No public release. | `scripts/verify-package.py` and package lifecycle transcript |
+| Configuration | Snake-case `nightshift.json` schema 1; strict unknown-key/type checks. CLI options override config then safe defaults. Init refuses existing config and preserves workflow/ignore content. | `UsabilityTests.InitPreserves…`, `MalformedConfiguration…`, `NestedDiscovery…` |
+| Discovery scope | Nearest config; inclusive Git boundary, home boundary; unconfigured project is invocation directory. Config paths are config-relative, CLI paths invocation-relative. | `Project.Discover` plus nested/path tests |
+| Real-worker consent | Explicit `init --backend codex --enable-codex` saves permission. Trusted project config can then authorize later calls. Default sandbox is read-only. Auto-discovery never enables a worker. No credential storage/trust-management platform. | `SavedOptInRunsFakeCodexAndResumeIgnoresChangedProjectDefaults` |
+| Executable selection | Explicit CLI, explicit config, external PATH executable, macOS app fallback. Invalid explicit choices fail. No aliases/functions or permission changes. | `CodexDiscoveryUsesExplicitThenConfigThenPathThenBundle…` |
+| Doctor | Bounded version/help/login-status probes, no model or login. Only recognized version/status summaries printed; raw authentication output discarded. Optional Codex warnings for simulation, errors for required Codex. | Doctor tests, including missing flags, failed authentication, timeout and output redaction |
+| Run identity | Optional execution metadata extends the original manifest; older manifests remain readable. CLI new runs always record backend, sandbox, consent, paths and source origins. | `ExecutionSettings`, existing core tests, CLI tests |
+| Resume | Current project defaults ignored. Reject backend/sandbox/workspace changes; allow validated same-backend executable replacement. Under the run lease, atomically save current resume settings (including deliberately overridden run limits) and immutable history. Final outcomes remain final. | Saved-identity, replacement/history, legacy and final-result tests |
+| Legacy resume | Require explicit backend; Codex also requires explicit permission. Status/inspect still work without guessing. | `LegacyResumeRequiresExplicitBackendAndPermission` |
+| Latest | Project-root equality plus selected output root; most recently started run for status/result, most recent resumable interrupted/abandoned run for resume. Active leases skipped. Changing output root requires explicit old run path. | `LatestSelectsOnlyThisProject…` plus installed package verification |
+| Progress | Plain lines, five-second heartbeat for active stages, visits/attempts/retries and elapsed time; no percentages or invented cycle denominator. JSON stdout isolated from progress stderr. | Heartbeat/JSON tests and real CLI subprocess fixtures |
+| Outputs | Config `outputs` / repeatable CLI `--output` declares paths. Print existence separately from worker claims and tool verdicts. No inference from prose or general acceptance guarantee. | Declared-output tests and installed verifier success/failure fixtures |
+| Demo | Always offline by default, even in a Codex-configured project. Scratch workspaces live under the run root's `.workspaces/`. Real modes require explicit flags, have one model stage/zero retries/finite time limits; read and write modes both use real local verifier stages. | Offline/real-fake-demo tests and installed package check |
+| Cancellation evidence | Kill attached workers promptly, allow up to one second to drain already-emitted stdout/stderr, then cancel pipe reads. This preserves logs without an unbounded daemon-held pipe wait. | Existing child cleanup test plus new CLI cancellation test |
+
+Persistent project consent is a deliberate convenience with consequences: running a trusted configured project may consume usage without repeating the flag. Review configs/workflows before running them. Resume metadata records execution settings, not credentials or a serialized model conversation.
+
+The original subprocess test's readiness marker preceded its expected stdout emission. Its expanded-suite failure exposed that race. The fixture now emits stdout before signaling readiness; the assertion and child-cleanup requirement are unchanged. Bounded draining corrects the corresponding implementation risk. Initial pack failures and corrections remain in the evidence directory; no tests were removed to get green results.

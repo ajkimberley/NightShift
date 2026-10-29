@@ -4,7 +4,7 @@ set -euo pipefail
 repo_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 action=${1:-install}
 package_id=Nightshift.Cli
-package_version=0.2.0
+package_version=0.2.1
 tool_dir="$HOME/.dotnet/tools"
 case "$action" in
   install|update|uninstall) ;;
@@ -25,9 +25,9 @@ cd "$repo_dir"
 dotnet restore --locked-mode
 dotnet pack src/Nightshift.Cli -c Release --no-restore -o artifacts/packages
 if [ -n "$installed" ]; then
-  dotnet tool update --global "$package_id" --source "$repo_dir/artifacts/packages" --version "$package_version"
+  dotnet tool update --global "$package_id" --source "$repo_dir/artifacts/packages" --version "$package_version" --no-cache
 else
-  dotnet tool install --global "$package_id" --source "$repo_dir/artifacts/packages" --version "$package_version"
+  dotnet tool install --global "$package_id" --source "$repo_dir/artifacts/packages" --version "$package_version" --no-cache
 fi
 "$tool_dir/nightshift" --version
 case ":$PATH:" in

@@ -1,5 +1,7 @@
 # Conformance and evidence
 
+Phase-two usability extensions are documented in [the phase-two review](../PHASE-2-REVIEW.md). The engine feature scope and original interpretation decisions below remain in force; installed commands now add project settings, diagnostics, results and recorded worker identity.
+
 Baseline: [pinned spec](reference/attractor-spec.md), including §11 and Appendices A–D. This is **partial conformance**. Tests below were authored during implementation; they are not independent assurance. Latest execution evidence: [verification transcript](evidence/verification.txt), [Release check](evidence/release-verification.txt), [development findings](evidence/development-findings.md).
 
 States: **Implemented/tested** means behavior exercised deterministically; **Implemented/unverified** means code exists without that specific behavior exercised; **Partial** means a specified portion or documented divergence; **Deferred** means no working feature claim; **Ambiguous** means competing spec readings, with the implemented choice tested and explained in [spec decisions](spec-decisions.md). No live-model feature is verified.

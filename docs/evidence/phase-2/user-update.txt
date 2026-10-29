@@ -1,0 +1,31 @@
+  Determining projects to restore...
+  Restored /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/Nightshift.Cli.csproj (in 62 ms).
+  Restored /Users/adamkimberley/Repos/nightshift/tests/Nightshift.Tests/Nightshift.Tests.csproj (in 89 ms).
+  1 of 3 projects are up-to-date for restore.
+  Nightshift.Core -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Core/bin/Release/net10.0/Nightshift.Core.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Release/net10.0/Nightshift.Cli.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Release/net10.0/Nightshift.Cli.dll
+  Nightshift.Cli -> /Users/adamkimberley/Repos/nightshift/src/Nightshift.Cli/bin/Release/net10.0/publish/
+  Successfully created package '/Users/adamkimberley/Repos/nightshift/artifacts/packages/Nightshift.Cli.0.2.1.nupkg'.
+Skipping NuGet package signature verification.
+Tools directory '/Users/adamkimberley/.dotnet/tools' is not currently on the PATH environment variable.
+If you are using zsh, you can add it to your profile by running the following command:
+
+cat << \EOF >> ~/.zprofile
+# Add .NET Core SDK tools
+export PATH="$PATH:/Users/adamkimberley/.dotnet/tools"
+EOF
+
+And run `zsh -l` to make it available for current session.
+
+You can only add it to the current session by running the following command:
+
+export PATH="$PATH:/Users/adamkimberley/.dotnet/tools"
+
+Tool 'nightshift.cli' was successfully updated from version '0.2.0' to version '0.2.1'.
+nightshift 0.2.1
+Installed executable: /Users/adamkimberley/.dotnet/tools/nightshift
+The tools directory is missing from PATH. For this Terminal tab, run:
+  export PATH="$HOME/.dotnet/tools:$PATH"
+Then run: nightshift doctor; nightshift demo
+No shell startup file was modified.

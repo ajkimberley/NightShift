@@ -62,7 +62,11 @@ public sealed class CliApplication(TextWriter output, TextWriter error, string i
                 ["backend"] = args.Has("--backend") ? "command line" : project.ConfigurationPath ?? "safe default: scripted",
                 ["working_directory"] = args.Has("--workdir") ? "command line" : project.ConfigurationPath ?? "invocation directory",
                 ["sandbox"] = args.Has("--sandbox") ? "command line" : project.ConfigurationPath ?? "default: read-only",
-                ["real_worker_opt_in"] = args.Has("--enable-codex") ? "command line" : enabled ? "explicit saved project opt-in" : "not granted"
+                ["real_worker_opt_in"] = args.Has("--enable-codex") ? "command line" : enabled ? "explicit saved project opt-in" : "not granted",
+                ["run_output_root"] = args.Has("--output-root") ? "command line; relative to invocation directory" : project.ConfigurationPath ?? "default: project .nightshift/runs",
+                ["max_visits"] = args.Has("--max-visits") ? "command line" : project.ConfigurationPath ?? "default: 1000",
+                ["max_seconds"] = args.Has("--max-seconds") ? "command line" : project.ConfigurationPath ?? "default: 3600",
+                ["outputs"] = args.Outputs.Count > 0 ? "command line; relative to invocation directory" : project.ConfigurationPath ?? "none declared"
             };
             string? executable = null;
             if (backend == "codex")
@@ -74,7 +78,7 @@ public sealed class CliApplication(TextWriter output, TextWriter error, string i
             return await Execute(args, settings, workingDirectory, NewRunDirectory(args, outputRoot), Options(args, project.Configuration), false, token);
         }
         catch (OperationCanceledException) { WriteError(args, "Cancelled before a resumable run was initialized."); return 130; }
-        catch (Exception e) when (e is ArgumentException or IOException or FormatException or PipelineException or DotParseException or JsonException or UnauthorizedAccessException or System.ComponentModel.Win32Exception or InvalidOperationException)
+        catch (Exception e) when (e is ArgumentException or IOException or FormatException or OverflowException or PipelineException or DotParseException or JsonException or UnauthorizedAccessException or System.ComponentModel.Win32Exception or InvalidOperationException)
         { WriteError(args, e.Message); return 2; }
     }
     private void Diagnostics(PreparedPipeline p)
@@ -97,8 +101,10 @@ public sealed class CliApplication(TextWriter output, TextWriter error, string i
         if (settings.Backend is not "scripted" and not "codex") throw new ArgumentException("backend must be codex or scripted.");
         if (settings.Sandbox is not "read-only" and not "workspace-write") throw new ArgumentException("sandbox must be read-only or workspace-write; no bypass modes are supported.");
         if (!Directory.Exists(workdir)) throw new DirectoryNotFoundException($"Working directory does not exist: {workdir}");
+        if (!resume && Directory.Exists(directory) && Directory.EnumerateFileSystemEntries(directory).Any()) throw new ArgumentException($"Run directory is not empty: {directory}. Use resume for a saved run, or choose a fresh directory; existing files were preserved.");
         var checkpoint = resume ? Json.Read<Checkpoint>(await File.ReadAllTextAsync(Path.Combine(directory, "checkpoint.json"), token)) : null;
         if (checkpoint?.FinalOutcome != null) { PrintView(directory, args.Has("--json"), true); return checkpoint.FinalOutcome.IsSuccess ? 0 : 1; }
+        settings = settings with { Limits = options with { PauseAfterStages = null } };
         ICodergenBackend backend;
         if (settings.Backend == "codex")
         {
@@ -122,7 +128,9 @@ public sealed class CliApplication(TextWriter output, TextWriter error, string i
         TextWriter progress = args.Has("--json") ? error : output;
         progress.WriteLine($"Project: {settings.ProjectRoot}\nWorkflow: {settings.WorkflowPath}\nWorkspace: {workdir}\nBackend: {backend.Capabilities.Name} | Real workers: {(settings.Backend == "codex" ? "enabled; may consume usage" : "off (simulation)")} | Sandbox: {settings.Sandbox}\nRun directory: {directory}");
         if (settings.CodexExecutable != null) progress.WriteLine("Codex executable: " + settings.CodexExecutable);
-        progress.WriteLine("Settings sources: " + string.Join("; ", settings.Sources.Select(p => p.Key + "=" + p.Value)));
+        progress.WriteLine("Settings: " + (settings.Sources.GetValueOrDefault("resume") ?? settings.Sources.GetValueOrDefault("project") ?? settings.Sources.GetValueOrDefault("mode") ?? "saved run"));
+        var overrides = settings.Sources.Where(p => p.Value.StartsWith("command line", StringComparison.Ordinal) || p.Value == "explicit resume override").Select(p => p.Key).ToList();
+        if (overrides.Count > 0) progress.WriteLine("CLI overrides: " + string.Join(", ", overrides));
         await using var display = new ProgressDisplay(progress);
         var engine = new Engine(registry); engine.Event += display.Handle;
         var result = await engine.RunAsync(dot, directory, workdir, options, resume, token, settings);
@@ -144,10 +152,11 @@ public sealed class CliApplication(TextWriter output, TextWriter error, string i
         string? exe = recorded?.CodexExecutable;
         bool enabled = recorded?.EnableCodex == true || args.Has("--enable-codex");
         var sources = new Dictionary<string, string>(recorded?.Sources ?? new Dictionary<string, string>()) { ["resume"] = "saved run identity; current project defaults ignored" };
+        foreach (string field in new[] { "max-visits", "max-seconds" }) if (args.Has("--" + field)) sources[field.Replace('-', '_')] = "command line resume override";
         if (args.Get("--codex") is { } replacement) { exe = Project.FullPath(replacement, invocationDirectory); CodexDiscovery.RequireExecutable(exe); sources["codex_executable"] = "explicit resume override"; }
         else if (recorded == null && backend == "codex") exe = CodexDiscovery.Resolve(null, null, invocationDirectory, manifest.WorkingDirectory).Path;
         var settings = new ExecutionSettings(recorded?.ProjectRoot ?? manifest.WorkingDirectory, backend, exe, sandbox, enabled, recorded?.RunOutputRoot ?? Path.GetDirectoryName(directory)!, recorded?.WorkflowPath ?? Path.Combine(directory, "graph.dot"), recorded?.Outputs ?? [], sources);
-        var prior = manifest.Options;
+        var prior = recorded?.Limits ?? manifest.Options;
         var options = new EngineOptions(args.Integer("--max-visits", prior.MaxVisits), args.Number("--max-seconds", prior.MaxSeconds), args.Has("--pause-after") ? args.Integer("--pause-after", 0) : null);
         return await Execute(args, settings, manifest.WorkingDirectory, directory, options, true, token);
     }
@@ -196,7 +205,7 @@ public sealed class CliApplication(TextWriter output, TextWriter error, string i
         if (args.Has("--write") && !real) throw new ArgumentException("--write selects the real Codex writing demo; use --backend codex --enable-codex --sandbox workspace-write.");
         string sandbox = args.Get("--sandbox") ?? "read-only";
         if (args.Has("--write") && sandbox != "workspace-write") throw new ArgumentException("The writing demo requires explicit --sandbox workspace-write.");
-        string scratch = Path.GetFullPath(Path.Combine(root, "..", "workspaces", Guid.NewGuid().ToString("N")));
+        string scratch = Path.GetFullPath(Path.Combine(root, ".workspaces", Guid.NewGuid().ToString("N")));
         string? executable = real ? CodexDiscovery.Resolve(args.Get("--codex"), null, invocationDirectory, project.Root).Path : null;
         Directory.CreateDirectory(scratch);
         // Create a private Git repository for the worker without making a commit.

@@ -1,4 +1,6 @@
-# Test Nightshift with your real Codex CLI
+# Historical/manual source-based Codex walkthrough
+
+For the installed CLI and shorter daily commands, start with [the current onboarding guide](guides/getting-started.md). This phase-one walkthrough is preserved for manual diagnostics and its original evidence checks.
 
 This walkthrough starts with one read-only model invocation in a tiny personal scratch repository. It then offers a file-writing test and a checkpoint/resume test. Run the steps in the same Terminal tab so the shell variables remain available.
 
@@ -250,7 +252,7 @@ nightshift_resume_exit=$?
 printf 'Resume exit code (expected 0): %s\n' "$nightshift_resume_exit"
 ```
 
-**Repeat all worker-selection flags on resume.** Omitting `--backend codex` selects the default scripted simulator, even if the original run used real Codex. This is currently a manual responsibility. Run bounds and working directory are restored from the manifest unless overridden.
+**Phase-two update:** new runs record worker identity and real-worker consent, so resume restores them without repeated worker flags and rejects incompatible backend changes. Legacy manifests that lack identity require explicit backend/permission selection. The explicit flags above remain valid when they match the saved backend/sandbox. Run bounds and working directory are restored from the manifest unless deliberately overridden within the supported rules.
 
 Check the `resume/inspect/.../last-message.json` value against the input as in step 4. This tests the engine's durable continuation. It does not resume a Codex conversation: every worker stage is fresh. Ctrl-C during a model stage can leave an uncertain external effect that is repeated on engine resume; it may also consume additional model usage.
 

@@ -1,0 +1,1 @@
+PASS: local links resolve across 8 primary documents; 30 shell blocks syntax-checked without executing model commands; 4 Mermaid source diagrams plus directory tree reviewed.

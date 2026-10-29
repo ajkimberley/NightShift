@@ -1,0 +1,84 @@
+
+$ nightshift --version
+nightshift 0.2.1
+[exit 0]
+
+$ nightshift doctor
+Nightshift 0.2.1 | .NET 10.0.3
+Installation: /Users/adamkimberley/.dotnet/tools/.store/nightshift.cli/0.2.1/nightshift.cli/0.2.1/tools/net10.0/any/
+Project: /Users/adamkimberley/Repos/nightshift/artifacts/user-installed-smoke
+Config: none; run nightshift init for saved defaults
+Workspace: /Users/adamkimberley/Repos/nightshift/artifacts/user-installed-smoke
+Run output root: /Users/adamkimberley/Repos/nightshift/artifacts/user-installed-smoke/.nightshift/runs
+Backend: scripted | Sandbox: read-only | Real-worker opt-in: False
+Codex: /Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex (PATH)
+[ok] Run output root: /Users/adamkimberley/Repos/nightshift/artifacts/user-installed-smoke/.nightshift/runs
+[ok] Workspace: /Users/adamkimberley/Repos/nightshift/artifacts/user-installed-smoke
+[ok] Codex version: codex-cli 0.164.0-alpha.11.1
+[ok] Codex interface: Required exec flags available
+[ok] Stored authentication: Credentials reported present; live model access is unverified
+No model was started. Stored authentication does not verify live model access.
+[exit 0]
+
+$ nightshift demo --json
+{
+  "run_directory": "/Users/adamkimberley/Repos/nightshift/artifacts/user-installed-smoke/.nightshift/runs/20261029T072646689-25886a59",
+  "state": "success",
+  "working_directory": "/Users/adamkimberley/Repos/nightshift/artifacts/user-installed-smoke/.nightshift/runs/.workspaces/c5fa9b052e184a559469299c380f42f1",
+  "backend": "scripted",
+  "sandbox": "read-only",
+  "current_node": "exit",
+  "next_node": null,
+  "visits": 5,
+  "active_seconds": 0.1265771,
+  "summary": "Pipeline reached exit; visited goal gates satisfied",
+  "checkpoint": "/Users/adamkimberley/Repos/nightshift/artifacts/user-installed-smoke/.nightshift/runs/20261029T072646689-25886a59/checkpoint.json",
+  "events": "/Users/adamkimberley/Repos/nightshift/artifacts/user-installed-smoke/.nightshift/runs/20261029T072646689-25886a59/events.jsonl",
+  "response": "/Users/adamkimberley/Repos/nightshift/artifacts/user-installed-smoke/.nightshift/runs/20261029T072646689-25886a59/plan/visit-0001/attempt-0001/response.md",
+  "logs": "/Users/adamkimberley/Repos/nightshift/artifacts/user-installed-smoke/.nightshift/runs/20261029T072646689-25886a59/verify/visit-0001/attempt-0001",
+  "outputs": [
+    {
+      "path": "/Users/adamkimberley/Repos/nightshift/artifacts/user-installed-smoke/.nightshift/runs/.workspaces/c5fa9b052e184a559469299c380f42f1/demo-output.txt",
+      "exists": true
+    }
+  ],
+  "tool_verdicts": [
+    "create: success (host command)",
+    "verify: success (tool goal gate)"
+  ]
+}
+Warning goal_gate_has_retry verify: Goal gate has no valid recovery target
+Project: /Users/adamkimberley/Repos/nightshift/artifacts/user-installed-smoke
+Workflow: /Users/adamkimberley/Repos/nightshift/artifacts/user-installed-smoke/.nightshift/runs/.workspaces/c5fa9b052e184a559469299c380f42f1/workflow.dot
+Workspace: /Users/adamkimberley/Repos/nightshift/artifacts/user-installed-smoke/.nightshift/runs/.workspaces/c5fa9b052e184a559469299c380f42f1
+Backend: scripted | Real workers: off (simulation) | Sandbox: read-only
+Run directory: /Users/adamkimberley/Repos/nightshift/artifacts/user-installed-smoke/.nightshift/runs/20261029T072646689-25886a59
+Settings: offline demo; scripted worker and local shell verification
+Stage start: running | visit 1, attempt 1
+Stage start: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Stage plan: running | visit 1, attempt 1
+Stage plan: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Stage create: running | visit 1, attempt 1
+Stage create: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+Stage verify: running | visit 1, attempt 1
+Stage verify: completed | visit 1, attempt 1 | 0.0s | success; will_retry=False; 
+[exit 0]
+
+$ nightshift result --latest
+success: Pipeline reached exit; visited goal gates satisfied
+Workspace: /Users/adamkimberley/Repos/nightshift/artifacts/user-installed-smoke/.nightshift/runs/.workspaces/c5fa9b052e184a559469299c380f42f1
+Backend: scripted | Sandbox: read-only
+Stages visited: 5 | Checkpointed active time: 0.1s
+Tool verdict: create: success (host command)
+Tool verdict: verify: success (tool goal gate)
+Declared output (exists; existence alone is not verification): /Users/adamkimberley/Repos/nightshift/artifacts/user-installed-smoke/.nightshift/runs/.workspaces/c5fa9b052e184a559469299c380f42f1/demo-output.txt
+Worker response (a claim; check tool verdicts separately):
+[SCRIPTED; no task correctness claim] plan: Simulate a planning stage
+Run: /Users/adamkimberley/Repos/nightshift/artifacts/user-installed-smoke/.nightshift/runs/20261029T072646689-25886a59
+Checkpoint: /Users/adamkimberley/Repos/nightshift/artifacts/user-installed-smoke/.nightshift/runs/20261029T072646689-25886a59/checkpoint.json
+Events: /Users/adamkimberley/Repos/nightshift/artifacts/user-installed-smoke/.nightshift/runs/20261029T072646689-25886a59/events.jsonl
+Response: /Users/adamkimberley/Repos/nightshift/artifacts/user-installed-smoke/.nightshift/runs/20261029T072646689-25886a59/plan/visit-0001/attempt-0001/response.md
+Stage logs: /Users/adamkimberley/Repos/nightshift/artifacts/user-installed-smoke/.nightshift/runs/20261029T072646689-25886a59/verify/visit-0001/attempt-0001
+[exit 0]
+
+PASS: user-installed 0.2.1, invoked by name outside source with the documented PATH addition; packaged demo and saved limit metadata checked. Actual Codex probes were version/help/login-status only. No model or login flow started.

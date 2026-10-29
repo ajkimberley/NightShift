@@ -19,7 +19,7 @@ public class UsabilityTests
         #!/bin/sh
         case "$1:$2" in
           --version:) echo 'codex-cli 1.2.3'; echo 'DO_NOT_LEAK_SECRET'; exit 0 ;;
-          exec:--help) echo '--json --ephemeral --sandbox --output-schema --output-last-message'; exit 0 ;;
+          exec:--help) echo '--json --ephemeral --sandbox --output-schema --output-last-message --cd --config --model'; exit 0 ;;
           login:status) echo 'DO_NOT_LEAK_AUTH'; exit 0 ;;
         esac
         printf '%s\n' "$@" > "$ATTRACTOR_STAGE_DIR/worker-arguments.txt"
@@ -105,6 +105,18 @@ public class UsabilityTests
         if (!OperatingSystem.IsWindows()) File.SetUnixFileMode(stalled, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
         var timeout = await Invoke(w.Root, "doctor", "--backend", "codex", "--enable-codex", "--codex", stalled, "--probe-seconds", ".1");
         Assert.Equal(1, timeout.Code); Assert.Contains("timed out", timeout.Output); Assert.DoesNotContain("DO_NOT_LEAK", timeout.Output + timeout.Error);
+    }
+    [Fact]
+    public async Task DoctorRejectsMissingInterfaceFlagsAndFailedAuthenticationWithoutLeakingOutput()
+    {
+        using var w = new TestWorkspace(); string fake = await Fake(w);
+        string script = await File.ReadAllTextAsync(fake);
+        await File.WriteAllTextAsync(fake, script.Replace("--output-schema ", "", StringComparison.Ordinal));
+        var missing = await Invoke(w.Root, "doctor", "--backend", "codex", "--enable-codex", "--codex", fake);
+        Assert.Equal(1, missing.Code); Assert.Contains("--output-schema", missing.Output); Assert.DoesNotContain("DO_NOT_LEAK", missing.Output + missing.Error);
+        await File.WriteAllTextAsync(fake, script.Replace("echo 'DO_NOT_LEAK_AUTH'; exit 0", "echo 'DO_NOT_LEAK_AUTH'; exit 1", StringComparison.Ordinal));
+        var auth = await Invoke(w.Root, "doctor", "--backend", "codex", "--enable-codex", "--codex", fake);
+        Assert.Equal(1, auth.Code); Assert.Contains("no usable stored authentication", auth.Output); Assert.DoesNotContain("DO_NOT_LEAK_AUTH", auth.Output + auth.Error);
     }
     [Fact]
     public async Task SavedOptInRunsFakeCodexAndResumeIgnoresChangedProjectDefaults()
@@ -209,4 +221,54 @@ public class UsabilityTests
         await File.WriteAllTextAsync(workflow, "digraph G { start [shape=Mdiamond] work [prompt=x] exit [shape=Msquare] start -> work [fidelity=truncate] work -> exit }");
         Assert.Equal(0, (await Invoke(w.Root, "run")).Code);
     }
+    [Fact]
+    public async Task CliRetriesAndFinalFailuresExposeActualStateAndPaths()
+    {
+        using var w = new TestWorkspace(); string graph = Path.Combine(w.Root, "retry.dot");
+        await File.WriteAllTextAsync(graph, EngineTests.StageGraph(", max_retries=2, script.outcomes=\"retry,retry,success\""));
+        var success = await Invoke(w.Root, "run", graph, "--dir", "retry-run", "--output", "not-produced.txt");
+        Assert.Equal(0, success.Code); Assert.Contains("retry scheduled", success.Output); Assert.Contains("attempt 3", success.Output);
+        Assert.Contains("Declared output (missing)", success.Output); Assert.Contains("Checkpoint: " + Path.Combine(w.Root, "retry-run", "checkpoint.json"), success.Output);
+        await File.WriteAllTextAsync(graph, EngineTests.StageGraph(", script.outcomes=fail"));
+        var fail = await Invoke(w.Root, "run", graph, "--dir", "failed-run", "--json"); Assert.Equal(1, fail.Code);
+        using var json = JsonDocument.Parse(fail.Output); Assert.Equal("failed", json.RootElement.GetProperty("state").GetString());
+        Assert.Equal(1, (await Invoke(w.Root, "resume", Path.Combine(w.Root, "failed-run"))).Code);
+    }
+    [Fact]
+    public async Task CliCancellationKeepsResumableStateAndReportsThePendingStage()
+    {
+        using var w = new TestWorkspace(); using var cancel = new CancellationTokenSource();
+        string graph = Path.Combine(w.Root, "cancel.dot");
+        await File.WriteAllTextAsync(graph, EngineTests.StageGraph(", type=tool, tool_command=\"echo started > started.marker; sleep 30\""));
+        using var output = new StringWriter(); using var error = new StringWriter();
+        var task = new CliApplication(output, error, w.Root).RunAsync(["run", graph, "--dir", "cancel-run"], cancel.Token);
+        await ProcessTests.WaitForFile(Path.Combine(w.Root, "started.marker")); cancel.Cancel();
+        Assert.Equal(3, await task); Assert.Contains("interrupted", output.ToString()); Assert.Contains("Next stage: work", output.ToString());
+        var view = RunViews.Read(Path.Combine(w.Root, "cancel-run")); Assert.Equal("interrupted", view.State); Assert.NotNull(view.Logs);
+    }
+
+    [Fact]
+    public async Task DeliberateResumeLimitOverridesPersistAcrossLaterResumes()
+    {
+        using var w = new TestWorkspace(); await Invoke(w.Root, "init");
+        await Invoke(w.Root, "run", "--pause-after", "1", "--max-visits", "10", "--max-seconds", "20");
+        string run = Directory.GetDirectories(Path.Combine(w.Root, ".nightshift", "runs")).Single();
+        Assert.Equal(3, (await Invoke(w.Root, "resume", run, "--max-visits", "3", "--max-seconds", "12", "--pause-after", "1")).Code);
+        var saved = Json.Read<ExecutionSettings>(await File.ReadAllTextAsync(Path.Combine(run, "execution.json")));
+        Assert.Equal(3, saved.Limits!.MaxVisits); Assert.Equal(12, saved.Limits.MaxSeconds); Assert.Null(saved.Limits.PauseAfterStages);
+        Assert.Equal("command line resume override", saved.Sources["max_visits"]);
+        Assert.Equal(0, (await Invoke(w.Root, "resume", run)).Code);
+        var again = Json.Read<ExecutionSettings>(await File.ReadAllTextAsync(Path.Combine(run, "execution.json")));
+        Assert.Equal(3, again.Limits!.MaxVisits); Assert.Equal(12, again.Limits.MaxSeconds);
+    }
+
+    [Fact]
+    public async Task NonemptyRunDirectoryIsPreservedAndOversizedArgumentsAreInputErrors()
+    {
+        using var w = new TestWorkspace(); await Invoke(w.Root, "init");
+        string run = w.RunDirectory(); Directory.CreateDirectory(run); string original = Path.Combine(run, "graph.dot"); await File.WriteAllTextAsync(original, "unrelated existing work");
+        var collision = await Invoke(w.Root, "run", "--dir", run); Assert.Equal(2, collision.Code); Assert.Contains("not empty", collision.Error); Assert.Equal("unrelated existing work", await File.ReadAllTextAsync(original));
+        Assert.Equal(2, (await Invoke(w.Root, "run", "--max-visits", "999999999999999999999999999")).Code);
+    }
+
 }

@@ -1,5 +1,7 @@
 # Morning review — Nightshift / Attractor
 
+Historical phase-one handoff. For the installed CLI and current onboarding, see [getting started](docs/guides/getting-started.md) and [phase-two review](PHASE-2-REVIEW.md).
+
 **Runnable partial implementation delivered. No implementation blocker.** C# / net10.0 with installed SDK **10.0.103**, pinned in `global.json`. Debug and Release builds have **0 warnings / 0 errors**; **91 tests pass in each configuration**. All deterministic CLI demos ran successfully. No real model worker ran, and no work systems, deployments, remote writes or account changes were used.
 
 Repository started empty with no repository/ancestor AGENTS.md or visual guide present. Git initialized on **`implement/attractor`**; local commits retain the implementation. Existing visual content outside this checkout was not accessed or modified.
