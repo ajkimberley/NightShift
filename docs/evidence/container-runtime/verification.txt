@@ -1,0 +1,303 @@
++ podman machine start --no-info nightshift-dev
+Starting machine "nightshift-dev"
+Machine "nightshift-dev" started successfully
++ podman --connection nightshift-dev info --format json
+{
+  "host": {
+    "arch": "arm64",
+    "buildahVersion": "1.45.2",
+    "cgroupManager": "systemd",
+    "cgroupVersion": "v2",
+    "cgroupControllers": [
+      "cpu",
+      "io",
+      "memory",
+      "pids"
+    ],
+    "cdiSpecDirs": [
+      "/etc/cdi",
+      "/var/run/cdi"
+    ],
+    "conmon": {
+      "package": "conmon-2.2.1-2.fc44.aarch64",
+      "path": "/usr/bin/conmon",
+      "version": "conmon version 2.2.1, commit: "
+    },
+    "cpus": 4,
+    "cpuUtilization": {
+      "userPercent": 7.8,
+      "systemPercent": 10.07,
+      "idlePercent": 82.13
+    },
+    "databaseBackend": "sqlite",
+    "distribution": {
+      "distribution": "fedora",
+      "variant": "podman-machine-os",
+      "version": "44"
+    },
+    "eventLogger": "journald",
+    "freeLocks": 2048,
+    "hostname": "localhost.localdomain",
+    "idMappings": {
+      "gidmap": [
+        {
+          "container_id": 0,
+          "host_id": 1000,
+          "size": 1
+        },
+        {
+          "container_id": 1,
+          "host_id": 100000,
+          "size": 1000000
+        }
+      ],
+      "uidmap": [
+        {
+          "container_id": 0,
+          "host_id": 501,
+          "size": 1
+        },
+        {
+          "container_id": 1,
+          "host_id": 100000,
+          "size": 1000000
+        }
+      ]
+    },
+    "kernel": "7.2.7-200.fc44.aarch64",
+    "logDriver": "journald",
+    "memFree": 3193958400,
+    "memAvailable": 3454668800,
+    "memTotal": 4075831296,
+    "networkBackend": "netavark",
+    "networkBackendInfo": {
+      "backend": "netavark",
+      "version": "netavark 2.1.0",
+      "package": "netavark-2.1.0-1.fc44.aarch64",
+      "path": "/usr/libexec/podman/netavark",
+      "dns": {
+        "version": "aardvark-dns 2.1.0",
+        "package": "aardvark-dns-2.1.0-1.fc44.aarch64",
+        "path": "/usr/libexec/podman/aardvark-dns"
+      },
+      "defaultNetwork": "podman"
+    },
+    "ociRuntime": {
+      "name": "crun",
+      "package": "crun-1.30-1.fc44.aarch64",
+      "path": "/usr/bin/crun",
+      "version": "crun version 1.30\ncommit: a6e70f254e509ceac317027c858082cc6da34cf2\nrundir: /run/user/501/crun\nspec: 1.0.0\n+SYSTEMD +SELINUX +APPARMOR +CAP +SECCOMP +EBPF +CRIU +LIBKRUN +WASM:wasmedge +JSON_C"
+    },
+    "os": "linux",
+    "remoteSocket": {
+      "path": "unix:///run/user/501/podman/podman.sock",
+      "exists": true
+    },
+    "rootlessNetworkCmd": "pasta",
+    "rootlessPortForwarder": "rootlessport",
+    "serviceIsRemote": true,
+    "security": {
+      "apparmorEnabled": false,
+      "capabilities": "CAP_CHOWN,CAP_DAC_OVERRIDE,CAP_FOWNER,CAP_FSETID,CAP_KILL,CAP_NET_BIND_SERVICE,CAP_SETFCAP,CAP_SETGID,CAP_SETPCAP,CAP_SETUID,CAP_SYS_CHROOT",
+      "rootless": true,
+      "seccompEnabled": true,
+      "seccompProfilePath": "/usr/share/containers/seccomp.json",
+      "selinuxEnabled": true
+    },
+    "pasta": {
+      "executable": "/usr/bin/pasta",
+      "package": "passt-0^20260728.gf8df3f1-2.fc44.aarch64",
+      "version": "pasta 0^20260728.gf8df3f1-2.fc44.aarch64-pasta\nCopyright Red Hat\nGNU General Public License, version 2 or later\n  \u003chttps://www.gnu.org/licenses/old-licenses/gpl-2.0.html\u003e\nThis is free software: you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.\n"
+    },
+    "swapFree": 0,
+    "swapTotal": 0,
+    "uptime": "0h 0m 7.00s",
+    "variant": "v8",
+    "linkmode": "dynamic",
+    "emulatedArchitectures": [
+      "linux/386",
+      "linux/amd64",
+      "linux/arm64be"
+    ]
+  },
+  "store": {
+    "containerStore": {
+      "number": 0,
+      "paused": 0,
+      "running": 0,
+      "stopped": 0
+    },
+    "graphDriverName": "overlay",
+    "graphOptions": {
+      "overlay.mountopt": "nodev"
+    },
+    "graphRoot": "/var/home/core/.local/share/containers/storage",
+    "graphRootAllocated": 42344624128,
+    "graphRootUsed": 2698596352,
+    "graphStatus": {
+      "Backing Filesystem": "xfs",
+      "Native Overlay Diff": "true",
+      "Supports d_type": "true",
+      "Supports shifting": "false",
+      "Supports volatile": "true",
+      "Using metacopy": "false"
+    },
+    "imageCopyTmpDir": "/var/tmp",
+    "imageStore": {
+      "number": 0
+    },
+    "runRoot": "/run/user/501/containers",
+    "volumePath": "/var/home/core/.local/share/containers/storage/volumes",
+    "transientStore": false
+  },
+  "registries": {
+    "search": [
+  "docker.io"
+]
+  },
+  "plugins": {
+    "volume": [
+      "local"
+    ],
+    "network": [
+      "bridge",
+      "macvlan",
+      "ipvlan"
+    ],
+    "log": [
+      "k8s-file",
+      "none",
+      "passthrough",
+      "journald"
+    ],
+    "authorization": null
+  },
+  "version": {
+    "APIVersion": "6.1.4",
+    "Version": "6.1.4",
+    "GoVersion": "go1.26.9-X:nodwarf5",
+    "GitCommit": "464c15fec06f0074c916f9eff87c4806869c2833",
+    "BuiltTime": "Mon Oct 12 01:00:00 2026",
+    "Built": 1791763200,
+    "BuildOrigin": "Copr: packit/podman-container-tools-podman-29957",
+    "OsArch": "linux/arm64",
+    "Os": "linux"
+  },
+  "Client": {
+    "APIVersion": "6.1.4",
+    "Version": "6.1.4",
+    "GoVersion": "go1.27.2",
+    "GitCommit": "",
+    "BuiltTime": "Mon Oct 12 18:07:47 2026",
+    "Built": 1791824867,
+    "BuildOrigin": "brew",
+    "OsArch": "darwin/arm64",
+    "Os": "darwin"
+  }
+}
++ podman --connection nightshift-dev pull docker.io/library/alpine:3.22
+f28fb2fa6085390a967d9b74491b91c53cf00dec45bf1c7defa6aae11a52e519
+Trying to pull docker.io/library/alpine:3.22...
+Getting image source signatures
+Copying blob sha256:281d5a96263b1ebc7051f11d9b9a4ca111ed1c711d5e209682310fc62c4b8bef
+Copying config sha256:f28fb2fa6085390a967d9b74491b91c53cf00dec45bf1c7defa6aae11a52e519
+Writing manifest to image destination
++ podman --connection nightshift-dev image inspect docker.io/library/alpine:3.22
+[
+     {
+          "Id": "f28fb2fa6085390a967d9b74491b91c53cf00dec45bf1c7defa6aae11a52e519",
+          "Digest": "sha256:3e07a4f627d12468155eb812785e10f2453a447c346872b47788a62437366764",
+          "RepoTags": [
+               "docker.io/library/alpine:3.22"
+          ],
+          "RepoDigests": [
+               "docker.io/library/alpine@sha256:2e0b81d60597f449baa56dc25d355367869d2dca4cd57e866f1e2b52af3eb55f",
+               "docker.io/library/alpine@sha256:3e07a4f627d12468155eb812785e10f2453a447c346872b47788a62437366764"
+          ],
+          "Parent": "",
+          "Comment": "buildkit.dockerfile.v0",
+          "Created": "2026-10-21T20:47:02.239161075Z",
+          "Config": {
+               "Env": [
+                    "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+               ],
+               "Cmd": [
+                    "/bin/sh"
+               ],
+               "WorkingDir": "/"
+          },
+          "Version": "",
+          "Author": "",
+          "Architecture": "arm64",
+          "Os": "linux",
+          "Size": 8833655,
+          "VirtualSize": 8833655,
+          "GraphDriver": {
+               "Name": "overlay",
+               "Data": {
+                    "UpperDir": "/var/home/core/.local/share/containers/storage/overlay/f27c84aef3509463528cb456fbf5bfa25cdc7dcea6912131a622883b5e005744/diff",
+                    "WorkDir": "/var/home/core/.local/share/containers/storage/overlay/f27c84aef3509463528cb456fbf5bfa25cdc7dcea6912131a622883b5e005744/work"
+               }
+          },
+          "RootFS": {
+               "Type": "layers",
+               "Layers": [
+                    "sha256:f27c84aef3509463528cb456fbf5bfa25cdc7dcea6912131a622883b5e005744"
+               ]
+          },
+          "Labels": null,
+          "Annotations": {
+               "com.docker.official-images.bashbrew.arch": "arm64v8",
+               "org.opencontainers.image.base.name": "scratch",
+               "org.opencontainers.image.created": "2026-10-21T20:46:59Z",
+               "org.opencontainers.image.revision": "0f41d588b1c2b004dfc99868bbe7ce4d37b99790",
+               "org.opencontainers.image.source": "https://github.com/alpinelinux/docker-alpine.git#0f41d588b1c2b004dfc99868bbe7ce4d37b99790:aarch64",
+               "org.opencontainers.image.url": "https://hub.docker.com/_/alpine",
+               "org.opencontainers.image.version": "3.22.7"
+          },
+          "ManifestType": "application/vnd.oci.image.manifest.v1+json",
+          "User": "",
+          "History": [
+               {
+                    "created": "2026-10-21T20:47:02.239161075Z",
+                    "created_by": "ADD alpine-minirootfs-3.22.7-aarch64.tar.gz / # buildkit",
+                    "comment": "buildkit.dockerfile.v0"
+               },
+               {
+                    "created": "2026-10-21T20:47:02.239161075Z",
+                    "created_by": "CMD [\"/bin/sh\"]",
+                    "comment": "buildkit.dockerfile.v0",
+                    "empty_layer": true
+               }
+          ],
+          "NamesHistory": [
+               "docker.io/library/alpine:3.22"
+          ]
+     }
+]
++ podman --connection nightshift-dev run --rm --pull=never --network=none --read-only --cap-drop=ALL --security-opt=no-new-privileges --pids-limit=64 --memory=128m --cpus=1 --userns=keep-id --user=501:501 --volume /Users/adamkimberley/Library/Application Support/Nightshift/container-workspaces/prerequisite-yntof82g:/workspace:rw --workdir=/workspace docker.io/library/alpine@sha256:2e0b81d60597f449baa56dc25d355367869d2dca4cd57e866f1e2b52af3eb55f sh -c 
+set -eu
+[ "$(id -u)" = 501 ]
+[ "$(cat /workspace/input.txt)" = 'nightshift prerequisite' ]
+printf 'container wrote this\n' > /workspace/output.txt
+[ ! -e /Users/adamkimberley/Repos/nightshift ]
+[ ! -S /run/podman/podman.sock ]
+[ ! -S /var/run/docker.sock ]
+[ "$(ls /sys/class/net)" = lo ]
+awk '$2 == "/" { if ($4 !~ /(^|,)ro(,|$)/) exit 1; found=1 } END { if (!found) exit 1 }' /proc/mounts
+if touch /root-filesystem-write 2>/dev/null; then exit 1; fi
+grep -Eq '^CapEff:[[:space:]]+0+$' /proc/self/status
+grep -Eq '^NoNewPrivs:[[:space:]]+1$' /proc/self/status
+[ "$(cat /sys/fs/cgroup/memory.max)" = 134217728 ]
+[ "$(cat /sys/fs/cgroup/pids.max)" = 64 ]
+[ "$(cat /sys/fs/cgroup/cpu.max)" = '100000 100000' ]
+printf 'PASS: uid, workspace read/write, hidden checkout, no runtime sockets, loopback only, read-only root, dropped capabilities, no-new-privileges, memory/pids/cpu limits\n'
+
+PASS: uid, workspace read/write, hidden checkout, no runtime sockets, loopback only, read-only root, dropped capabilities, no-new-privileges, memory/pids/cpu limits
+PASS: host read back container output
++ podman --connection nightshift-dev ps --all --format json
+[]
+PASS: no leftover containers
++ podman machine stop nightshift-dev
+Machine "nightshift-dev" stopped successfully
+ALL PREREQUISITE CHECKS PASSED; VM stopped cleanly

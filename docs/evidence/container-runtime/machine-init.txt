@@ -1,0 +1,6 @@
+Looking up Podman Machine image at quay.io/podman/machine-os:6.1 to create VM
+Machine init complete
+To start your machine run:
+
+	podman machine start nightshift-dev
+

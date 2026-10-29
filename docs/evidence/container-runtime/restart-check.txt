@@ -1,0 +1,8 @@
++ podman machine start --no-info nightshift-dev
+Starting machine "nightshift-dev"
+Machine "nightshift-dev" started successfully
++ podman --connection nightshift-dev run --rm --pull=never --network=none docker.io/library/alpine@sha256:2e0b81d60597f449baa56dc25d355367869d2dca4cd57e866f1e2b52af3eb55f sh -c echo restart-container-ok
+restart-container-ok
++ podman machine stop nightshift-dev
+Machine "nightshift-dev" stopped successfully
+PASS: clean restart and subsequent container run

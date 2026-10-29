@@ -1,0 +1,18 @@
+[
+    {
+        "Name": "nightshift-dev",
+        "URI": "ssh://core@127.0.0.1:51627/run/user/501/podman/podman.sock",
+        "Identity": "/Users/adamkimberley/.local/share/containers/podman/machine/machine",
+        "IsMachine": true,
+        "Default": true,
+        "ReadWrite": true
+    },
+    {
+        "Name": "nightshift-dev-root",
+        "URI": "ssh://root@127.0.0.1:51627/run/podman/podman.sock",
+        "Identity": "/Users/adamkimberley/.local/share/containers/podman/machine/machine",
+        "IsMachine": true,
+        "Default": false,
+        "ReadWrite": true
+    }
+]

@@ -1,0 +1,31 @@
+[
+     {
+          "ConfigDir": {
+               "Path": "/Users/adamkimberley/.config/containers/podman/machine/applehv"
+          },
+          "ConnectionInfo": {
+               "PodmanSocket": {
+                    "Path": "/var/folders/n5/5wnnbcrj3bbdjr7lrwjrpr2m0000gn/T/podman/nightshift-dev-api.sock"
+               },
+               "PodmanPipe": null
+          },
+          "Created": "2026-10-29T10:37:54.720398Z",
+          "LastUp": "2026-10-29T10:38:37.573759Z",
+          "Name": "nightshift-dev",
+          "Resources": {
+               "CPUs": 4,
+               "DiskSize": 40,
+               "Memory": 4096,
+               "USBs": []
+          },
+          "SSHConfig": {
+               "IdentityPath": "/Users/adamkimberley/.local/share/containers/podman/machine/machine",
+               "Port": 51627,
+               "RemoteUsername": "core"
+          },
+          "State": "stopped",
+          "UserModeNetworking": true,
+          "Rootful": false,
+          "Rosetta": false
+     }
+]

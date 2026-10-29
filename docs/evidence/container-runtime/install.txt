@@ -1,0 +1,14 @@
+==> Downloading bottle manifests
+✔︎ Bottle Manifest podman (6.1.4)
+==> Fetching downloads for: podman
+✔︎ Bottle podman (6.1.4)
+==> Pouring podman--6.1.4.arm64_tahoe.bottle.tar.gz
+🍺  /opt/homebrew/Cellar/podman/6.1.4: 220 files, 97.3MB
+==> Caveats
+zsh completions have been installed to:
+  /opt/homebrew/share/zsh/site-functions
+==> podman
+In order to run containers locally, podman depends on a Linux kernel.
+One can be started manually using `podman machine` from this package.
+To start a podman VM automatically at login, also install the cask
+"podman-desktop".

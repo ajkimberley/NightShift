@@ -1,32 +1,28 @@
-# Draft goal: portability and trusted execution
-
-**For review only. This goal is not active.** Creating this document authorizes no implementation, runtime installation, account changes, model calls or work-system access. Once approved, this document can be linked to an explicit `/goal` request.
-
-## Decisions to review before approval
-
-1. **Initial isolation target:** propose a local Linux-container execution profile, usable from macOS development and later Linux CI. Native Windows/macOS execution security is not included automatically. Neither `docker` nor `podman` was found on the current PATH when this draft was prepared. A supported local runtime must be made available before the isolation acceptance gate can pass. Runtime installation is not authorized by this draft or proposed implementation scope.
-2. **Integration target:** propose GitHub/GitHub Actions and **Azure DevOps Services** for a small common repository/CI workflow. Azure DevOps Server compatibility needs its actual version confirmed separately. Adapters will be exercised against fixtures, not work accounts.
-3. **Completion level:** working adapter implementations and contract tests, plus an actually exercised filesystem isolation profile. Live agent/provider/account compatibility and the actual port into the work project remain separate, explicitly authorized steps.
-
-Command/interface names below describe intended behavior, not existing features. These choices can be changed during review; do not replace a required security property with a weaker claim to make the phase pass.
-
----
-
-## Goal
+# Goal: portability and trusted execution
 
 Prepare Nightshift for a later port into my work project by separating orchestration from coding-agent backends, repository/CI services and execution infrastructure, and by preventing an agent from changing authoritative run state or manufacturing verification evidence.
 
-Implement and verify the approved scope autonomously. Preserve existing work, record assumptions and specification decisions, and leave `PHASE-3-REVIEW.md` with exact commands, evidence, capabilities, limitations and porting instructions. Do not stop after producing interfaces or a plan. If an environmental requirement blocks progress, continue independent work where possible, preserve it, and report the specific blocker without claiming full completion.
+Implement and verify this scope autonomously. Preserve existing work, record assumptions and specification decisions, and leave `PHASE-3-REVIEW.md` with exact commands, evidence, capabilities, limitations and porting instructions. Do not stop after producing interfaces or a plan. If an environmental requirement blocks progress, continue independent work where possible, preserve it, and report the specific blocker without claiming full completion.
+
+## Implementation targets and prerequisites
+
+Begin by inspecting the current working tree, repository instructions, `README.md`, `PHASE-2-REVIEW.md` and `docs/container-runtime.md`. Use current files and runtime checks as authoritative; preserve existing local changes. This document contains the implementation scope and does not depend on earlier chat history.
+
+1. **Initial isolation target:** a local Linux-container execution profile, usable from macOS development and later Linux CI. Native Windows/macOS execution security is not included automatically. Podman 6.1.4 is installed on this Mac with a local rootless `nightshift-dev` VM; see [runtime setup and evidence](docs/container-runtime.md). The VM was left stopped after prerequisite verification. The operator must start it with `podman machine start nightshift-dev` before isolation checks; verify its current availability and local connection identity. Its only host share is the dedicated Nightshift container-workspaces directory, so worker workspace preparation must respect that boundary. Further runtime installation/reconfiguration is outside this scope.
+2. **Integration target:** GitHub/GitHub Actions and **Azure DevOps Services** for a small common repository/CI workflow. Azure DevOps Server compatibility needs its actual version confirmed separately. Adapters will be exercised against fixtures, not work accounts.
+3. **Completion level:** working adapter implementations and contract tests, plus an actually exercised filesystem isolation profile. Live agent/provider/account compatibility and the actual port into the work project remain separate, explicitly authorized steps.
+
+Command/interface names below describe required behavior to implement. Do not replace a required security property with a weaker claim to make the phase pass.
 
 ## 1. Boundaries and non-goals
 
-- Work in this personal Nightshift repository and its local test fixtures. Creating Nightshift-owned private state directories outside the checkout is authorized when this goal is approved and executed, because that separation is a deliverable. **Do not access, clone, inspect or modify the work project, work systems, work repositories, pipeline endpoints or credentials.** This phase prepares the port; it does not perform it.
+- Work in the personal Nightshift repository at `/Users/adamkimberley/Repos/nightshift` and its local test fixtures. Creating Nightshift-owned private state directories outside the checkout is authorized because that separation is a deliverable. **Do not access, clone, inspect or modify the work project, work systems, work repositories, pipeline endpoints or credentials.** This phase prepares the port; it does not perform it.
 - Use C# and the existing supported .NET toolchain. Split projects only at real dependency/trust boundaries. Retain the installed CLI user experience and meaningful existing tests.
 - Preserve the pinned Attractor baseline and external graph/status names. Record protective divergences and new acceptance-policy extensions explicitly. Preserve routing/retry/revisit semantics rather than silently rewriting them around a security feature.
 - The seam is for **coding-agent backends**, such as Codex and Claude Code. Do not implement `unified-llm-spec.md`, `coding-agent-loop-spec.md`, a custom model client, an internal tool-use loop, or a multi-agent platform. The unified client spec is an architectural reference for normalized data/errors/capabilities, not an implementation requirement.
 - Use fake agent executables, local Git fixtures and fake HTTP services for integration tests. Use real isolation-runtime processes for isolation tests. Do not invoke models, paid APIs, login flows or real hosted repository/CI operations without a separate explicit instruction.
 - Network access is allowed for public authoritative documentation and necessary development dependencies. Any test-image download must use an explicitly identified official base image, record its resolved digest, and stay within bounded local verification. Never connect to a remote/work container context.
-- No sudo, machine-wide installs/upgrades, changes to existing account/system permissions or SSH trust, new host/provider accounts or credentials, host provider-CLI installs/upgrades, shell-profile edits, remote pushes/PRs, deployments or package publication. Creating restrictive permissions and execution-policy records for new Nightshift-owned artifacts is allowed; altering unrelated user/system resources is not. Local commits/packages are allowed. After isolated package checks pass, updating only the current user's Nightshift installation is allowed when the goal is approved and executed.
+- No sudo, machine-wide installs/upgrades, changes to existing account/system permissions or SSH trust, new host/provider accounts or credentials, host provider-CLI installs/upgrades, shell-profile edits, remote pushes/PRs, deployments or package publication. Creating restrictive permissions and execution-policy records for new Nightshift-owned artifacts is allowed; altering unrelated user/system resources is not. Local commits/packages are allowed. After isolated package checks pass, updating only the current user's Nightshift installation is allowed.
 - No production-readiness, compliance, general sandbox-escape resistance, or live work-environment compatibility claim. State exactly what the tested profile guarantees and assumes.
 
 ## 2. Threat model and architecture first
@@ -55,7 +51,7 @@ Protect the coordinator's binaries, Git administration data and approved control
 
 ### B. One real isolation profile
 
-Implement a worker-launch contract with one genuinely enforced profile for the approved initial target. The proposed first profile is local Linux containers. Verify local-runtime prerequisites and context identity before use. Do not install, start or reconfigure a container daemon/VM, or redirect to a remote context, automatically. Launching bounded test containers on an already available local runtime is within scope.
+Implement a worker-launch contract with one genuinely enforced profile for local Linux containers. Verify local-runtime prerequisites and context identity before use. Do not install, start or reconfigure a container daemon/VM, or redirect to a remote context, automatically. Launching bounded test containers on an already available local runtime is within scope.
 
 Give the worker only its permitted checkout, private scratch/exchange area, required executable/runtime assets and explicitly approved environment. Do not expose the protected run store, host home, host service credentials, inherited privileged handles, Docker/Podman socket, host PID namespace or broad host mounts. Use an explicitly constrained nonprivileged profile; do not use privileged containers, sandbox bypass flags or an unsandboxed retry fallback. Use network-disabled fixtures for adversarial tests. Describe live network/auth requirements separately and do not claim an untested live profile is protected.
 
@@ -165,7 +161,7 @@ Stop when those conditions pass. If blocked, preserve the work and handoff hones
 
 ---
 
-## Reference material for the implementation phase
+## References
 
 Inspect current official sources when implementing; pin any upstream spec revision adopted as a reference. The existing pinned Attractor orchestration baseline remains authoritative for existing behavior. These sources are context, not authorization to expand scope or execute their examples:
 
