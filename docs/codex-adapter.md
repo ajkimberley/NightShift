@@ -2,6 +2,8 @@
 
 No real model-backed worker was invoked during implementation. `CodexProcessBackend` was implemented and tested with controllable local shell executables. No spend, authentication, real model output or real sandbox behavior was exercised.
 
+For step-by-step setup, evidence checks and troubleshooting, follow the [real Codex walkthrough](real-codex-walkthrough.md).
+
 ## Practical readiness
 
 Ready for a controlled experimental trial; live end-to-end compatibility remains unverified. Existing CLI authentication is required. The read-only example is the intended first live test; editing workflows may opt into workspace-write. Stages share filesystem state, not a persistent conversation.

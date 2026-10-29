@@ -1,0 +1,25 @@
+Walkthrough checks — 2026-10-29
+
+Read-only interface inspection (no model calls):
+  command -v codex
+  codex --version
+  codex login --help
+  codex exec --help
+Observed codex-cli 0.164.0-alpha.11.1.
+
+Executed:
+  dotnet src/Nightshift.Cli/bin/Debug/net10.0/Nightshift.Cli.dll validate examples/codex-read-smoke.dot
+Result: exit 0, Valid: 3 nodes, 2 edges.
+
+Executed:
+  dotnet src/Nightshift.Cli/bin/Debug/net10.0/Nightshift.Cli.dll validate examples/codex-write-smoke.dot
+Result: exit 0, Valid: 4 nodes, 3 edges. Expected goal_gate_has_retry warning for verifier (no automatic recovery).
+
+Extracted all 14 ```sh blocks from docs/real-codex-walkthrough.md and passed each to /bin/bash -n via stdin, without executing its commands. All passed. Local Markdown links in guide, README and adapter documentation resolve.
+
+Using a temporary workspace under runs/ and the scripted backend, executed the write-smoke graph twice with --max-visits 4 --max-seconds 10:
+  Missing codex-output.txt: exit 1, verifier failed as expected.
+  codex-output.txt containing exactly NIGHTSHIFT_WRITE_OK followed by newline: exit 0, trace start -> write -> verify -> exit.
+Temporary workspace removed after verification. No fake or real Codex process was launched in these two runs; the ordinary local shell verifier executed.
+
+Real-model read/write/resume trial commands remain unexecuted. Authentication status/login commands in the guide were not executed by the implementation agent. Existing 91-test Debug/Release results are from the preceding schema fix; no engine code was changed for this walkthrough.

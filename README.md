@@ -41,6 +41,7 @@ bash scripts/verify.sh runs/my-verification
 - [Conformance](docs/conformance.md): capability-by-capability coverage and gaps.
 - [Spec decisions](docs/spec-decisions.md): ambiguities and protective divergences.
 - [Verification transcript](docs/evidence/verification.txt): commands/results from `scripts/verify.sh`.
+- [Real Codex walkthrough](docs/real-codex-walkthrough.md): copyable read-only, writing and resume trials.
 - [Codex boundary](docs/codex-adapter.md): source interface, capabilities and test scope.
 
 Status files use external `outcome`, with `success`, `partial_success`, `fail`, `retry` (and internal-compatible `skipped`). Worker text alone is insufficient for success. A zero shell exit is command completion; a model's status is its claim. Independent test/acceptance stages are still needed to establish task correctness. `auto_status=true` is explicit synthetic success and emits a warning.
