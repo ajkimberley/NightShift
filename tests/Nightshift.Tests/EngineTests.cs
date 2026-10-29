@@ -25,7 +25,7 @@ public sealed class CallbackBackend(Func<StageRequest, CancellationToken, Task<B
 public class EngineTests
 {
     internal static string StageGraph(string attributes = "", string extra = "") => $"digraph G {{ start [shape=Mdiamond] work [prompt=do_work {attributes}] exit [shape=Msquare] start -> work work -> exit {extra} }}";
-    internal static HandlerRegistry Registry(string workdir, ICodergenBackend? backend = null, IInterviewer? interviewer = null) => HandlerRegistry.Create(backend ?? new ScriptedBackend(), interviewer ?? new QueueInterviewer([]), workdir);
+    internal static HandlerRegistry Registry(string workdir, ICodergenBackend? backend = null, IInterviewer? interviewer = null) => HandlerRegistry.Create(backend ?? new ScriptedBackend(), interviewer ?? new QueueInterviewer([]), workdir, new ToolHandler(workdir));
     [Fact]
     public async Task BareStartAndEndIdentifiersResolveToNoOpHandlersAndPublishTypedEvents()
     {

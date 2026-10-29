@@ -12,7 +12,7 @@ public class ProcessTests
         var engine = new Engine(EngineTests.Registry(w.Root));
         var ok = await engine.RunAsync(EngineTests.StageGraph(", type=tool, tool_command=\"printf 'hello'; printf 'warning' >&2\""), w.RunDirectory(), w.Root);
         Assert.True(ok.Outcome.IsSuccess); Assert.Equal("hello", ok.Checkpoint.ContextValues["tool.output"].GetString());
-        var fail = await engine.RunAsync(EngineTests.StageGraph(", type=tool, tool_command=\"printf '{\\\"outcome\\\":\\\"success\\\"}' > \\\"$ATTRACTOR_STAGE_DIR/status.json\\\"; exit 7\""), w.RunDirectory("fail"), w.Root);
+        var fail = await engine.RunAsync(EngineTests.StageGraph(", type=tool, tool_command=\"printf '{\\\"outcome\\\":\\\"success\\\"}' > \\\"$NIGHTSHIFT_EXCHANGE_DIR/status.json\\\"; exit 7\""), w.RunDirectory("fail"), w.Root);
         Assert.False(fail.Outcome.IsSuccess); Assert.Contains("exited 7", fail.Outcome.FailureReason);
         string workerStatus = Directory.GetFiles(w.RunDirectory("fail"), "worker-status.json", SearchOption.AllDirectories).Single();
         Assert.Equal(StageStatus.Success, Json.Read<Outcome>(await File.ReadAllTextAsync(workerStatus)).Status);
@@ -21,7 +21,7 @@ public class ProcessTests
     public async Task ToolCanReturnExplicitStatusAndContextUpdates()
     {
         using var w = new TestWorkspace();
-        string command = "printf '{\\\"outcome\\\":\\\"fail\\\",\\\"failure_reason\\\":\\\"business check failed\\\"}' > \\\"$ATTRACTOR_STAGE_DIR/status.json\\\"";
+        string command = "printf '{\\\"outcome\\\":\\\"fail\\\",\\\"failure_reason\\\":\\\"business check failed\\\"}' > \\\"$NIGHTSHIFT_EXCHANGE_DIR/status.json\\\"";
         var r = await new Engine(EngineTests.Registry(w.Root)).RunAsync(EngineTests.StageGraph($", type=tool, tool_command=\"{command}\""), w.RunDirectory(), w.Root);
         Assert.False(r.Outcome.IsSuccess); Assert.Equal("business check failed", r.Outcome.FailureReason);
     }
@@ -50,13 +50,13 @@ public class ProcessTests
         string path = Path.Combine(w.Root, "fake-codex");
         string script = """
         #!/bin/sh
-        printf '%s\n' "$@" > "$ATTRACTOR_STAGE_DIR/arguments.txt"
+        printf '%s\n' "$@" > "$NIGHTSHIFT_EXCHANGE_DIR/arguments.txt"
         output=''
         while [ "$#" -gt 0 ]; do
           if [ "$1" = '--output-last-message' ]; then shift; output=$1; fi
           shift
         done
-        cat > "$ATTRACTOR_STAGE_DIR/input.txt"
+        cat > "$NIGHTSHIFT_EXCHANGE_DIR/input.txt"
         """ + $"\nprintf '%s\\n' '{eventJson}'\n" + (outcome.Length > 0 ? $"printf '%s' '{outcome}' > \"$output\"\n" : "") + $"exit {exit}\n";
         await File.WriteAllTextAsync(path, script);
         if (!OperatingSystem.IsWindows()) File.SetUnixFileMode(path, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);

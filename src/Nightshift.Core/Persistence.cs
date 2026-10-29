@@ -52,7 +52,7 @@ public sealed class Checkpoint
 // CLI execution identity is optional so older core-only runs remain readable.
 public sealed record ExecutionSettings(string ProjectRoot, string Backend, string? CodexExecutable, string Sandbox, bool EnableCodex, string RunOutputRoot, string WorkflowPath, IReadOnlyList<string> Outputs, IReadOnlyDictionary<string, string> Sources, int SchemaVersion = 1, EngineOptions? Limits = null);
 public sealed record RunManifest(string GraphName, string Goal, string GraphHash, string WorkingDirectory, DateTimeOffset StartedAt, EngineOptions Options, ExecutionSettings? Execution = null);
-public sealed class RunStore : IDisposable
+public sealed class RunStore : IRunStore
 {
     public string Root { get; }
     private readonly FileStream lease;
@@ -79,6 +79,7 @@ public sealed class RunStore : IDisposable
     public Checkpoint Load() => Json.Read<Checkpoint>(File.ReadAllText(Path.Combine(Root, "checkpoint.json")));
     public string StageDirectory(string node, int visit, int attempt)
     {
+        if (Path.GetFileName(node) != node || node is "." or ".." || node.Contains('\\')) throw new IOException("Unsafe stage identifier");
         string path = Path.Combine(Root, node, $"visit-{visit:D4}", $"attempt-{attempt:D4}");
         // Checkpoint may lag an artifact write after a crash. Never overwrite prior evidence.
         while (Directory.Exists(path)) path = Path.Combine(Root, node, $"visit-{visit:D4}", $"attempt-{attempt:D4}-replay-{Guid.NewGuid():N}");

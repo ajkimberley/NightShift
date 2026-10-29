@@ -2,7 +2,9 @@ using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 
-namespace Nightshift.Core;
+using Nightshift.Core;
+
+namespace Nightshift.Adapters;
 
 public sealed record ProcessResult(int ExitCode, string Stdout, string Stderr);
 public static class ProcessRunner
@@ -19,12 +21,15 @@ public static class ProcessRunner
         }
         return preview.ToString();
     }
-    public static async Task<ProcessResult> RunAsync(string executable, IReadOnlyList<string> arguments, string workingDirectory, string input, string artifactDirectory, CancellationToken cancellationToken)
+    public static async Task<ProcessResult> RunAsync(string executable, IReadOnlyList<string> arguments, string workingDirectory, string input, string artifactDirectory, CancellationToken cancellationToken, string? exchangeDirectory = null)
     {
         cancellationToken.ThrowIfCancellationRequested(); Directory.CreateDirectory(artifactDirectory);
+        string exchange = exchangeDirectory ?? Path.Combine(workingDirectory, ".nightshift-exchange-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(exchange);
         var start = new ProcessStartInfo(executable) { WorkingDirectory = workingDirectory, UseShellExecute = false, RedirectStandardInput = true, RedirectStandardOutput = true, RedirectStandardError = true, CreateNoWindow = true };
         foreach (string argument in arguments) start.ArgumentList.Add(argument);
-        start.Environment["ATTRACTOR_STAGE_DIR"] = Path.GetFullPath(artifactDirectory);
+        start.Environment.Remove("ATTRACTOR_STAGE_DIR");
+        start.Environment["NIGHTSHIFT_EXCHANGE_DIR"] = exchange;
         using var process = new Process { StartInfo = start };
         process.Start();
         await File.WriteAllTextAsync(Path.Combine(artifactDirectory, "process.pid"), process.Id.ToString(), CancellationToken.None);
@@ -45,6 +50,14 @@ public static class ProcessRunner
             finally { process.StandardInput.Close(); }
             await process.WaitForExitAsync(cancellationToken);
             var result = new ProcessResult(process.ExitCode, await stdout, await stderr);
+            foreach (string name in new[] { "status.json", "last-message.json", "arguments.txt", "input.txt", "outcome-schema.json" })
+            {
+                string source = Path.Combine(exchange, name);
+                if (!File.Exists(source)) continue;
+                WorkspaceSnapshot.RejectLinks(source);
+                if (new FileInfo(source).Length > 1024 * 1024) throw new IOException("Legacy exchange bounds exceeded");
+                File.Copy(source, Path.Combine(artifactDirectory, name == "status.json" ? "worker-status.json" : name), false);
+            }
             cancellationToken.ThrowIfCancellationRequested(); return result;
         }
         finally
@@ -52,6 +65,7 @@ public static class ProcessRunner
             if (!process.HasExited) { try { process.Kill(entireProcessTree: true); } catch (InvalidOperationException) { } }
             await process.WaitForExitAsync(CancellationToken.None);
             await Task.WhenAll(stdout, stderr);
+            if (Directory.Exists(exchange)) Directory.Delete(exchange, true);
         }
     }
 }
@@ -66,7 +80,9 @@ public sealed class CodexProcessBackend(CodexProcessOptions options) : ICodergen
         if (options.Sandbox is not "read-only" and not "workspace-write") return new("", Outcome.Fail("Only read-only or workspace-write sandbox allowed"));
         if (r.Handoff.Fidelity != "truncate") return new("", Outcome.Fail("Codex process adapter only implements truncate fidelity"));
         if (r.Node.Attributes.Text("llm_provider") is { Length: > 0 } provider && provider != "openai") return new("", Outcome.Fail($"Provider '{provider}' not supported by this adapter"));
-        string schema = Path.Combine(r.Directory, "outcome-schema.json"), last = Path.Combine(r.Directory, "last-message.json");
+        string exchange = Path.Combine(options.WorkingDirectory, ".nightshift-exchange-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(exchange);
+        string schema = Path.Combine(exchange, "outcome-schema.json"), last = Path.Combine(exchange, "last-message.json");
         // JSON Schema keywords have protocol-defined casing, independent of run-state naming.
         await AtomicFile.WriteJsonAsync(schema, new Dictionary<string, object>
         {
@@ -80,9 +96,9 @@ public sealed class CodexProcessBackend(CodexProcessOptions options) : ICodergen
         args.AddRange(["-c", "model_reasoning_effort=" + JsonSerializer.Serialize(r.Node.Attributes.Text("reasoning_effort", "high")), "-"]);
         // Truncate is intentionally minimal: do not smuggle full context into a fresh session.
         string input = $"Graph goal: {r.Graph.Attributes.Text("goal")}\nRun: {r.Context.Get("run.id")}\n\n{prompt}\n\nReturn the requested outcome JSON. Report incomplete work as fail or retry. An outcome is a worker claim, not independent test verification.";
-        var process = await ProcessRunner.RunAsync(options.Executable, args, options.WorkingDirectory, input, r.Directory, cancellationToken);
+        var process = await ProcessRunner.RunAsync(options.Executable, args, options.WorkingDirectory, input, r.Directory, cancellationToken, exchange);
         if (process.ExitCode != 0) return new(process.Stdout, Outcome.Fail($"Codex exited {process.ExitCode}"));
-        var protocol = await CodexOutput.ReadAsync(Path.Combine(r.Directory, "stdout.txt"), last, cancellationToken);
+        var protocol = await CodexOutput.ReadAsync(Path.Combine(r.Directory, "stdout.txt"), Path.Combine(r.Directory, "last-message.json"), cancellationToken);
         return new(process.Stdout, protocol);
     }
 }

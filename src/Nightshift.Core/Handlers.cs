@@ -15,11 +15,11 @@ public sealed class HandlerRegistry
     public bool Contains(string type) => handlers.ContainsKey(type);
     public void Register(string type, IHandler handler) => handlers[type] = handler;
     public IHandler Resolve(Node node) => handlers.TryGetValue(node.Type, out var h) ? h : throw new PipelineException($"Unsupported handler '{node.Type}'");
-    public static HandlerRegistry Create(ICodergenBackend backend, IInterviewer interviewer, string workingDirectory)
+    public static HandlerRegistry Create(ICodergenBackend backend, IInterviewer interviewer, string workingDirectory, IHandler? toolHandler = null)
     {
         var registry = new HandlerRegistry();
         foreach (string type in new[] { "start", "exit", "conditional" }) registry.Register(type, new DelegateHandler((_, _) => Task.FromResult(Outcome.Success())));
-        registry.Register("codergen", new CodergenHandler(backend)); registry.Register("tool", new ToolHandler(workingDirectory)); registry.Register("wait.human", new HumanHandler(interviewer)); return registry;
+        registry.Register("codergen", new CodergenHandler(backend)); registry.Register("tool", toolHandler ?? new DelegateHandler((_, _) => throw new PipelineException("Tool execution requires an explicitly composed launcher"))); registry.Register("wait.human", new HumanHandler(interviewer)); return registry;
     }
 }
 public sealed record BackendCapabilities(string Name, IReadOnlyList<string> FidelityModes, bool SessionReuse = false, bool PerToolHooks = false, string Notes = "");
@@ -58,19 +58,6 @@ public sealed class CodergenHandler(ICodergenBackend backend) : IHandler
         if (result.Outcome != null) return result.Outcome;
         if (r.Node.Attributes.Bool("auto_status")) return Outcome.Success("auto-status: no status supplied; not verified correctness");
         return Outcome.Fail("Backend returned text without an explicit outcome; task correctness is unknown");
-    }
-}
-public sealed class ToolHandler(string workingDirectory) : IHandler
-{
-    public async Task<Outcome> ExecuteAsync(StageRequest r, CancellationToken cancellationToken)
-    {
-        var result = await ProcessRunner.RunAsync("/bin/sh", ["-c", r.Node.Attributes.Text("tool_command")], workingDirectory, "", r.Directory, cancellationToken);
-        string statusFile = Path.Combine(r.Directory, "status.json");
-        if (File.Exists(statusFile)) File.Copy(statusFile, Path.Combine(r.Directory, "worker-status.json"), overwrite: false);
-        if (result.ExitCode != 0) return Outcome.Fail($"Command exited {result.ExitCode}; see stderr.txt");
-        if (File.Exists(statusFile)) return Json.Read<Outcome>(await File.ReadAllTextAsync(statusFile, cancellationToken));
-        var updates = new RunContext(); updates.Set("tool.output", result.Stdout); updates.Set("tool.exit_code", result.ExitCode);
-        return new() { Status = StageStatus.Success, ContextUpdates = updates.Snapshot(), Notes = "Command exited zero; domain correctness requires explicit checks" };
     }
 }
 public sealed class HumanHandler(IInterviewer interviewer) : IHandler

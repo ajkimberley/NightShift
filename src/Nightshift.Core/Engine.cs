@@ -13,7 +13,7 @@ public sealed record Backoff(double InitialMilliseconds = 200, double Factor = 2
 public interface IRetryDelay { Task WaitAsync(TimeSpan delay, CancellationToken cancellationToken); }
 public sealed class SystemRetryDelay : IRetryDelay { public Task WaitAsync(TimeSpan delay, CancellationToken cancellationToken) => Task.Delay(delay, cancellationToken); }
 
-public sealed class Engine(HandlerRegistry handlers, IRetryDelay? retryDelay = null, Backoff? backoff = null)
+public sealed class Engine(HandlerRegistry handlers, IRetryDelay? retryDelay = null, Backoff? backoff = null, Func<string, IRunStore>? runStoreFactory = null)
 {
     private readonly IRetryDelay retryDelay = retryDelay ?? new SystemRetryDelay();
     private readonly Backoff backoff = backoff ?? new();
@@ -24,7 +24,7 @@ public sealed class Engine(HandlerRegistry handlers, IRetryDelay? retryDelay = n
         options ??= new();
         if (options.MaxVisits <= 0 || options.MaxSeconds <= 0 || !double.IsFinite(options.MaxSeconds) || options.PauseAfterStages is <= 0) throw new ArgumentException("Run limits must be positive and finite");
         var prepared = Preparation.Prepare(dot, handlers); Preparation.RequireValid(prepared); var graph = prepared.Graph;
-        using var store = new RunStore(directory);
+        using var store = runStoreFactory?.Invoke(directory) ?? new RunStore(directory);
         store.Event += evt => Event?.Invoke(evt);
         Checkpoint state;
         if (resume)

@@ -4,8 +4,8 @@ namespace Nightshift.Cli;
 
 public sealed class Arguments
 {
-    private static readonly HashSet<string> Switches = ["--enable-codex", "--latest", "--json", "--help", "--write"];
-    private static readonly HashSet<string> Values = ["--dir", "--answers", "--backend", "--codex", "--sandbox", "--max-visits", "--max-seconds", "--pause-after", "--workdir", "--project", "--config", "--workflow", "--output-root", "--output", "--probe-seconds"];
+    private static readonly HashSet<string> Switches = ["--enable-codex", "--latest", "--json", "--help", "--write", "--enable-agent"];
+    private static readonly HashSet<string> Values = ["--dir", "--answers", "--backend", "--codex", "--sandbox", "--max-visits", "--max-seconds", "--pause-after", "--workdir", "--project", "--config", "--workflow", "--output-root", "--output", "--probe-seconds", "--profile", "--state-root", "--policy", "--agent-executable", "--repository-service", "--pipeline-service"];
     public string Command { get; }
     public string? Target { get; private set; }
     private readonly Dictionary<string, string> values = new(StringComparer.Ordinal);

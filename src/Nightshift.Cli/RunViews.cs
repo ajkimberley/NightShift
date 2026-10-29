@@ -30,6 +30,7 @@ public static class RunViews
             }
         }
         string summary = state.FinalOutcome?.FailureReason is { Length: > 0 } reason ? reason : state.FinalOutcome?.Notes ?? (state.State == "interrupted" ? "Ready to resume; an interrupted effect may replay." : "Execution is pending or active.");
+        if (!File.Exists(Path.Combine(directory, "protected-identity.json"))) summary = "[Legacy untrusted evidence; no verified acceptance] " + summary;
         var verdicts = new List<string>();
         var graph = new DotParser().Parse(File.ReadAllText(Path.Combine(directory, "graph.dot")));
         foreach (var (id, outcome) in state.NodeOutcomes)

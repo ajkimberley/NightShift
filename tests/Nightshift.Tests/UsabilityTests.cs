@@ -9,7 +9,7 @@ public class UsabilityTests
     internal static async Task<(int Code, string Output, string Error)> Invoke(string directory, params string[] args)
     {
         using var output = new StringWriter(); using var error = new StringWriter();
-        int code = await new CliApplication(output, error, directory).RunAsync(args);
+        int code = await new CliApplication(output, error, directory).RunAsync([.. args, "--profile", "native-development"]);
         return (code, output.ToString(), error.ToString());
     }
     internal static async Task<string> Fake(TestWorkspace w, string body = "")
@@ -22,13 +22,13 @@ public class UsabilityTests
           exec:--help) echo '--json --ephemeral --sandbox --output-schema --output-last-message --cd --config --model'; exit 0 ;;
           login:status) echo 'DO_NOT_LEAK_AUTH'; exit 0 ;;
         esac
-        printf '%s\n' "$@" > "$ATTRACTOR_STAGE_DIR/worker-arguments.txt"
+        printf '%s\n' "$@" > "$NIGHTSHIFT_EXCHANGE_DIR/worker-arguments.txt"
         output=''
         while [ "$#" -gt 0 ]; do
           if [ "$1" = '--output-last-message' ]; then shift; output=$1; fi
           shift
         done
-        cat > "$ATTRACTOR_STAGE_DIR/worker-input.txt"
+        cat > "$NIGHTSHIFT_EXCHANGE_DIR/worker-input.txt"
         """ + "\n" + (body.Length == 0 ? "printf '%s' '{\"outcome\":\"success\",\"notes\":\"fake worker claim\"}' > \"$output\"\n" : body + "\n") + "printf '%s\\n' '{\"type\":\"turn.completed\"}'\n";
         await File.WriteAllTextAsync(path, script);
         if (!OperatingSystem.IsWindows()) File.SetUnixFileMode(path, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute);
@@ -241,7 +241,7 @@ public class UsabilityTests
         string graph = Path.Combine(w.Root, "cancel.dot");
         await File.WriteAllTextAsync(graph, EngineTests.StageGraph(", type=tool, tool_command=\"echo started > started.marker; sleep 30\""));
         using var output = new StringWriter(); using var error = new StringWriter();
-        var task = new CliApplication(output, error, w.Root).RunAsync(["run", graph, "--dir", "cancel-run"], cancel.Token);
+        var task = new CliApplication(output, error, w.Root).RunAsync(["run", graph, "--dir", "cancel-run", "--profile", "native-development"], cancel.Token);
         await ProcessTests.WaitForFile(Path.Combine(w.Root, "started.marker")); cancel.Cancel();
         Assert.Equal(3, await task); Assert.Contains("interrupted", output.ToString()); Assert.Contains("Next stage: work", output.ToString());
         var view = RunViews.Read(Path.Combine(w.Root, "cancel-run")); Assert.Equal("interrupted", view.State); Assert.NotNull(view.Logs);

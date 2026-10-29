@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Text.Json;
 using Nightshift.Core;
+using Nightshift.Adapters;
 
 namespace Nightshift.Cli;
 
@@ -15,7 +16,15 @@ public sealed class CliApplication(TextWriter output, TextWriter error, string i
             args = new(arguments);
             if (args.Command == "version") { output.WriteLine("nightshift " + Version); return 0; }
             if (args.Command == "help" || args.Has("--help")) { output.WriteLine(Help); return 0; }
-            if (args.Command is not "doctor" and not "init" and not "demo" and not "validate" and not "run" and not "resume" and not "status" and not "result" and not "inspect" and not "events") throw new ArgumentException($"Unknown command '{args.Command}'. Run nightshift help.");
+            if (args.Command is not "doctor" and not "init" and not "demo" and not "validate" and not "run" and not "resume" and not "status" and not "result" and not "inspect" and not "events" and not "adopt" and not "reference") throw new ArgumentException($"Unknown command '{args.Command}'. Run nightshift help.");
+            string profile = args.Get("--profile") ?? "linux-container-v1";
+            if (profile is not "linux-container-v1" and not "native-development") throw new ArgumentException("profile must be linux-container-v1 or native-development");
+            bool legacyInspection = args.Target != null && args.Command is "status" or "result" or "inspect" or "events"
+                && !File.Exists(Path.Combine(Project.FullPath(args.Target, invocationDirectory), "protected-identity.json"));
+            if (profile == "linux-container-v1" && args.Command != "validate" && !legacyInspection)
+                return await new ProtectedCli(output, error, invocationDirectory).RunAsync(args, token);
+            if (args.Command is "adopt" or "reference") throw new ArgumentException("This command requires the protected profile");
+            if (args.Command is "run" or "resume" or "demo") error.WriteLine("Explicit native-development profile: lacks protected execution and trusted acceptance.");
             bool explicitRunPath = args.Target != null && args.Command is "resume" or "status" or "result" or "inspect" or "events";
             var project = explicitRunPath ? new Project(Path.GetFullPath(invocationDirectory), null, new()) : Project.Discover(invocationDirectory, args.Get("--project"), args.Get("--config"));
             if (args.Command == "init")
@@ -78,7 +87,7 @@ public sealed class CliApplication(TextWriter output, TextWriter error, string i
             return await Execute(args, settings, workingDirectory, NewRunDirectory(args, outputRoot), Options(args, project.Configuration), false, token);
         }
         catch (OperationCanceledException) { WriteError(args, "Cancelled before a resumable run was initialized."); return 130; }
-        catch (Exception e) when (e is ArgumentException or IOException or FormatException or OverflowException or PipelineException or DotParseException or JsonException or UnauthorizedAccessException or System.ComponentModel.Win32Exception or InvalidOperationException)
+        catch (Exception e) when (e is ServiceException or ArgumentException or IOException or FormatException or OverflowException or PipelineException or DotParseException or JsonException or UnauthorizedAccessException or System.ComponentModel.Win32Exception or InvalidOperationException)
         { WriteError(args, e.Message); return 2; }
     }
     private void Diagnostics(PreparedPipeline p)
@@ -98,6 +107,7 @@ public sealed class CliApplication(TextWriter output, TextWriter error, string i
     }
     private async Task<int> Execute(Arguments args, ExecutionSettings settings, string workdir, string directory, EngineOptions options, bool resume, CancellationToken token)
     {
+        if (File.Exists(Path.Combine(directory, "protected-identity.json"))) throw new ArgumentException("Protected runs cannot enter native-development execution");
         if (settings.Backend is not "scripted" and not "codex") throw new ArgumentException("backend must be codex or scripted.");
         if (settings.Sandbox is not "read-only" and not "workspace-write") throw new ArgumentException("sandbox must be read-only or workspace-write; no bypass modes are supported.");
         if (!Directory.Exists(workdir)) throw new DirectoryNotFoundException($"Working directory does not exist: {workdir}");
@@ -115,7 +125,7 @@ public sealed class CliApplication(TextWriter output, TextWriter error, string i
         else backend = new ScriptedBackend();
         IInterviewer interviewer = args.Get("--answers") is { } answers ? new QueueInterviewer(answers.Split(',').Select(a => new Answer(a.Trim(), Identity: "cli-queue-unverified")))
             : Console.IsInputRedirected || args.Has("--json") ? new CallbackInterviewer((_, _) => throw new ArgumentException("Human gate needs --answers in noninteractive mode. No auto-approval occurred.")) : new ConsoleInterviewer();
-        var registry = HandlerRegistry.Create(backend, interviewer, workdir);
+        var registry = HandlerRegistry.Create(backend, interviewer, workdir, new ToolHandler(workdir));
         string dot = await File.ReadAllTextAsync(resume ? Path.Combine(directory, "graph.dot") : settings.WorkflowPath, token);
         var prepared = Preparation.Prepare(dot, registry); Diagnostics(prepared); Preparation.RequireValid(prepared);
         if (settings.Backend == "codex") foreach (var node in prepared.Graph.Nodes.Values.Where(n => n.Type == "codergen"))
@@ -234,6 +244,19 @@ public sealed class CliApplication(TextWriter output, TextWriter error, string i
     }
     public const string Help = """
 Nightshift — personal DOT workflows
+Default profile: linux-container-v1 (requires manually available rootless Podman).
+  nightshift init [--workflow FILE] [--backend scripted|codex|claude-code]
+  nightshift adopt --policy nightshift-policy.json
+  nightshift run | resume --latest | result --latest
+  nightshift demo                  Enforced offline example; no model/account
+  nightshift reference --repository-service github|azure-devops
+                       --pipeline-service github-actions|azure-pipelines
+  --state-root DIR                 Operator-only external store override
+Protected settings come from adopted snapshots; no project config can redirect state.
+Reference uses actual local containers + fake HTTP services; never live accounts.
+
+Legacy development commands below require --profile native-development to execute.
+This mode lacks the phase-three protection; old runs remain inspectable.
   nightshift --version
   nightshift doctor [--json] [--codex PATH]
   nightshift demo                         Offline, no account or model

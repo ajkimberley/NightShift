@@ -99,9 +99,16 @@
           "xunit.extensibility.core": "[2.9.3]"
         }
       },
+      "nightshift.adapters": {
+        "type": "Project",
+        "dependencies": {
+          "Nightshift.Core": "[1.0.0, )"
+        }
+      },
       "nightshift.cli": {
         "type": "Project",
         "dependencies": {
+          "Nightshift.Adapters": "[1.0.0, )",
           "Nightshift.Core": "[1.0.0, )"
         }
       },

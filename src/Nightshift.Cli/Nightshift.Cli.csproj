@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Nightshift.Core\Nightshift.Core.csproj" />
+    <ProjectReference Include="..\Nightshift.Adapters\Nightshift.Adapters.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -10,7 +11,7 @@
     <ToolCommandName>nightshift</ToolCommandName>
     <PackageId>Nightshift.Cli</PackageId>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Version>0.2.1</Version>
+    <Version>0.3.0</Version>
     <Authors>Nightshift contributors</Authors>
     <Description>Personal DOT workflow orchestration with durable runs and a Codex process adapter.</Description>
     <TargetFramework>net10.0</TargetFramework>

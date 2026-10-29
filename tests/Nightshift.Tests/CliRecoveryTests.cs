@@ -12,7 +12,7 @@ public class CliRecoveryTests
     private static Process Start(string workdir, params string[] args)
     {
         var start = new ProcessStartInfo("dotnet") { WorkingDirectory = workdir, RedirectStandardOutput = true, RedirectStandardError = true };
-        start.ArgumentList.Add(Cli); foreach (var a in args) start.ArgumentList.Add(a); return Process.Start(start)!;
+        start.ArgumentList.Add(Cli); foreach (var a in args) start.ArgumentList.Add(a); start.ArgumentList.Add("--profile"); start.ArgumentList.Add("native-development"); return Process.Start(start)!;
     }
     [Fact]
     public async Task AbruptProcessInterruptionBeforeCompletionResumesFromDurableContinuation()
