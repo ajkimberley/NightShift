@@ -14,18 +14,59 @@ public abstract class ProcessAgent(IWorkerLauncher launcher, string executable, 
     protected abstract AgentResult Translate(WorkerResult result);
     public async Task<AgentResult> ExecuteAsync(AgentTask task, CancellationToken token)
     {
-        if (task.Fidelity != "truncate" || task.SessionRequested || task.SteeringRequested || task.HooksRequested)
+        if ((task.Workspace != null && (task.Workspace.Path != "/workspace" || !task.Workspace.Writable))
+            || (task.Limits != null && (task.Limits.MaxSeconds <= 0 || task.Limits.MaxSeconds > 3600 || !double.IsFinite(task.Limits.MaxSeconds) || task.Limits.MaxOutputBytes != 2 * 1024 * 1024))
+            || task.Fidelity != "truncate" || task.SessionRequested || task.SteeringRequested || task.HooksRequested)
             return new(AgentResultKind.ConfigurationError, "", Detail: "Only fresh truncate tasks are supported; sessions, steering and hooks are unsupported");
         try
         {
-            var result = await launcher.ExecuteAsync(BuildCommand(task), token);
-            if (result.ExitCode != 0) return new(AgentResultKind.WorkerFailure, result.Stdout, Detail: "Agent exited " + result.ExitCode + "; no automatic task retry");
-            return Translate(result);
+            using var limit = CancellationTokenSource.CreateLinkedTokenSource(token);
+            limit.CancelAfter(TimeSpan.FromSeconds(task.Limits?.MaxSeconds ?? 3600));
+            var result = await launcher.ExecuteAsync(BuildCommand(task), limit.Token);
+            if (result.ExitCode != 0)
+            {
+                try { var reported = Translate(result); if (reported.Kind == AgentResultKind.ConfigurationError) return reported; }
+                catch (Exception e) when (e is JsonException or KeyNotFoundException or InvalidOperationException) { }
+                return new(result.ExitCode is 126 or 127 ? AgentResultKind.ConfigurationError : AgentResultKind.WorkerFailure,
+                    result.Stdout, Detail: "Agent exited " + result.ExitCode + "; no automatic task retry");
+            }
+            return Events(Translate(result), result.Stdout);
         }
-        catch (OperationCanceledException) when (!token.IsCancellationRequested) { return new(AgentResultKind.Incomplete, "", Detail: "Runtime probe deadline elapsed"); }
+        catch (OperationCanceledException) when (!token.IsCancellationRequested) { return new(AgentResultKind.Incomplete, "", Detail: "Bounded agent execution deadline elapsed"); }
         // Caller cancellation propagates so the engine preserves a resumable pending attempt.
         catch (IOException) { return new(AgentResultKind.WorkerFailure, "", Detail: "Enforced launch or collection failed; no native fallback"); }
         catch (Exception e) when (e is JsonException or KeyNotFoundException or InvalidOperationException) { return new(AgentResultKind.Incomplete, "", Detail: "Malformed or incomplete agent protocol"); }
+    }
+    private static AgentResult Events(AgentResult result, string stdout)
+    {
+        var events = ImmutableArray.CreateBuilder<AgentEvent>();
+        foreach (string line in stdout.Split('\n', StringSplitOptions.RemoveEmptyEntries).Take(4096))
+        {
+            try
+            {
+                using var doc = JsonDocument.Parse(line);
+                if (!doc.RootElement.TryGetProperty("type", out var type) || type.ValueKind != JsonValueKind.String) continue;
+                string nativeType = type.GetString()!;
+                var kind = nativeType is "error" or "turn.failed" ? AgentEventKind.Failure
+                    : nativeType is "result" or "turn.completed" ? AgentEventKind.Completion : AgentEventKind.Progress;
+                events.Add(new(kind, nativeType));
+            }
+            catch (JsonException) { break; }
+        }
+        return result with { Events = events.ToImmutable() };
+    }
+    protected static AgentResult Error(JsonElement data, string response)
+    {
+        string code = data.TryGetProperty("code", out var direct) && direct.ValueKind == JsonValueKind.String ? direct.GetString()! : "";
+        if (data.TryGetProperty("error", out var error) && error.ValueKind == JsonValueKind.Object
+            && error.TryGetProperty("code", out var nested) && nested.ValueKind == JsonValueKind.String) code = nested.GetString()!;
+        var kind = code switch
+        {
+            "authentication_error" or "invalid_api_key" or "permission_denied" or "invalid_request_error" => AgentResultKind.ConfigurationError,
+            "rate_limit_exceeded" or "server_error" or "overloaded_error" => AgentResultKind.WorkerFailure,
+            _ => AgentResultKind.TaskFailure
+        };
+        return new(kind, response, Detail: "Agent error payload (" + (code.Length > 0 ? kind.ToString() : "unclassified task failure") + "); no automatic task retry");
     }
     protected static AgentResult Claim(JsonElement data, string response)
     {
@@ -43,7 +84,7 @@ public sealed class CodexAgent(IWorkerLauncher launcher, string executable = "/u
     public override AgentCapabilities Capabilities => new("codex", Version);
     public override WorkerCommand BuildCommand(AgentTask task)
     {
-        var args = new List<string> { "exec", "--json", "--ephemeral", "--skip-git-repo-check", "--sandbox", "workspace-write", "-C", "/workspace" };
+        var args = new List<string> { "exec", "--json", "--ephemeral", "--skip-git-repo-check", "--ignore-user-config", "--ignore-rules", "--sandbox", "workspace-write", "-C", "/workspace" };
         if (task.Model != null) args.AddRange(["--model", task.Model]);
         args.AddRange(["-c", "model_reasoning_effort=" + JsonSerializer.Serialize(task.ReasoningEffort), "-"]);
         return new(Executable, args.ToImmutableArray(), Prompt(task) + "\nSchema: " + ClaimSchema);
@@ -55,7 +96,7 @@ public sealed class CodexAgent(IWorkerLauncher launcher, string executable = "/u
         {
             using var doc = JsonDocument.Parse(line); var root = doc.RootElement;
             if (!root.TryGetProperty("type", out var type)) return new(AgentResultKind.Incomplete, result.Stdout, Detail: "Missing event type");
-            if (type.GetString() is "error" or "turn.failed") return new(AgentResultKind.TaskFailure, result.Stdout, Detail: "Agent error event; no automatic task retry");
+            if (type.GetString() is "error" or "turn.failed") return Error(root, result.Stdout);
             if (type.GetString() == "turn.completed") completed = true;
             if (type.GetString() == "item.completed" && root.TryGetProperty("item", out var item)
                 && item.TryGetProperty("type", out var itemType) && itemType.GetString() == "agent_message"
@@ -70,7 +111,7 @@ public sealed class ClaudeCodeAgent(IWorkerLauncher launcher, string executable 
     public override AgentCapabilities Capabilities => new("claude-code", Version);
     public override WorkerCommand BuildCommand(AgentTask task)
     {
-        var args = new List<string> { "-p", "--output-format", "stream-json", "--verbose", "--no-session-persistence", "--permission-mode", "acceptEdits", "--json-schema", ClaimSchema, "--effort", task.ReasoningEffort };
+        var args = new List<string> { "--bare", "-p", "--output-format", "stream-json", "--verbose", "--no-session-persistence", "--permission-mode", "acceptEdits", "--json-schema", ClaimSchema, "--effort", task.ReasoningEffort };
         if (task.Model != null) args.AddRange(["--model", task.Model]);
         return new(Executable, args.ToImmutableArray(), Prompt(task));
     }
@@ -82,7 +123,7 @@ public sealed class ClaudeCodeAgent(IWorkerLauncher launcher, string executable 
             using var doc = JsonDocument.Parse(line); var root = doc.RootElement;
             if (!root.TryGetProperty("type", out var type)) return new(AgentResultKind.Incomplete, result.Stdout, Detail: "Missing event type");
             if ((root.TryGetProperty("is_error", out var error) && error.ValueKind == JsonValueKind.True) || type.GetString() == "error")
-                return new(AgentResultKind.TaskFailure, result.Stdout, Detail: "Agent error payload; no automatic task retry");
+                return Error(root, result.Stdout);
             if (type.GetString() == "result") final = root.Clone();
         }
         if (final == null || !final.Value.TryGetProperty("subtype", out var subtype) || subtype.GetString() != "success"

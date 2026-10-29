@@ -74,7 +74,7 @@ public sealed class ServiceHttp : IDisposable
             if (!download.IsSuccessStatusCode) throw new ServiceException(ServiceFailure.Transport, "Anonymous log download failed; redirects are not followed");
             bytes = await Bounded(await download.Content.ReadAsStreamAsync(token), 2 * 1024 * 1024, token);
         }
-        if (!zip) return Encoding.UTF8.GetString(bytes);
+        if (!zip) return Redact(Encoding.UTF8.GetString(bytes));
         using var archive = new ZipArchive(new MemoryStream(bytes)); var text = new StringBuilder();
         foreach (var entry in archive.Entries.Take(128))
         {
@@ -82,7 +82,12 @@ public sealed class ServiceHttp : IDisposable
             byte[] content = await Bounded(entry.Open(), 1024 * 1024 - text.Length, token);
             text.AppendLine(entry.FullName); text.AppendLine(Encoding.UTF8.GetString(content));
         }
-        return text.ToString();
+        return Redact(text.ToString());
+    }
+    private string Redact(string value)
+    {
+        string? credential = authentication()?.Parameter;
+        return string.IsNullOrEmpty(credential) ? value : value.Replace(credential, "[REDACTED]", StringComparison.Ordinal);
     }
     private static async Task<byte[]> Bounded(Stream stream, int bound, CancellationToken token)
     {

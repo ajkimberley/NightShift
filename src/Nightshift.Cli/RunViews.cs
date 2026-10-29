@@ -35,7 +35,7 @@ public static class RunViews
         var graph = new DotParser().Parse(File.ReadAllText(Path.Combine(directory, "graph.dot")));
         foreach (var (id, outcome) in state.NodeOutcomes)
         {
-            if (graph.Nodes.TryGetValue(id, out var n) && n.Type == "tool") verdicts.Add($"{id}: {Conditions.StatusText(outcome.Status)}" + (n.Attributes.Bool("goal_gate") ? " (tool goal gate)" : " (host command)"));
+            if (graph.Nodes.TryGetValue(id, out var n) && n.Type == "tool") verdicts.Add($"{id}: {Conditions.StatusText(outcome.Status)}" + (File.Exists(Path.Combine(directory, "protected-identity.json")) ? " (isolated command; acceptance separate)" : " (untrusted native command claim)") + (n.Attributes.Bool("goal_gate") ? " (Attractor goal gate)" : ""));
         }
         return new(directory, state.State, manifest.WorkingDirectory, execution?.Backend ?? "legacy: not recorded", execution?.Sandbox ?? "legacy: not recorded", state.CurrentNode, state.NextNode, state.TotalVisits, state.ElapsedSeconds, summary, Path.Combine(directory, "checkpoint.json"), Path.Combine(directory, "events.jsonl"), response, logs,
             (execution?.Outputs ?? []).Select(p => new OutputPath(p, File.Exists(p) || Directory.Exists(p))).ToList(), verdicts);

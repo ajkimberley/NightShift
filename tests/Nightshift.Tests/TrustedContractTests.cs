@@ -102,3 +102,30 @@ public class TrustedContractTests
         finally { if (Directory.Exists(state)) Directory.Delete(state, true); }
     }
 }
+
+public class EvidenceAndGitTests
+{
+    [Fact]
+    public async Task Evidence_order_survives_wall_clock_reversal_and_later_failure_overrides_prior_pass()
+    {
+        using var w = new TestWorkspace();
+        var candidate = new Candidate(new("fixture", "owner", "repo"), "commit", "snapshot");
+        var passed = new VerificationEvidence(EvidenceSource.ControlledLocalCheck, candidate, "policy", "check", CheckState.Passed, "unit1", DateTimeOffset.UtcNow);
+        await EvidenceLedger.AppendAsync(w.Root, passed, CancellationToken.None);
+        await EvidenceLedger.AppendAsync(w.Root, passed with { State = CheckState.Failed, ExecutionId = "unit2", RecordedAt = passed.RecordedAt.AddHours(-1) }, CancellationToken.None);
+        var records = EvidenceLedger.Read(w.Root); Assert.Equal(CheckState.Failed, records[^1].State);
+        Assert.False(Acceptance.Decide(candidate, "policy", ["check"], records).Accepted);
+    }
+    [Fact]
+    public async Task Local_git_commit_contains_exact_snapshot_bytes_despite_ignore_and_attributes()
+    {
+        using var w = new TestWorkspace();
+        var snapshot = new WorkspaceSnapshot([new(".gitignore", "candidate.txt\n"u8.ToArray(), false), new(".gitattributes", "* text eol=lf\n"u8.ToArray(), false), new("candidate.txt", "CRLF\r\n"u8.ToArray(), false)]);
+        string git = Path.Combine(w.Root, "private-git");
+        var candidate = await new LocalGit().CommitSnapshotAsync(git, snapshot, new("fixture", "owner", "repo"), CancellationToken.None);
+        var start = new System.Diagnostics.ProcessStartInfo("/usr/bin/git") { RedirectStandardOutput = true, RedirectStandardError = true };
+        foreach (string arg in new[] { "-C", git, "cat-file", "blob", candidate.Revision + ":candidate.txt" }) start.ArgumentList.Add(arg);
+        using var p = System.Diagnostics.Process.Start(start)!; string actual = await p.StandardOutput.ReadToEndAsync(); await p.WaitForExitAsync();
+        Assert.Equal(0, p.ExitCode); Assert.Equal("CRLF\r\n", actual); Assert.Equal(snapshot.Digest, candidate.SnapshotDigest);
+    }
+}

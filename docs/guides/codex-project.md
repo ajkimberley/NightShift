@@ -1,3 +1,5 @@
+> Historical phase-two native-development guide. In 0.3, executing these examples requires explicit `--profile native-development` and lacks protected acceptance. For current defaults see [protected workflows](protected-workflows.md).
+
 # Configure a personal project for Codex
 
 Use a personal repository whose files and workflows you trust. `init` writes configuration and a template; it does not run Codex. Real runs may consume usage or incur charges.

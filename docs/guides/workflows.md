@@ -1,3 +1,5 @@
+> Historical phase-two native-development guide. In 0.3, executing these examples requires explicit `--profile native-development` and lacks protected acceptance. For current defaults see [protected workflows](protected-workflows.md).
+
 # Write a small workflow
 
 A workflow is a directed DOT graph. Keep task prompts explicit and route using facts or actual check outcomes. Real Codex stages require truncate fidelity; the simulator does not perform the requested coding work.

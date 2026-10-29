@@ -1,3 +1,5 @@
+> Historical phase-two native-development guide. In 0.3, executing these examples requires explicit `--profile native-development` and lacks protected acceptance. For current defaults see [protected workflows](protected-workflows.md).
+
 # Find results, understand failures and resume
 
 ## What the terminal tells you

@@ -1,81 +1,93 @@
 # Nightshift
 
-Nightshift runs personal workflows written as small DOT graphs. It can hand tasks to your Codex CLI, run independent local checks, pause for a choice, and save enough state to resume after interruption.
+Nightshift runs small DOT workflows with durable checkpoints, interchangeable
+coding-agent backends and separate candidate verification. Version **0.3.0** defaults
+to a protected local Linux-container profile. Worker success is a claim; approved
+independent checks decide acceptance for an exact captured candidate.
 
-**Start here:** [install and run your first demo](docs/guides/getting-started.md). The demo needs no account or model. For real work, follow [configure a Codex project](docs/guides/codex-project.md).
+[Protected workflow guide](docs/guides/protected-workflows.md) ·
+[Phase-three results and limits](PHASE-3-REVIEW.md) ·
+[Later work-porting guide](docs/work-porting-guide.md)
 
-## Install on this Mac
-
-From Terminal:
+## Install and try offline
 
 ```sh
-bash /Users/adamkimberley/Repos/nightshift/scripts/install.sh install
+bash /Users/adamkimberley/Repos/nightshift/scripts/install.sh update
 ```
 
-This builds a local .NET tool package and installs `nightshift` for your user. It does not publish a package, install/upgrade .NET or Codex, or change shell startup files. Installation requires the pinned .NET SDK **10.0.103**; the installed command requires the **.NET 10 runtime** and can run outside this checkout. Shell tools/demos require Git and `/bin/sh`; macOS arm64 is the verified platform.
-
-If installation reports the tools directory is absent from PATH, run this once in the current Terminal tab:
+The helper installs/updates only your user's Nightshift .NET tool. It needs the
+pinned SDK **10.0.103**; installed commands need the **.NET 10 runtime**. It does not
+publish a package or change shell profiles. If the tools folder is absent from PATH,
+add it for the current Terminal tab:
 
 ```sh
 export PATH="$HOME/.dotnet/tools:$PATH"
 ```
 
-Then:
+Start the already configured local runtime yourself, then run:
 
 ```sh
-nightshift --version
+podman machine start nightshift-dev
 nightshift doctor
 nightshift demo
+nightshift reference --repository-service github --pipeline-service github-actions
+nightshift reference --repository-service azure-devops --pipeline-service azure-pipelines
 ```
 
-Doctor checks setup without starting a model. In an unconfigured project, missing Codex/auth is a warning so the offline demo can still run. The demo prints progress, creates a tiny file, verifies its bytes with a local command, and prints exact output/response/log paths.
+The demo/reference commands use no models/accounts. They exercise real containers
+and offline HTTP fixtures. See [the installed local Podman runtime, start/stop commands
+and prerequisite checks](docs/container-runtime.md). Nightshift verifies the named
+local rootless connection and never installs, starts or reconfigures a runtime or
+falls back to native execution. The initial image is pinned official Alpine and
+contains fixtures, not live coding-agent binaries.
 
-## Use a personal project with Codex
+## Configure a protected workflow
 
-Change into your personal repository, then:
-
-```sh
-nightshift init --backend codex --enable-codex
-nightshift doctor
-```
-
-Review `nightshift.json` and edit the generated `workflow.dot` task prompt. Initialization saves your explicit permission for later Codex calls in this project and defaults to read-only. It never starts a worker. Real runs may consume account usage or incur charges.
+In a small personal fixture project:
 
 ```sh
+nightshift init
+# Review/edit nightshift-policy.json: workflow, checks and pinned verification files.
+nightshift adopt --policy nightshift-policy.json
 nightshift run
-nightshift status --latest
 nightshift result --latest
-```
-
-Codex is discovered automatically. Set an explicit path only if discovery cannot find your intended executable. Each Codex stage starts fresh with truncate fidelity; files can carry work across stages. To edit files, deliberately configure `sandbox` as `workspace-write` and add an independent check. See [a complete small writing workflow](docs/guides/codex-project.md).
-
-## Understand, inspect and resume
-
-```sh
 nightshift resume --latest
-nightshift validate
-nightshift help
 ```
 
-Resume selects the latest interrupted run **in this project**, restoring its recorded backend, permission, working directory and sandbox. It never silently changes a real run to simulation. Prior attempts remain on disk; an interrupted external effect may replay. Existing legacy runs without recorded worker identity require explicit backend selection.
+Adopted policies and new run state live outside the writable project and container
+share. Resume retains backend/version, runtime/image/profile, coordinator hashes
+and policy identity. Repository, pipeline and agent selections are independent;
+real API translations are tested against fixtures. Live agent/network/auth, hosted
+accounts, ADO Server and work-project integration remain separately authorized,
+unverified steps. This is a bounded tested profile, not production certification or
+a claim of arbitrary correctness or general sandbox-escape resistance.
 
-- [First-use visual guide and installation](docs/guides/getting-started.md)
-- [Project configuration, Codex discovery and real workflows](docs/guides/codex-project.md)
-- [Results, directory map, failures and resume](docs/guides/results-and-resume.md)
-- [Workflow authoring: tasks, checks, branches and human choices](docs/guides/workflows.md)
-- [Phase-two handoff and actual verification](PHASE-2-REVIEW.md)
+## Develop and verify
 
-## Development and limits
+With the approved runtime already running:
 
 ```sh
 dotnet restore --locked-mode
 dotnet build --no-restore
 dotnet test --no-build
+python3 scripts/verify-phase3-package.py
 python3 scripts/verify-package.py
 ```
 
-The package verifier installs, updates and uninstalls in an isolated directory. It exercises installed commands with fake Codex processes and preserves its transcript under `docs/evidence/phase-2/`. It never starts a model.
+The suite includes actual hostile containers; unavailable enforcement fails these
+checks instead of skipping them. The second package script retains historical native
+compatibility tests with explicit profile selection. Installed assets are checked
+outside source and while source assets are hidden. Neither script starts a model.
 
-Implemented handlers: start/exit, codergen, conditional, tool and wait.human. Parallel/fan-in, manager supervision, loop_restart, per-tool hooks, persistent sessions, model summaries and HTTP/UI remain deferred. This is a personal learning implementation with partial conformance. Worker success is a claim; independent tool stages provide separate command evidence. A zero exit or an existing file is not proof of arbitrary correctness.
+Core retains the pinned Attractor sequential routing/retry/revisit behavior.
+Start/exit, codergen, conditional, tool and human handlers remain supported.
+Parallel/fan-in, supervision, persistent sessions, summaries, steering and per-tool
+instrumentation remain unsupported. No internal model client or agent tool loop is
+implemented. See [architecture](docs/phase-3-architecture.md),
+[threat model](docs/phase-3-threat-model.md), [decisions](docs/phase-3-decisions.md) and
+[acceptance evidence](docs/phase-3-acceptance.md).
 
-Technical references: [architecture/spec decisions](docs/spec-decisions.md), [conformance](docs/conformance.md), [Codex adapter contract](docs/codex-adapter.md), [original implementation review](MORNING-REVIEW.md), [pinned upstream source/licence](docs/reference/PROVENANCE.md). Historical phase-one source-based commands and evidence remain available; installed usage above is the primary user path.
+Old runs remain inspectable and labeled untrusted. Legacy execution requires explicit
+`--profile native-development` and lacks phase-three protection. Historical
+[phase-two review](PHASE-2-REVIEW.md) and [guides](docs/guides/getting-started.md) are
+preserved; their native commands require that explicit selection in 0.3.

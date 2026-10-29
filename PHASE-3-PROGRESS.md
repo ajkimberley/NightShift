@@ -17,3 +17,13 @@
 - Retained initial failures: nonexistent-path attribute check, fixture marker offset,
   legacy CLI tests requiring explicit profile, missing legacy schema audit import.
   Corrections retained assertions and isolated legacy compatibility explicitly.
+- Hostile enforcement covers actual known host paths, sentinel hashes, descendants,
+  credentials/environment/open-fd absence, useful edits, forged claims, symlink/
+  hardlink/rename/.git ingestion refusal, pinned verifier tampering and PATH tools.
+- Fixed cancellation grace timeout using Podman rm --force --time=0; corrected
+  test DOT quoting rather than relaxing parser/assertions. Both corrections passed.
+- Abrupt coordinator kill/recovery passed. Both full GitHub and ADO references passed.
+- Added exact-byte Git plumbing and monotonic evidence ledger after final review;
+  focused tests passed. Debug 185 (before two ledger/Git tests) and Release 187 passed.
+- Installed protected package check passed outside source with source assets hidden.
+  Legacy package lifecycle is being retained and verified separately.

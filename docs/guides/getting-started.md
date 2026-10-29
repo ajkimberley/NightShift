@@ -1,3 +1,5 @@
+> Historical phase-two native-development guide. In 0.3, executing these examples requires explicit `--profile native-development` and lacks protected acceptance. For current defaults see [protected workflows](protected-workflows.md).
+
 # Install Nightshift and run your first workflow
 
 The first demo runs entirely locally. You need the installed .NET 10 runtime, Git and the usual macOS shell tools. Building/installing from this checkout uses SDK 10.0.103; running the installed command does not use the source folder or its `global.json`.

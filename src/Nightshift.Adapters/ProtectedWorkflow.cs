@@ -20,6 +20,11 @@ public sealed class ProtectedWorkflow(ProtectedState state)
         var snapshot = resume ? ProtectedState.ReadSnapshot(directory) : WorkspaceSnapshot.Capture(state.ProjectRoot);
         var launcher = new PodmanLauncher(policy.Runtime, snapshot, directory);
         var runtime = await launcher.VerifyAsync(token); // fail closed before any agent starts
+        string coordinator = Engine.Hash(Convert.ToBase64String(File.ReadAllBytes(typeof(ProtectedWorkflow).Assembly.Location)))
+            + ":" + Engine.Hash(Convert.ToBase64String(File.ReadAllBytes(typeof(Engine).Assembly.Location)));
+        if (prior != null && (prior.Runtime != runtime || prior.CoordinatorVersion != coordinator || prior.ProjectRoot != state.ProjectRoot
+            || prior.Agent.Name != policy.Backend || prior.RepositoryService != policy.RepositoryService || prior.PipelineService != policy.PipelineService))
+            throw new IOException("Backend/runtime/profile/policy/coordinator identity changed; resume refused");
         if (resume) await launcher.RecoverAsync(token);
         AgentCapabilities capabilities = new("scripted", "deterministic-1", StructuredClaims: true, Progress: false);
         if (policy.Backend != "scripted")
@@ -29,8 +34,6 @@ public sealed class ProtectedWorkflow(ProtectedState state)
             if (probe.ExitCode != 0 || probe.Stdout.Length is 0 or > 256) throw new IOException("Agent version probe failed");
             capabilities = new(policy.Backend, probe.Stdout.Trim());
         }
-        string coordinator = Engine.Hash(Convert.ToBase64String(File.ReadAllBytes(typeof(ProtectedWorkflow).Assembly.Location)))
-            + ":" + Engine.Hash(Convert.ToBase64String(File.ReadAllBytes(typeof(Engine).Assembly.Location)));
         var identity = new ProtectedIdentity(revision, runtime, capabilities, state.ProjectRoot, coordinator, policy.RepositoryService, policy.PipelineService);
         if (prior != null && Json.Serialize(prior) != Json.Serialize(identity)) throw new IOException("Backend/runtime/profile/policy/coordinator identity changed; resume refused");
         if (!resume)
@@ -74,7 +77,9 @@ public sealed class ProtectedWorkflow(ProtectedState state)
                 : incoming.Any(e => Handoff.Resolve(prepared.Graph, node, e, e.From).Fidelity != "truncate")) throw new ArgumentException("Coding agents support fresh truncate fidelity only");
             if (node.Attributes.Text("llm_provider").Length > 0) throw new ArgumentException("llm_provider is unsupported at the coding-agent seam; choose the agent in the approved policy");
         }
-        options ??= new(policy.MaxVisits, policy.MaxSeconds);
+        var manifest = resume ? Json.Read<RunManifest>(File.ReadAllText(Path.Combine(directory, "manifest.json"))) : null;
+        var savedSettings = resume && File.Exists(Path.Combine(directory, "execution.json")) ? Json.Read<ExecutionSettings>(File.ReadAllText(Path.Combine(directory, "execution.json"))) : manifest?.Execution;
+        options ??= resume ? (savedSettings?.Limits ?? manifest!.Options) with { PauseAfterStages = null } : new(policy.MaxVisits, policy.MaxSeconds);
         if (options.MaxVisits > policy.MaxVisits || options.MaxSeconds > policy.MaxSeconds) throw new ArgumentException("Run limits cannot exceed adopted policy limits");
         var settings = new ExecutionSettings(state.ProjectRoot, policy.Backend, null, runtime.Profile, policy.AllowModel,
             Path.Combine(state.ProjectDirectory, "runs"), Path.Combine(directory, "graph.dot"), [], new Dictionary<string, string> { ["policy"] = revision }, Limits: options);
@@ -103,7 +108,7 @@ public sealed class ProtectedWorkflow(ProtectedState state)
                 }
                 var record = new VerificationEvidence(EvidenceSource.ControlledLocalCheck, candidate, revision, check.Id, result, executionId, DateTimeOffset.UtcNow);
                 evidence.Add(record);
-                await AtomicFile.WriteJsonAsync(Path.Combine(directory, "evidence", Guid.NewGuid().ToString("N") + ".json"), record, token);
+                await EvidenceLedger.AppendAsync(directory, record, token);
             }
         }
         var acceptance = pipeline.State == "success" ? Acceptance.Decide(candidate, revision, policy.Checks.Select(c => c.Id), evidence)

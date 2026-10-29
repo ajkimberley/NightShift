@@ -66,8 +66,9 @@ public sealed class ProtectedCli(TextWriter output, TextWriter error, string inv
         directory ??= args.Get("--dir") is { } dir ? Project.FullPath(dir, invocation) : store.NewRun();
         EngineOptions? options = null;
         var policyForLimits = store.Policy(resume ? Json.Read<ProtectedIdentity>(File.ReadAllText(Path.Combine(directory, "protected-identity.json"))).PolicyRevision : null).Policy;
+        var savedLimits = resume ? RunViews.ReadExecution(directory, Json.Read<RunManifest>(File.ReadAllText(Path.Combine(directory, "manifest.json"))))?.Limits : null;
         if (args.Has("--pause-after") || args.Has("--max-visits") || args.Has("--max-seconds"))
-            options = new(args.Integer("--max-visits", policyForLimits.MaxVisits), args.Number("--max-seconds", policyForLimits.MaxSeconds), args.Has("--pause-after") ? args.Integer("--pause-after", 0) : null);
+            options = new(args.Integer("--max-visits", savedLimits?.MaxVisits ?? policyForLimits.MaxVisits), args.Number("--max-seconds", savedLimits?.MaxSeconds ?? policyForLimits.MaxSeconds), args.Has("--pause-after") ? args.Integer("--pause-after", 0) : null);
         return await Execute(store, directory, resume, options, args, token);
     }
     private async Task<int> Execute(ProtectedState state, string directory, bool resume, EngineOptions? options, Arguments args, CancellationToken token)
@@ -86,7 +87,7 @@ public sealed class ProtectedCli(TextWriter output, TextWriter error, string inv
         var snapshot = ProtectedState.ReadSnapshot(directory);
         var policy = Json.Read<ApprovedPolicy>(await File.ReadAllTextAsync(Path.Combine(directory, "approved-policy.json"), token));
         var candidate = new Candidate(new("local", Engine.Hash(identity.ProjectRoot)[..24], "workspace"), "snapshot:" + snapshot.Digest, snapshot.Digest);
-        var records = Directory.Exists(Path.Combine(directory, "evidence")) ? Directory.GetFiles(Path.Combine(directory, "evidence"), "*.json").Select(p => Json.Read<VerificationEvidence>(File.ReadAllText(p))).OrderBy(e => e.RecordedAt).ToArray() : [];
+        var records = EvidenceLedger.Read(directory);
         var decision = view.State == "success" ? Acceptance.Decide(candidate, identity.PolicyRevision, policy.Checks.Select(c => c.Id), records) : new(false, "Pipeline incomplete/interrupted/failed");
         if (args.Has("--json")) output.WriteLine(Json.Serialize(new { run = view, provenance = "protected coordinator record", identity, candidate, acceptance = decision, evidence = records }));
         else { ProgressDisplay.Print(view, output, args.Command is "result" or "run" or "resume" or "demo"); output.WriteLine("Profile: " + identity.Runtime.Profile + " | Policy: " + identity.PolicyRevision + "\nCandidate: " + candidate.SnapshotDigest + "\nCode acceptance: " + decision.Accepted + " — " + decision.Reason); }

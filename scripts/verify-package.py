@@ -15,13 +15,15 @@ feed = root / "feed"
 tools = root / "tools"
 project = root / "personal project"
 project.mkdir()
-log_path = repo / "docs/evidence/phase-2/package-lifecycle.txt"
+log_path = repo / "docs/evidence/phase-3/package-legacy.txt"
 log_path.parent.mkdir(parents=True, exist_ok=True)
 env = dict(os.environ, NUGET_PACKAGES=str(root / "cache"))
 env["PATH"] = str(tools) + os.pathsep + env.get("PATH", "")
 
 with log_path.open("w") as log:
     def run(args, cwd=repo, expected=0):
+        if str(args[0]) == "nightshift" and len(args) > 1 and args[1] not in ("--version", "help"):
+            args = [*args, "--profile", "native-development"]
         log.write("\n$ " + shlex.join(map(str, args)) + "\n")
         log.flush()
         result = subprocess.run(list(map(str, args)), cwd=cwd, env=env, text=True, capture_output=True, timeout=120)
@@ -31,7 +33,7 @@ with log_path.open("w") as log:
             raise RuntimeError(f"Unexpected result; inspect {log_path}")
         return result.stdout
 
-    for version in ("0.2.0", "0.2.1"):
+    for version in ("0.2.0", "0.3.0"):
         run(["dotnet", "pack", "src/Nightshift.Cli", "-c", "Release", "--no-restore", "-p:Version=" + version, "-o", feed])
     run(["dotnet", "tool", "install", "Nightshift.Cli", "--tool-path", tools, "--source", feed, "--version", "0.2.0"])
     assert "nightshift 0.2.0" in run(["nightshift", "--version"], project)
@@ -47,8 +49,8 @@ while [ "$#" -gt 0 ]; do
   if [ "$1" = '--output-last-message' ]; then shift; output=$1; fi
   shift
 done
-cat > "$ATTRACTOR_STAGE_DIR/input.txt"
-if grep -q 'Hello from Nightshift' "$ATTRACTOR_STAGE_DIR/input.txt"; then
+cat > "$NIGHTSHIFT_EXCHANGE_DIR/input.txt"
+if grep -q 'Hello from Nightshift' "$NIGHTSHIFT_EXCHANGE_DIR/input.txt"; then
   printf 'Hello from Nightshift\\n' > report.txt
 else
   printf 'PACKAGE_VERIFIED\\n' > generated.txt
@@ -117,8 +119,8 @@ printf '%s\\n' '{"type":"turn.completed"}'
         artifact.unlink() if damage == "missing" else artifact.write_text("wrong\n")
         run(["nightshift", "resume", run_dir], project, 1)
         assert json.loads((run_dir / "checkpoint.json").read_text())["state"] == "failed"
-    run(["dotnet", "tool", "update", "Nightshift.Cli", "--tool-path", tools, "--source", feed, "--version", "0.2.1"])
-    assert "nightshift 0.2.1" in run(["nightshift", "--version"], project)
+    run(["dotnet", "tool", "update", "Nightshift.Cli", "--tool-path", tools, "--source", feed, "--version", "0.3.0"])
+    assert "nightshift 0.3.0" in run(["nightshift", "--version"], project)
     run(["dotnet", "tool", "uninstall", "Nightshift.Cli", "--tool-path", tools])
     assert not (tools / "nightshift").exists()
     log.write(f"\nPASS: package lifecycle and installed onboarding. Evidence retained: {root}\n")

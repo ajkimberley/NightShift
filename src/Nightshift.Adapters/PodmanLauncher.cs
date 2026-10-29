@@ -29,6 +29,7 @@ public sealed class PodmanLauncher(ContainerProfile profile, WorkspaceSnapshot i
         if (OperatingSystem.IsWindows()) throw new IOException("Protected profile requires Linux containers; Windows host profile unverified");
         if (!Path.IsPathFullyQualified(profile.Executable) || !File.Exists(profile.Executable)) throw new IOException("Approved Podman executable unavailable");
         if (!Regex.IsMatch(profile.Image, @"^[a-z0-9./:_-]+@sha256:[a-f0-9]{64}$")) throw new IOException("Profile requires an immutable image digest");
+        if (Path.GetFullPath(profile.ShareRoot) != Path.GetFullPath(ContainerProfile.LocalDefault.ShareRoot)) throw new IOException("The initial profile requires the dedicated local workspace share");
         WorkspaceSnapshot.RejectLinks(profile.ShareRoot);
         if (!Directory.Exists(profile.ShareRoot)) throw new IOException("Approved dedicated workspace share is missing; operator setup required");
         using var deadline = CancellationTokenSource.CreateLinkedTokenSource(token); deadline.CancelAfter(TimeSpan.FromSeconds(10));
@@ -71,7 +72,7 @@ public sealed class PodmanLauncher(ContainerProfile profile, WorkspaceSnapshot i
             if (unit.State is "collected" or "interrupted") continue;
             if (!Regex.IsMatch(unit.Id, "^nightshift-[a-f0-9]{32}$") || unit.Profile != profile) throw new IOException("Owned execution recovery identity mismatch");
             using var cleanup = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-            Success(await Call(["rm", "--force", "--ignore", unit.Id], "", cleanup.Token));
+            Success(await Call(["rm", "--force", "--time=0", "--ignore", unit.Id], "", cleanup.Token));
             await Record(unit.Id, "interrupted");
             string workspace = Path.Combine(profile.ShareRoot, unit.Id);
             if (Directory.Exists(workspace)) Directory.Delete(workspace, true);
@@ -110,7 +111,7 @@ public sealed class PodmanLauncher(ContainerProfile profile, WorkspaceSnapshot i
             // Stop all writers before archive collection, then remove execution before parsing bytes.
             var archive = await Call(["cp", id + ":/workspace/.", "-"], "", token); Success(archive);
             using var cleanup = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-            Success(await Call(["rm", "--force", id], "", cleanup.Token)); removed = true;
+            Success(await Call(["rm", "--force", "--time=0", id], "", cleanup.Token)); removed = true;
             Snapshot = WorkspaceSnapshot.ReadArchive(archive.Output);
             await Record(id, "collected");
             return new(exit, result.Text, result.Error, id);
@@ -120,7 +121,7 @@ public sealed class PodmanLauncher(ContainerProfile profile, WorkspaceSnapshot i
             if (created && !removed)
             {
                 using var cleanup = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-                var result = await Call(["rm", "--force", "--ignore", id], "", cleanup.Token);
+                var result = await Call(["rm", "--force", "--time=0", "--ignore", id], "", cleanup.Token);
                 Success(result); await Record(id, "interrupted"); // Cleanup uncertainty is an error, never accepted output.
             }
             // No code follows worker links for cleanup; recursive delete unlinks symlinks.

@@ -6,11 +6,18 @@ namespace Nightshift.Core;
 public sealed record AgentCapabilities(string Name, string Version, bool FreshTasks = true,
     bool StructuredClaims = true, bool Progress = true, bool Cancellation = true,
     bool Sessions = false, bool Steering = false, bool Hooks = false);
+public sealed record AgentWorkspace(string Path = "/workspace", bool Writable = true);
+public sealed record AgentLimits(double MaxSeconds = 3600, int MaxOutputBytes = 2 * 1024 * 1024);
 public sealed record AgentTask(string Instructions, string ApprovedContext, string Fidelity = "truncate",
     string? Model = null, string ReasoningEffort = "high", bool SessionRequested = false,
-    bool SteeringRequested = false, bool HooksRequested = false);
+    bool SteeringRequested = false, bool HooksRequested = false, AgentWorkspace? Workspace = null, AgentLimits? Limits = null);
 public enum AgentResultKind { CompletedClaim, TaskFailure, Incomplete, Cancelled, WorkerFailure, ConfigurationError }
-public sealed record AgentResult(AgentResultKind Kind, string Response, string Claim = "fail", string Detail = "");
+public enum AgentEventKind { Progress, Completion, Failure }
+public sealed record AgentEvent(AgentEventKind Kind, string NativeType);
+public sealed record AgentResult(AgentResultKind Kind, string Response, string Claim = "fail", string Detail = "")
+{
+    public ImmutableArray<AgentEvent> Events { get; init; } = [];
+}
 public interface ICodingAgent
 {
     AgentCapabilities Capabilities { get; }

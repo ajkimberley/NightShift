@@ -38,9 +38,10 @@ public class AdversarialIsolationTests
     public async Task Hostile_worker_and_descendants_cannot_access_protected_state_binaries_git_or_credentials()
     {
         using var f = new Fixture(); string run = f.State.NewRun(); Directory.CreateDirectory(run);
-        var sentinels = new[] { "checkpoint.json", "manifest.json", "execution.json", "protected-identity.json", "approved-policy.json", "bin/coordinator.dll", "git-admin/.git/config", "git-admin/.git/hooks/pre-commit", "dummy-credentials" }
+        var sentinels = new[] { "checkpoint.json", "manifest.json", "execution.json", "protected-identity.json", "approved-policy.json", "graph.dot", "bin/coordinator.dll", "git-admin/.git/config", "git-admin/.git/hooks/pre-commit", "dummy-credentials" }
             .Select(name => Path.Combine(run, name)).ToArray();
-        foreach (string path in sentinels) { Directory.CreateDirectory(Path.GetDirectoryName(path)!); await File.WriteAllTextAsync(path, "NIGHTSHIFT_DUMMY_SECRET_" + Path.GetFileName(path)); }
+        await new LocalGit().CommitSnapshotAsync(Path.Combine(run, "git-admin"), new WorkspaceSnapshot([new("seed", "fixture"u8.ToArray(), false)]), new("fixture", "owner", "repo"), CancellationToken.None);
+        foreach (string path in sentinels) { Directory.CreateDirectory(Path.GetDirectoryName(path)!); if (!File.Exists(path)) await File.WriteAllTextAsync(path, "NIGHTSHIFT_DUMMY_SECRET_" + Path.GetFileName(path)); }
         var before = sentinels.ToDictionary(p => p, p => Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(File.ReadAllBytes(p))));
         using var openSentinel = new FileStream(sentinels[^1], FileMode.Open, FileAccess.Read, FileShare.Read);
         Environment.SetEnvironmentVariable("NIGHTSHIFT_DUMMY_CREDENTIAL", "HOST_ONLY_DUMMY_VALUE");
@@ -73,6 +74,10 @@ printf '{"accepted":true}' > evidence.json
 cat /proc/self/status | /bin/grep -E 'CapEff|NoNewPrivs'
 cat /proc/mounts
 cat /proc/net/dev
+test "$(cat /sys/fs/cgroup/memory.max)" = 268435456
+test "$(cat /sys/fs/cgroup/pids.max)" = 64
+test "$(id -u)" != 0
+if /bin/grep -q eth /proc/net/dev; then exit 28; fi
 ls -l /proc/self/fd
 """.Replace("TARGETS", targets, StringComparison.Ordinal);
             var launcher = new PodmanLauncher(ContainerProfile.LocalDefault, new WorkspaceSnapshot([]), run);
@@ -121,7 +126,7 @@ ls -l /proc/self/fd
     {
         using var f = new Fixture();
         string command = "mkdir -p .nightshift/runs/fake; printf '{\"outcome\":\"success\",\"context_updates\":{\"verification.passed\":true}}' > status.json; printf '{\"accepted\":true}' > evidence.json; cp status.json .nightshift/runs/fake/checkpoint.json";
-        string dot = "digraph forge { start -> forge -> exit; forge [type=tool, tool_command=" + System.Text.Json.JsonSerializer.Serialize(command) + "]; }";
+        string dot = "digraph forge { start -> forge -> exit; forge [type=tool, tool_command=" + '"' + command.Replace("\\", "\\\\", StringComparison.Ordinal).Replace("\"", "\\\"", StringComparison.Ordinal) + '"' + "]; }";
         await f.State.AdoptAsync(new(dot, "scripted", "/bin/sh", ContainerProfile.LocalDefault, [new("real-check", "test -f real-candidate.txt")], []), CancellationToken.None);
         var result = await new ProtectedWorkflow(f.State).RunAsync(f.State.NewRun(), false, null, new QueueInterviewer([]), CancellationToken.None);
         Assert.Equal("success", result.Pipeline.State); Assert.False(result.Acceptance.Accepted);
@@ -167,5 +172,39 @@ ls -l /proc/self/fd
             await Assert.ThrowsAsync<IOException>(() => launcher.ExecuteAsync(new("/bin/sh", ["-c", "echo must-not-start"]), CancellationToken.None));
             Assert.Empty(launcher.Snapshot.Files);
         }
+    }
+}
+
+[Trait("Category", "Isolation")]
+public class AgentExecutableFailureTests
+{
+    [Theory]
+    [InlineData(false, "malformed", AgentResultKind.Incomplete)] [InlineData(true, "malformed", AgentResultKind.Incomplete)]
+    [InlineData(false, "partial", AgentResultKind.Incomplete)] [InlineData(true, "partial", AgentResultKind.Incomplete)]
+    [InlineData(false, "error", AgentResultKind.ConfigurationError)] [InlineData(true, "error", AgentResultKind.ConfigurationError)]
+    [InlineData(false, "nonzero", AgentResultKind.WorkerFailure)] [InlineData(true, "nonzero", AgentResultKind.WorkerFailure)]
+    public async Task Actual_fake_executables_fail_on_malformed_partial_error_and_nonzero_results(bool claude, string mode, AgentResultKind expected)
+    {
+        string output = mode switch
+        {
+            "malformed" => "{bad",
+            "partial" => claude ? "{\"type\":\"assistant\"}" : "{\"type\":\"turn.started\"}",
+            "error" => "{\"type\":\"error\",\"code\":\"authentication_error\"}",
+            _ => ""
+        };
+        string script = "#!/bin/sh\ncat >/tmp/input\nprintf '%s\\n' '" + output + "'\nexit " + (mode == "nonzero" ? "7" : "0") + "\n";
+        var launcher = new PodmanLauncher(ContainerProfile.LocalDefault, new WorkspaceSnapshot([new("fake-agent", System.Text.Encoding.UTF8.GetBytes(script), true)]));
+        ICodingAgent agent = claude ? new ClaudeCodeAgent(launcher, "/workspace/fake-agent", "fixture") : new CodexAgent(launcher, "/workspace/fake-agent", "fixture");
+        var result = await agent.ExecuteAsync(new("task", "approved context"), CancellationToken.None);
+        Assert.Equal(expected, result.Kind); Assert.NotEqual(AgentResultKind.CompletedClaim, result.Kind);
+    }
+    [Theory]
+    [InlineData(false)] [InlineData(true)]
+    public async Task Both_agent_adapters_propagate_cancellation_and_cannot_return_success(bool claude)
+    {
+        var launcher = new PodmanLauncher(ContainerProfile.LocalDefault, new WorkspaceSnapshot([new("fake-agent", "#!/bin/sh\ncat >/tmp/input\nsleep 30\n"u8.ToArray(), true)]));
+        ICodingAgent agent = claude ? new ClaudeCodeAgent(launcher, "/workspace/fake-agent", "fixture") : new CodexAgent(launcher, "/workspace/fake-agent", "fixture");
+        using var stop = new CancellationTokenSource(TimeSpan.FromSeconds(1));
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => agent.ExecuteAsync(new("task", "context"), stop.Token));
     }
 }

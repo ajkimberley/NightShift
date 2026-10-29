@@ -16,7 +16,12 @@ public sealed class LocalGit(string executable = "/usr/bin/git")
     {
         snapshot.WriteFresh(privateDirectory);
         await Git(privateDirectory, token, "init", "-q");
-        await Git(privateDirectory, token, "add", "--all");
+        // Plumbing bypasses .gitignore, .gitattributes filters and line-ending conversion.
+        foreach (var file in snapshot.Files)
+        {
+            string blob = await Git(privateDirectory, token, "hash-object", "-w", "--no-filters", "--", file.Path);
+            await Git(privateDirectory, token, "update-index", "--add", "--cacheinfo", file.Executable ? "100755" : "100644", blob, file.Path);
+        }
         await Git(privateDirectory, token, "commit", "--no-verify", "--allow-empty", "-q", "-m", "Captured Nightshift candidate");
         string revision = await Git(privateDirectory, token, "rev-parse", "--verify", "HEAD^{commit}");
         return new(repository, revision, snapshot.Digest);
